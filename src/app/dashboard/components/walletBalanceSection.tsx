@@ -1,7 +1,8 @@
 "use client"
 import { GreenBackground } from "@/app/assets/green-background"
-import { COLOURS } from "@/app/includes/constants"
+import { COLOURS, ROUTES } from "@/app/includes/constants"
 import useHttpHook from "@/app/includes/useHttpHook";
+import Link from "next/link";
 import { useEffect, useState } from "react"
 export interface WalletBalanceProps {
 balance:string;
@@ -33,7 +34,8 @@ export const WalletBalance =()=>{
                 <div className="text-[#FFD983]">Total Earned: ₦{(balance?.earnings || "0.00")}<span></span></div>
             </div>
             <div className="me-20 flex items-center">
-                <button 
+                <Link 
+                href={ROUTES.withdrawal}
                 className={`flex cursor-pointer items-center gap-1 justify-center rounded p-2 px-4 text-[16px] bg-${COLOURS.white} text-[${COLOURS.green}] `}
                 >
                  <span> Withdraw</span>
@@ -48,7 +50,7 @@ export const WalletBalance =()=>{
 </defs>
 </svg>
 
-                </button>
+                </Link>
             </div>
             </div>
          </div>
