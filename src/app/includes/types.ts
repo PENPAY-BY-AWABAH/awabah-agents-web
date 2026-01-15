@@ -22,3 +22,10 @@ import { ReactNode } from "react";
     confirmPassword?:string;
     otp?:string;
     }
+    export interface ItemProps {
+        title:string;
+        icon?:string | ReactNode;
+        description?:string;
+        route?:string;
+        selected?:boolean;
+    }

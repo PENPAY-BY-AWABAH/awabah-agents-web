@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { color } from "chart.js/helpers";
 import { ReactNode, useState } from "react";
 
 export interface ListProps {

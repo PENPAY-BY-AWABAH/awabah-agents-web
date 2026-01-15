@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { CONSTANT, ROUTES } from "./constants";
+import { CONSTANT } from "./constants";
 import { ItemProps} from "./types";
 import {name} from "../../../package.json"
 import { useRouter } from "next/navigation";
@@ -22,7 +22,6 @@ export interface UnknownKeyPair {
     [key: string]: any; 
   }
 export const useApiRequest = ()=>{
-    const navigate = useRouter()
     const [loading,setLoading] = useState<boolean>(false);
     const call = async(props:PayloadProps,showMessage?:boolean)=>{
     return new Promise<ApiResponse>(async (resolve)=>{
@@ -170,67 +169,7 @@ export const ExportJSONFile = (list:any[],fileName:string = "excelfile")=>{
     URL.revokeObjectURL(url); // Clean up
 }
 
- export const PFC = ()=>{
-const list:ItemProps[] = [];
-  const zpcPFC = [
-        "STANBIC",
-        "TRUSTFUND",
-        "GTCO",
-        "GT",
-        "GUARANTY",
-        "IBTC"
-];
-const upcPFC = [
-        "FCMB",
-        "LEADWAY",
-        "ALLIANCE",
-        "PAL ",
-        "CARDINAL",
-        "CITIZENS"
-];
-const fpcPFC = [
-        "ACCESSARM",
-        "ARM",
-        "ACCESS",
-        "NLPC",
-        "CRUSADER",
-        "FIDELITY",
-        "VERITAS",
-        "NPF",
-        "NUPEMCO",
-        "NIGERIAN",
-        "OAK",
-        "TANGERINE",
-        "PREMIUM",
-        "NORRENBERGER",
-        "STERLING",
-        "GLANVILLS"
-];
-zpcPFC.forEach((item,index)=>{
-  list.push({
-    name: "zpc",
-    value: item,
-    id: `${index + 1}`
-  })
-})
 
-upcPFC.forEach((item,index)=>{
-  list.push({
-    name: "upc",
-    value: item,
-    id:`${zpcPFC.length + (index+1)}`
-  })
-})
-
-fpcPFC.forEach((item,index)=>{
-  list.push({
-    name: "fpc",
-    value: item,
-    id:`${list.length + (index+1)}`
-  })
-})
-  return list;
- }
  export const PFABankAccounts = ()=>{
   return [
     {
