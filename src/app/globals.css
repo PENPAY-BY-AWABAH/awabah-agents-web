@@ -24,3 +24,32 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+input[type="checkbox"]{
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  appearance: none;
+  background: white;
+  border: solid 1px #ddd;
+  border-radius: 1px;
+  width: 25px;
+  height: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+input[type=checkbox]:checked::before {
+  content: "\2713";
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
+  font-size: 20px;
+  color: #fff;
+  text-align: center;
+  line-height: 22px;
+  background-color: #027115;
+  border: solid 1px #027115;
+  width: 25px;
+  height: 25px;
+}

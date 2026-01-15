@@ -1,65 +1,127 @@
-import Image from "next/image";
+"use client"
+import { useEffect, useState } from "react";
+import { CardOne } from "./dashboard/components/card1";
+import { COLOURS, CONSTANT, ROUTES } from "./includes/constants";
+import { SlideItemProp } from "./includes/types";
+import { CardTwo } from "./dashboard/components/card2";
+import { CardThree } from "./dashboard/components/card3";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+  const navigate = useRouter();
+  const [slider,setSlider] = useState<SlideItemProp[]>([
+    {
+      graphics:<CardOne />,
+      title:"Become an Awabah Agent",
+      description:"Help new users get started on Awabah and earn commissions for every successful onboarding."
+    },
+    {
+      graphics:<CardTwo />,
+      title:"Onboard & Track Users",
+      description:"Register new users, monitor their verification status, and track when your commissions are earned — all from one dashboard."
+    },
+    {
+      graphics:<CardThree />,
+      title:"Earn & Withdraw Commissions",
+      description:"Earn 300Naira per onboarding and Convert your earned commissions to cash and withdraw directly to your bank account when eligible."
+    }
+  ]);
+  const [showOnboardingBtn,setShowOnboardingBtn] = useState<boolean>(false);
+  const [selectedIndex,setSelectedIndex] = useState<number>(0);
+  const [stop,setStop] = useState<boolean>(false);
+  useEffect(()=>{
+  //   const intervalTime = setInterval(()=>{
+  //     setSelectedIndex((count)=>{
+  //       if(count > slider.length - 2)
+  //       {
+  //         setShowOnboardingBtn(true)
+  //         return 0
+  //       }
+  //       return count + 1
+  //     })
+  //   },4000)
+  // return ()=>{
+  //   clearInterval(intervalTime);
+  // }
+  },[stop])
+  useEffect(()=>{
+    const token =localStorage.getItem(CONSTANT.LocalStore.token);
+       if(token)
+       {
+          navigate.replace(ROUTES.dashboard) 
+       }
+      },[])
+  return (<div className="min-h-screen overflow-scroll pb-[140px] items-center justify-center bg-white font-sans grid grid-cols-1 ">
+     <div className="m-auto items-center text-center  h-[500px] ">
+     {slider.filter((a,i)=>selectedIndex === i).map((item,index)=>{
+      return <div key={index} className="m-auto items-center text-center  rounded-[30px] shadow w-[400px] p-[30px] pb-[60px]">
+     <div className="m-auto items-center text-center justify-center flex overflow-hidden">
+        {item.graphics}
+     </div>
+     <div className="flex items-center justify-center  mt-[50px] gap-2">
+      {slider?.map((item,index)=><button 
+      onClick={()=>{
+        setSelectedIndex(index)
+      }}
+      key={index} 
+      className={`cursor-pointer ${selectedIndex === index?"bg-green-600":"bg-[#C4C4C4]"}  h-[5px] ${selectedIndex === index?"w-[30px]":"w-[15px]"} rounded-[20px]`}></button>)}
+      </div>
+     <div >
+      <div className={``}></div>
+     </div>
+     <div className="w-[300px] m-auto items-center text-center mt-8" >
+     <div className="text-black text-[30px] w-[80%] text-center m-auto leading-[32px] ">
+     {item.title}
+     </div>
+     <div className="text-[#4D4D4DD9] text-[14px] mt-3 ">
+    {item.description}
+     </div>
+     </div>
+     </div>})}
+     </div>
+      <div className="flex p-10 items-center fixed top-0 left-0  w-full">
+      <div >
+      <Link 
+       href={ROUTES.login}
+      className="rounded-[12px] text-[16px] cursor-pointer bg-[#C4C4C440] px-[20px] py-2 text-black text-[18px]"
+      >
+      Skip
+      </Link>
+     </div>
+      <div className="flex-1 ">
+     </div>
+      {!showOnboardingBtn?<div >
+       <button 
+       onClick={()=>{
+          setSelectedIndex((count)=>{
+        if(count > slider.length - 2)
+        {
+          setShowOnboardingBtn(true)
+          return 0
+        }
+        return count + 1
+      })
+       }}
+      className={`rounded-[12px] text-[16px] cursor-pointer bg-[#009668] px-[20px] py-2 text-${COLOURS.white} text-[18px]`}
+      >
+      Next
+      </button>
+     </div>:<div className="flex gap-4">
+       <Link 
+       href={ROUTES.login}
+      className={`rounded-[12px] text-[16px] cursor-pointer border-[1px] border-[#009668] px-[20px] py-2 text-[#009668] text-[18px]`}
+      >
+      Log In
+      </Link>
+      <Link 
+      href={ROUTES.register}
+      className={`rounded-[12px] text-[16px] cursor-pointer bg-[#009668] px-[20px] py-2 text-white text-[18px]`}
+      >
+      Create Account
+      </Link>
+     </div>}
+     </div>
     </div>
   );
 }
