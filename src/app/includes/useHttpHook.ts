@@ -181,6 +181,71 @@ const useHttpHook = () => {
             })
         })
     }
+    const getListOfBanks = () => {
+        return new Promise<ApiResponse>((resolve) => {
+            setLoading(true);
+            call({ 
+               path:"agent-get-nigerian-banks",
+                body:{},
+                method:"GET",
+                requestType:"json"  
+            }).then((res) => {
+                setLoading(false);
+                resolve(res);
+            })
+        })
+    }    
+     
+     const getMyBanks = () => {
+        return new Promise<ApiResponse>((resolve) => {
+            setLoading(true);
+            call({ 
+               path:"agent-get-banks",
+                body:{},
+                method:"GET",
+                requestType:"json"  
+            }).then((res) => {
+                setLoading(false);
+                resolve(res);
+            })
+        })
+    }   
+    const saveBankAccount = (accountNumber: string,bankCode:string) => {
+        return new Promise<ApiResponse>((resolve) => {
+            setLoading(true);
+            call({
+                path:"agent-save-bank-details",
+                body:{accountNumber,bankCode},
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                 ShowMessage({
+                    position:"center",
+                    ...res
+                })
+                resolve(res);
+            })
+        })
+    }
+    const removeAcount = (accountNumber:string) => {
+        return new Promise<ApiResponse>((resolve) => {
+            setLoading(true);
+           call({
+                path:`agent-delete-bank?accountNumber=${accountNumber}`,
+                body:{},
+                method:"GET",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                 ShowMessage({
+                    position:"center",
+                    ...res
+                })
+                resolve(res);
+            })
+        })
+    }
     return {
         loading,
         handleGetTransactions,
@@ -192,7 +257,11 @@ const useHttpHook = () => {
         CheckReceipt,
         GetBalance,
         handleNewPassword,
-        handleSendOtp
+        handleSendOtp,
+        getListOfBanks,
+        getMyBanks,
+        saveBankAccount,
+        removeAcount
     }
 }
 export default useHttpHook;

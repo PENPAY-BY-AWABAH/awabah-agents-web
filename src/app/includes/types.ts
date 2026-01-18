@@ -29,3 +29,19 @@ import { ReactNode } from "react";
         route?:string;
         selected?:boolean;
     }
+    export interface BankItemProps {
+        id?:string;
+        name?:string;
+        code?:string;
+        longCode?:string;
+        country?:string;
+        currency?:string;
+    }
+    export interface SavedAccountProps {
+        id?:string;
+        accountName?:string;
+        accountNumber?:string;
+        bankName?:string;
+        bankCode?:string;
+        createdAt?:string;
+    }

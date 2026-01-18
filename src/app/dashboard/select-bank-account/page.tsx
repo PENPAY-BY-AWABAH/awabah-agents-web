@@ -6,7 +6,6 @@ import { BankIcon } from "@/app/assets/bank-icon";
 import { SaveIcon } from "@/app/assets/save-icon";
 import { useState } from "react";
 import BaseButton from "@/app/components/baseButton";
-import { ROUTES } from "@/app/includes/constants";
 
 const Page = ()=>{
     const [selectedOption,setSelectedOption] = useState<string>("")
@@ -52,11 +51,11 @@ const Page = ()=>{
             //navigate to next page based on selection
             if(selectedOption === "bank")
             {
-             navigate.push(ROUTES.selectBankAccount)     
+                
             }
             else if(selectedOption === "saved")
             {
-              navigate.push(ROUTES.saveBankAccount)  
+                
             }
         }}
         text="Next"

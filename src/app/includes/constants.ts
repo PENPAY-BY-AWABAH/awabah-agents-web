@@ -12,7 +12,10 @@ history:"/dashboard/history",
 withdrawal:"/dashboard/withdrawal",
 users:"/dashboard/users",
 notification:"/dashboard/notification",
-register:"/register"
+register:"/register",
+saveBankAccount:"/dashboard/save-bank-account",
+selectBankAccount:"/dashboard/select-bank-account",
+addAccount:"/dashboard/add-account"
 }
 export interface RouteItem {
 title:string;
