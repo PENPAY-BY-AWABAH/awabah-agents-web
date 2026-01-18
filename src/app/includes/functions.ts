@@ -3,9 +3,7 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { CONSTANT } from "./constants";
-import { ItemProps} from "./types";
 import {name} from "../../../package.json"
-import { useRouter } from "next/navigation";
 interface ApiResponse {
     status:boolean;
     message:string;
@@ -72,7 +70,6 @@ export const useApiRequest = ()=>{
                 data:{}
             })
         })
-       
     })
     }
     return {
@@ -261,3 +258,11 @@ export const ExportJSONFile = (list:any[],fileName:string = "excelfile")=>{
 })
 window.dispatchEvent(CustomMessage);
  }
+
+ export const CopyToClipboard = (text:string)=>{
+  navigator.clipboard.writeText(text).then(() => {
+    toast.success("Copied to clipboard")
+  }).catch((err) => {
+    toast.error("Failed to copy text: " + err);
+  });
+}

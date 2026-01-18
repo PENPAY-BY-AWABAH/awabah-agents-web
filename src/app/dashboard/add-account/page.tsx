@@ -3,6 +3,7 @@ import { BackIcon } from "@/app/assets/back-icon";
 import { BankIcon } from "@/app/assets/bank-icon";
 import BaseButton from "@/app/components/baseButton"
 import BaseInput from "@/app/components/baseInput";
+import { ROUTES } from "@/app/includes/constants";
 import { BankItemProps } from "@/app/includes/types";
 import useHttpHook from "@/app/includes/useHttpHook";
 import { useRouter } from "next/navigation";
@@ -34,7 +35,8 @@ const Page = () => {
         e.preventDefault();
         saveBankAccount(accountNumber,String(selectedOption?.code)).then((res) => {  
             if (res.status) {
-                navigate.back();
+                navigate.push(ROUTES.saveBankAccount);
+                localStorage.setItem("newlyAddedAccount", JSON.stringify(selectedOption));
             }
         })
     }

@@ -35,7 +35,7 @@ const Page = ()=>{
                <div className="text-center flex justify-center mb-2 items-center">
                <BankIcon selected={selectedOption === "bank"} />
                </div>
-                <div className="text-center">Bank Account</div>
+                <div className="text-center">Add bank Account</div>
                 </button>
             <button className={`${selectedOption === "saved" ? "bg-green-700 text-white" : "bg-[#C4C4C433]"} hover:bg-green-700 hover:text-white cursor-pointer  rounded-[15px] p-6 text-black text-[16px] font-normal text-center`} 
             onClick={() => setSelectedOption("saved")}
@@ -52,7 +52,7 @@ const Page = ()=>{
             //navigate to next page based on selection
             if(selectedOption === "bank")
             {
-             navigate.push(ROUTES.selectBankAccount)     
+             navigate.push(ROUTES.addAccount)     
             }
             else if(selectedOption === "saved")
             {
