@@ -9,9 +9,12 @@ import { CONSTANT, ROUTES } from "../includes/constants";
 import Link from "next/link";
 import useHttpHook from "../includes/useHttpHook";
 import { LoginProps } from "../includes/types";
+import BaseModal from "../components/baseModal";
+import { SwitchAccount } from "./components/switch-account";
 
 const Page = ()=>{
-    const [showForgotPassword,setShowForgotPassword] = useState<boolean>(false)
+    
+    const [showAccountSwitch,setShowAccountSwitch] = useState<boolean>(false)
     const navigate = useRouter();
     const {handleLogin,loading} = useHttpHook();
     const [formData,setFormData] = useState<LoginProps>({
@@ -24,10 +27,16 @@ const Page = ()=>{
             if(res.status)
             {
               navigate.replace(ROUTES.dashboard) 
+            }else{
+                if(res.data?.switch_account)
+                {
+                  setShowAccountSwitch(true)
+                }
             }
         })
     }
     useEffect(()=>{
+    //  localStorage.clear();
      const token =localStorage.getItem(CONSTANT.LocalStore.token);
      if(token)
      {
@@ -113,6 +122,11 @@ const Page = ()=>{
       </form>
      </div>
      </div>
+    {showAccountSwitch &&<SwitchAccount 
+    email={formData.email!}
+    password={formData.password!}
+    onClose={()=>setShowAccountSwitch(false)}
+    />}
     </div>
 }
 export default Page;

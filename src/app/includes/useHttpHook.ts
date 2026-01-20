@@ -2,14 +2,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { LoginProps } from "./types";
-import { CONSTANT } from "./constants";
 import { toast } from "react-toastify";
 import { useApiRequest } from "./functions";
 import {name}  from "../../../package.json"
 export interface ApiResponse {
     status:boolean;
     message:string;
-    data:unknown;
+    data:any;
     statusCode?:number;
 }
 const useHttpHook = () => {
@@ -289,6 +288,31 @@ const useHttpHook = () => {
             })
         })
     }
+    const switchToAgentAccount = (data:any) => {
+        return new Promise<ApiResponse>((resolve) => {
+            setLoading(true);
+           call({
+                path:`agent-sign-in`,
+                body:{
+                    ...data,
+                    account_switch:"yes"
+                },
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                if(!res.status)
+                {
+                    ShowMessage({
+                    position:"center",
+                    ...res
+                })
+                }
+                resolve(res);
+            })
+        })
+    }
+
     return {
         loading,
         handleGetTransactions,
@@ -306,7 +330,8 @@ const useHttpHook = () => {
         saveBankAccount,
         removeAcount,
         handleRegister,
-        handleEmailOTPVerification
+        handleEmailOTPVerification,
+        switchToAgentAccount
     }
 }
 export default useHttpHook;

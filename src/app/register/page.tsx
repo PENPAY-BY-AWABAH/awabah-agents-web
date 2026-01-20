@@ -44,6 +44,10 @@ const Page = () => {
         handleRegister(data).then((res) => {
             if (res.status) {
               setSection("Verify Email")
+            }else{
+                if(res.data?.activated === "0"){
+                  setSection("Verify Email")  
+                }
             }
         })
         

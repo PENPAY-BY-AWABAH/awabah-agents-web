@@ -15,7 +15,8 @@ notification:"/dashboard/notification",
 register:"/register",
 saveBankAccount:"/dashboard/save-bank-account",
 selectBankAccount:"/dashboard/select-bank-account",
-addAccount:"/dashboard/add-account"
+addAccount:"/dashboard/add-account",
+terms:"/terms-and-conditions",
 }
 export interface RouteItem {
 title:string;
