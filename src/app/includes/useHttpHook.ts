@@ -268,6 +268,27 @@ const useHttpHook = () => {
             })
         })
     }
+    const handleEmailOTPVerification = (data:any)=>{
+        return new Promise<ApiResponse>((resolve) => {
+            setLoading(true);
+           call({
+                path:`agent-verify-registration-otp`,
+                body:data,
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                if(!res.status)
+                {
+                    ShowMessage({
+                    position:"center",
+                    ...res
+                })
+                }
+                resolve(res);
+            })
+        })
+    }
     return {
         loading,
         handleGetTransactions,
@@ -284,7 +305,8 @@ const useHttpHook = () => {
         getMyBanks,
         saveBankAccount,
         removeAcount,
-        handleRegister
+        handleRegister,
+        handleEmailOTPVerification
     }
 }
 export default useHttpHook;

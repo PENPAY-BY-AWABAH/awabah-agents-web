@@ -1,72 +1,85 @@
 "use client"
-import { BackIcon } from "@/app/assets/back-icon";
-import BaseToggleBtn from "@/app/components/baseCheckBox";
-import BaseInput from "@/app/components/baseInput";
-import { ROUTES } from "@/app/includes/constants";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
-type OnboardingProps = "User Details" | "Bank Details" | "Verification";
-interface User {
-    name?:string;
-    email?:string;
-    password?:string;
-    fullName?:string;
-    address?:string;
-    phoneNumber?:string;
-    businessName?:string;
-    nin?:string;
-    bvn?:string;
-    dialCode?:string;
+import Link from "next/link";
+import useHttpHook from "@/app/includes/useHttpHook";
+import { ROUTES } from "@/app/includes/constants";
+import { BackIcon } from "@/app/assets/back-icon";
+import BaseInput from "@/app/components/baseInput";
+import BaseButton from "@/app/components/baseButton";
+type RegisterProps = "User Details" | "Verify Email" | "Account";
+export interface SignUpProps {
+email?:string;
+firstName?:string;
+lastName?:string;
+password?:string;
+phoneNumber?:string;
+businessName?:string;
+nin?:string;
 }
-const Page = ()=>{
-    const [section, setSection] = useState<OnboardingProps>("User Details");
+const Page = () => {
+    const [section, setSection] = useState<RegisterProps>("User Details")
     const navigate = useRouter();
-    const handleSubmit = (e:FormEvent<HTMLFormElement>)=>{
+    const { handleRegister, loading, } = useHttpHook();
+    const [formData, setFormData] = useState<SignUpProps>({
+        email: "",
+        password: ""
+    })
+    const handleSubmit = (e: FormEvent) => {
         e.preventDefault()
-    }   
-    const [formData, setFormData] = useState<User>({
-        email:"",
-        fullName:"",
-        address:"",
-        password:"",
-        phoneNumber:"",
-        businessName:"",
-        nin:"",
-        bvn:"",
-        dialCode:"+234",
-    });
-    return <div className="bg-white h-screen fixed top-0 left-0 w-screen z-10 p-4">
-       <div className="mb-6">
-               <button 
-               onClick={()=>{
-               navigate.back();
-               }}
-               className="flex items-center gap-2 cursor-pointer">
-                   <BackIcon />
-                   <div className="">Back</div>
-               </button>
+        handleRegister(formData).then((res) => {
+            if (res.status) {
+                navigate.replace(ROUTES.login)
+            }
+        })
+    }
+    return <div className="bg-white h-full px-[100px] py-[60px]">
+        <div className="mb-6">
+            <button
+                onClick={() => {
+                    navigate.back();
+                }}
+                className="flex items-center gap-2 cursor-pointer">
+                <BackIcon />
+                <div className="text-black text-[18px]">Back</div>
+            </button>
         </div>
-         <div className="m-auto items-center text-center   ">
+        <div className="m-auto items-center text-center h-full overflow-x-scroll   ">
             <div className="m-auto items-center text-center  rounded-[30px] min-h-[400px] shadow w-[500px] p-[30px] pb-[60px]">
                 <div className="text-black text-[24px] font-bold text-center">{section}</div>
-                <Indicator />
                 <div >
-                    <div className="text-[#909090] text-[12px] text-left">Please provide some information about the user, these information are used to protect users account and for compliance purpose</div>
+                    <div className="text-[#909090] text-[12px] text-left">Please provide some information about the user, these information are used to protect users account and for compliance purpose.</div>
+                    <div className="text-[#009668] text-[14px] text-left mt-4">Personal Details</div>
                     <form onSubmit={handleSubmit}>
-                           <BaseInput
+                        <BaseInput
                             type="text"
-                            name="name"
-                            value={formData.name}
+                            name="firstName"
+                            value={formData.firstName}
                             required
                             onValueChange={({ value }) => {
                                 setFormData({
                                     ...formData,
-                                    name: value
+                                    firstName: value
                                 })
                             }}
-                            label="Name"
-                            placeholder="Enter name."
+                            max={40}
+                            label="First Name"
+                            placeholder="Enter First Name."
+                        />
+                        <BaseInput
+                            type="text"
+                            name="lastName"
+                            value={formData.lastName}
+                            required
+                            onValueChange={({ value }) => {
+                                setFormData({
+                                    ...formData,
+                                    lastName: value
+                                })
+                            }}
+                            max={40}
+                            label="Last Name"
+                            placeholder="Enter last name."
                         />
                         <BaseInput
                             type="text"
@@ -79,6 +92,7 @@ const Page = ()=>{
                                     email: value
                                 })
                             }}
+                            max={140}
                             label="Email"
                             placeholder="Enter Email."
                         />
@@ -93,17 +107,69 @@ const Page = ()=>{
                                     password: value
                                 })
                             }}
+                            max={30}
                             label="Password"
                             placeholder="Enter Password."
                         />
-                       
+
+                        <BaseInput
+                            type="text"
+                            name="phoneNumber"
+                            value={formData.phoneNumber}
+                            required
+                            onValueChange={({ value }) => {
+                                setFormData({
+                                    ...formData,
+                                    phoneNumber: value
+                                })
+                            }}
+                            max={11}
+                            label="Phone Number"
+                            placeholder="Enter phone number."
+                        />
+                        <BaseInput
+                            type="text"
+                            name="businessName"
+                            value={formData.businessName}
+                            required
+                            onValueChange={({ value }) => {
+                                setFormData({
+                                    ...formData,
+                                    businessName: value
+                                })
+                            }}
+                            max={140}
+                            label="Business Name"
+                            placeholder="Enter business name."
+                        />
+                        <BaseInput
+                            type="text"
+                            name="nin"
+                            value={formData.nin}
+                            required
+                            max={11}
+                            onValueChange={({ value }) => {
+                                setFormData({
+                                    ...formData,
+                                    nin: value
+                                })
+                            }}
+                            label="NIN (National Identity Number)"
+                            placeholder="Enter NIN."
+                        />
+                        
+                        <BaseButton
+                            loading={loading}
+                            text="Next"
+                            type="submit"
+                        />
                         <div className="flex items-center justify-center mt-[30px] gap-1">
-                            <span className="text-[14px] text-black">Don`t have an account?</span>
+                            <span className="text-[14px] text-black">I have an account?</span>
                             <Link
-                                href={ROUTES.register}
+                                href={ROUTES.login}
                                 className="text-[14px] text-[#009668]"
                             >
-                                Create Account
+                            Login
                             </Link>
                         </div>
                     </form>
@@ -113,11 +179,3 @@ const Page = ()=>{
     </div>
 }
 export default Page;
-
-const Indicator = ()=>{
-    return <div className="flex items-center justify-center gap-2 my-6">
-        <div className="w-[100px] h-[8px] rounded bg-[#009668]"></div>
-        <div className="w-[100px] h-[8px] rounded bg-[#C4C4C4]"></div>
-        <div className="w-[100px] h-[8px] rounded bg-[#C4C4C4]"></div>
-    </div>
-}   
