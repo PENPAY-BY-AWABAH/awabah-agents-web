@@ -312,7 +312,62 @@ const useHttpHook = () => {
             })
         })
     }
-
+const getAgentProfile  = () => {
+        return new Promise<ApiResponse>((resolve) => {
+            setLoading(true);
+           call({
+                path:`agent-profile`,
+                body:{},
+                method:"GET",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                resolve(res);
+            })
+        })
+    }
+    const handleRegisterUser =(data:any) => {
+        return new Promise<ApiResponse>((resolve) => {
+            setLoading(true);
+           call({
+                path:`agent-user-registration`,
+                body:data,
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                if(!res.status)
+                {
+                    ShowMessage({
+                    position:"center",
+                    ...res
+                })
+                }
+                resolve(res);
+            })
+        })
+    }
+    const handleNextOfKin =(data:any) => {
+        return new Promise<ApiResponse>((resolve) => {
+            setLoading(true);
+           call({
+                path:`agent-save-next-of-kin`,
+                body:data,
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                if(!res.status)
+                {
+                    ShowMessage({
+                    position:"center",
+                    ...res
+                })
+                }
+                resolve(res);
+            })
+        })
+    }
     return {
         loading,
         handleGetTransactions,
@@ -331,7 +386,10 @@ const useHttpHook = () => {
         removeAcount,
         handleRegister,
         handleEmailOTPVerification,
-        switchToAgentAccount
+        switchToAgentAccount,
+        getAgentProfile,
+        handleRegisterUser,
+        handleNextOfKin
     }
 }
 export default useHttpHook;

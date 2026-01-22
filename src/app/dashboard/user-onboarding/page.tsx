@@ -1,56 +1,110 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client"
 import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import useHttpHook from "@/app/includes/useHttpHook";
 import { ROUTES } from "@/app/includes/constants";
 import { BackIcon } from "@/app/assets/back-icon";
 import BaseInput from "@/app/components/baseInput";
 import BaseButton from "@/app/components/baseButton";
-type RegisterProps = "User Details" | "Verify Email" | "Account";
+import { BaseHorizontalIndicator } from "@/app/components/baseHorizontalIndicator";
+import { OtpSection } from "./components/otpSection";
+import { NextOfKinPage } from "./components/nextOfKin";
+import { SuccessComponent } from "./components/success";
+type RegisterProps = "User Details" | "Verify Email" | "Next Of Kin" | "Success";
 export interface SignUpProps {
 email?:string;
 firstName?:string;
 lastName?:string;
-password?:string;
 phoneNumber?:string;
-businessName?:string;
+address?:string;
 nin?:string;
+bvn?:string;
 }
 const Page = () => {
+    const [index,setIndex] =  useState<number>(0)
     const [section, setSection] = useState<RegisterProps>("User Details")
     const navigate = useRouter();
-    const { handleRegister, loading, } = useHttpHook();
+    const { handleRegisterUser, loading } = useHttpHook();
     const [formData, setFormData] = useState<SignUpProps>({
         email: "",
-        password: ""
+        firstName:"",
+        lastName:"",
+        phoneNumber:"",
+        address:"",
+        nin:"",
+        bvn:""
     })
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault()
-        handleRegister(formData).then((res) => {
+        handleRegisterUser(formData).then((res) => {
+            if(String(res.message).includes("OTP"))
+            {
+                return setSection("Verify Email");
+            }
             if (res.status) {
-                navigate.replace(ROUTES.login)
+               setSection("Verify Email")
+            }else{
+                
+                
+                if(res.data?.nextOfKinRegistered === false)
+                {
+
+                }
+                if(res.data?.employerDetailsRegistered === false)
+                {
+
+                }
             }
         })
     }
+    useEffect(()=>{ 
+        if(section === "User Details")
+        {
+            setIndex(0)
+        }
+         if(section === "Verify Email")
+        {
+            setIndex(1)
+        }
+          if(section === "Next Of Kin")
+        {
+            setIndex(2)
+        }
+    },[section])
     return <div className="bg-white h-full px-[100px] py-[60px]">
-        <div className="mb-6">
+        {section !== "Success" && <div className="mb-6">
             <button
                 onClick={() => {
+                    if(section === "Next Of Kin")
+                    {
+                        return setSection("Verify Email")
+                    }
+                    if(section === "Verify Email")
+                    {
+                        return setSection("User Details")
+                    }
                     navigate.back();
                 }}
                 className="flex items-center gap-2 cursor-pointer">
                 <BackIcon />
                 <div className="text-black text-[18px]">Back</div>
             </button>
-        </div>
-        <div className="m-auto items-center text-center h-full overflow-x-scroll   ">
+        </div>}
+        {section !== "Success" ?<div className="m-auto items-center text-center h-full overflow-x-scroll   ">
             <div className="m-auto items-center text-center  rounded-[30px] min-h-[400px] shadow w-[500px] p-[30px] pb-[60px]">
-                <div className="text-black text-[24px] font-bold text-center">{section}</div>
-                <div >
+                <div className="text-black text-[24px] font-bold text-center mb-[20px] ">{section}</div>
+                <div className="w-[200px]">
+                <BaseHorizontalIndicator 
+                count={4} 
+                selectedIndex={index}
+                 />
+                </div>
+                {section === "User Details" &&<div className="mt-[20px]">
                     <div className="text-[#909090] text-[12px] text-left">Please provide some information about the user, these information are used to protect users account and for compliance purpose.</div>
                     <div className="text-[#009668] text-[14px] text-left mt-4">Personal Details</div>
-                    <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit}>
                         <BaseInput
                             type="text"
                             name="firstName"
@@ -96,21 +150,6 @@ const Page = () => {
                             label="Email"
                             placeholder="Enter Email."
                         />
-                        <BaseInput
-                            required
-                            type="password"
-                            name="password"
-                            value={formData.password}
-                            onValueChange={({ value }) => {
-                                setFormData({
-                                    ...formData,
-                                    password: value
-                                })
-                            }}
-                            max={30}
-                            label="Password"
-                            placeholder="Enter Password."
-                        />
 
                         <BaseInput
                             type="text"
@@ -129,18 +168,18 @@ const Page = () => {
                         />
                         <BaseInput
                             type="text"
-                            name="businessName"
-                            value={formData.businessName}
+                            name="address"
+                            value={formData.address}
                             required
                             onValueChange={({ value }) => {
                                 setFormData({
                                     ...formData,
-                                    businessName: value
+                                    address: value
                                 })
                             }}
                             max={140}
-                            label="Business Name"
-                            placeholder="Enter business name."
+                            label="Address"
+                            placeholder="Enter address."
                         />
                         <BaseInput
                             type="text"
@@ -157,25 +196,52 @@ const Page = () => {
                             label="NIN (National Identity Number)"
                             placeholder="Enter NIN."
                         />
-                        
+                         <BaseInput
+                            type="text"
+                            name="bvn"
+                            value={formData.bvn}
+                            required
+                            max={11}
+                            onValueChange={({ value }) => {
+                                setFormData({
+                                    ...formData,
+                                    bvn: value
+                                })
+                            }}
+                            label="BVN (BANK Verification Number)"
+                            placeholder="Enter BVN."
+                        />
                         <BaseButton
                             loading={loading}
                             text="Next"
                             type="submit"
                         />
-                        <div className="flex items-center justify-center mt-[30px] gap-1">
-                            <span className="text-[14px] text-black">I have an account?</span>
-                            <Link
-                                href={ROUTES.login}
-                                className="text-[14px] text-[#009668]"
-                            >
-                            Login
-                            </Link>
-                        </div>
-                    </form>
-                </div>
+                        
+                </form>
+                </div>}
+                    {section === "Verify Email" &&<div >
+                    <OtpSection
+                     email={formData.email!}
+                     onClose={()=>{
+                       setSection("Next Of Kin")
+                     }}
+                    />
+                    </div>}
+
+                    {section === "Next Of Kin" &&<div >
+                    <NextOfKinPage 
+                     onClose={()=>{
+                       setSection("Next Of Kin")
+                     }}
+                     onSuccess={()=>{
+                       setSection("Success") 
+                     }}
+                     email={formData.email!}
+                    />
+                    </div>}
+
             </div>
-        </div>
+        </div>:<SuccessComponent />}
     </div>
 }
 export default Page;
