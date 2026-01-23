@@ -368,6 +368,41 @@ const getAgentProfile  = () => {
             })
         })
     }
+    const handleRemiteMicroPensions = (data:any) => {
+        return new Promise<ApiResponse>((resolve) => {
+            setLoading(true);
+           call({
+                path:`remite-micro-pension`,
+                body:data,
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                if(!res.status)
+                {
+                    ShowMessage({
+                    position:"center",
+                    ...res
+                })
+                }
+                resolve(res);
+            })
+        })
+    }
+    const getRSAPIN = (data:any) => {
+        return new Promise<ApiResponse>((resolve) => {
+            setLoading(true);
+           call({
+                path:`get-rsa-pin`,
+                body:data,
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                resolve(res);
+            })
+        })
+    }
     return {
         loading,
         handleGetTransactions,
@@ -389,7 +424,9 @@ const getAgentProfile  = () => {
         switchToAgentAccount,
         getAgentProfile,
         handleRegisterUser,
-        handleNextOfKin
+        handleNextOfKin,
+        handleRemiteMicroPensions,
+        getRSAPIN
     }
 }
 export default useHttpHook;

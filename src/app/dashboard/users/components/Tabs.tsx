@@ -1,0 +1,65 @@
+import { UserCheckIcon } from "@/app/assets/user-check-icon"
+import { UserPendingIcon } from "@/app/assets/user-pending-icon"
+import { UserRejectIcon } from "@/app/assets/user-reject-icon"
+import { UsersIcon } from "@/app/assets/users-icon"
+import { RouteItem } from "@/app/includes/constants"
+import { ReactElement, useState } from "react"
+interface TabSectionProp {
+    title:string;
+    icon?:string | ReactElement;
+    description?:string;
+    bgColour?:string;
+    borderColour?:string;
+    route?:string;
+    selected?:boolean;
+}
+export const TabSection = ()=>{
+      const [btns,setBtns] = useState<TabSectionProp[]>([
+            {
+            title:"Users Onboarded",
+            icon:<UsersIcon size={40} />,
+            route:"text-[#1879F8]",
+            selected:true,
+            bgColour:"bg-[#1879F826]",
+            borderColour:"border-[#1879F8]",
+            description:"3003"
+            },
+            {
+            title:"Remit",
+            icon:<UserCheckIcon />,
+            route:"text-[#009668]",
+            selected:false,
+            bgColour:"bg-[#00966826]",
+            borderColour:"border-[#009668]",
+            description:"3893"
+            },
+            {
+            title:"Withdrawal History",
+            icon:<UserPendingIcon />,
+            route:"text-[#F4900C]",
+            selected:false,
+            bgColour:"bg-[#F4900C26]",
+            borderColour:"border-[#F4900C]",
+            description:"390"
+            },
+            {
+            title:"Rejected Onboarding",
+            icon:<UserRejectIcon />,
+            route:"text-[#EE1A1A]",
+            selected:false,
+            bgColour:"bg-[#EE1A1A26]",
+            borderColour:"border-[#EE1A1A]",
+            description:"0"
+            }
+        ])
+        
+    return <div>
+        <div className="flex items-center gap-9 my-8 mt-3">
+            {btns.map((a,i)=><div key={i} className={`${a.bgColour} ${a.borderColour} border-[1px] grid grid-cols-1 text-center items-center flex-1 rounded-[40px] p-8 min-h-[163px]`} >
+            <div className={`text-center m-auto ${a.route} ${String(a.borderColour).replace("border","text")} `}>{a.icon}</div>
+            <div className="text-center text-black text-[28.3px] mt-3">{a.description!}</div>
+            <div className="text-center text-black text-[18.8px] mt-3">{a.title}</div>
+            </div>)}
+        </div>
+    </div>
+}

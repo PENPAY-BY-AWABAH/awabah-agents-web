@@ -173,5 +173,5 @@ export const NextOfKinPage = ({onClose,onSuccess,email}:{onClose:()=>void;onSucc
                         />
                 </form>
     </div>
-                </div>
+    </div>
 }

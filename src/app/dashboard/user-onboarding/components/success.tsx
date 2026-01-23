@@ -1,11 +1,10 @@
 import BaseButton from "@/app/components/baseButton";
 import { BaseLoader } from "@/app/components/baseLoader";
-import BaseModal from "@/app/components/baseModal";
 import { ROUTES } from "@/app/includes/constants";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react"
 type ReviewStateProps = "starting"|"done"| null
-export const SuccessComponent = ()=>{
+export const SuccessComponent = ({onPay}:{onPay:()=>void;})=>{
     const [reviewState,setReviewState] = useState<ReviewStateProps>(null);
     useEffect(()=>{
         setTimeout(()=>{
@@ -381,12 +380,12 @@ This usually takes a few minutes.</div>}
 <path d="M9 12L11 14L15 10" stroke="#009668" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
 </div>
-<div className="text-[#909090] text-[12px] text-left ">The user has been successfully verified and onboarded, RSA pin has been sent to user.</div>
+<div className="text-[#909090] text-[12px] text-left ">The user has been successfully verified and onboarded, Temporay RSA PIN has been sent to user.</div>
 </div>
 <BaseButton
-text="Okay"
+text="Continue to Payment"
 onClick={()=>{
-    navigate.replace(ROUTES.dashboard)
+  onPay();
 }}
 type="button"
 

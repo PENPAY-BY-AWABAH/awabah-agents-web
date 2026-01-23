@@ -12,7 +12,8 @@ import { BaseHorizontalIndicator } from "@/app/components/baseHorizontalIndicato
 import { OtpSection } from "./components/otpSection";
 import { NextOfKinPage } from "./components/nextOfKin";
 import { SuccessComponent } from "./components/success";
-type RegisterProps = "User Details" | "Verify Email" | "Next Of Kin" | "Success";
+import { PaymentComponent } from "./components/payment";
+type RegisterProps = "User Details" | "Verify Email" | "Next Of Kin" | "Success" | "Pay";
 export interface SignUpProps {
 email?:string;
 firstName?:string;
@@ -239,9 +240,20 @@ const Page = () => {
                      email={formData.email!}
                     />
                     </div>}
+                    {section === "Pay" &&<div >
+                    <PaymentComponent
+                       onSuccess={()=>{
 
+                       }}   
+                       userdata={formData}  
+                    />
+                    </div>}
             </div>
-        </div>:<SuccessComponent />}
+        </div>:<SuccessComponent 
+        onPay={()=>{
+         setSection("Pay")
+        }}
+        />}
     </div>
 }
 export default Page;
