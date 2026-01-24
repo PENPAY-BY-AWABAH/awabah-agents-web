@@ -91,6 +91,7 @@ const useHttpHook = () => {
             })
         })
     }
+
     const handleGetProviders = () => {
         return new Promise<ApiResponse>((resolve) => {
             setLoading(true);
@@ -147,6 +148,7 @@ const useHttpHook = () => {
             })
         })
     }
+
     const handleNewPassword = (data:any) => {
         return new Promise<ApiResponse>((resolve) => {
             setLoading(true);
@@ -180,6 +182,7 @@ const useHttpHook = () => {
             })
         })
     }
+
     const getListOfBanks = () => {
         return new Promise<ApiResponse>((resolve) => {
             setLoading(true);
@@ -448,6 +451,63 @@ const handleSearchUser = (searchText:string)=>{
             })
         })
     }
+
+ const saveProfileDetails = (data:any)=>{
+ return new Promise<ApiResponse>((resolve) => {
+           setLoading(true);
+           call({
+                path:`agent-save-profile`,
+                body:data,
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                ShowMessage({
+                    position:"center",
+                    ...res
+                })
+                resolve(res);
+            })
+        })
+    }
+
+const updatePassword = (data:any)=>{
+ return new Promise<ApiResponse>((resolve) => {
+           setLoading(true);
+           call({
+                path:`agent-save-password`,
+                body:data,
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                ShowMessage({
+                    position:"center",
+                    ...res
+                })
+                resolve(res);
+            })
+        })
+    }
+    
+const updatePIN = (data:any)=>{
+ return new Promise<ApiResponse>((resolve) => {
+           setLoading(true);
+           call({
+                path:`agent-update-transaction-pin`,
+                body:data,
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                ShowMessage({
+                    position:"center",
+                    ...res
+                })
+                resolve(res);
+            })
+        })
+    }
     return {
         loading,
         handleGetTransactions,
@@ -474,7 +534,10 @@ const handleSearchUser = (searchText:string)=>{
         getRSAPIN,
         getAllUser,
         getAllUserStats,
-        handleSearchUser
+        handleSearchUser,
+        saveProfileDetails,
+        updatePassword,
+        updatePIN
     }
 }
 export default useHttpHook;

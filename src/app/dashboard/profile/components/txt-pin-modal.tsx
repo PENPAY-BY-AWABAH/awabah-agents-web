@@ -1,24 +1,57 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import BaseModal from "@/app/components/baseModal"
 import { OTPBaseInput } from "@/app/components/baseOTPInput"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import BaseInput from "@/app/components/baseInput"
 import { UserDetails } from "../../page"
 import { ReturnAllNumbers } from "@/app/includes/functions"
 import BaseButton from "@/app/components/baseButton"
+import useHttpHook from "@/app/includes/useHttpHook"
+import { BaseLoader } from "@/app/components/baseLoader"
 
 export const TxtPINModal = ({onClose,details}:{onClose:()=>void;details:UserDetails})=>{
 const [changePIN,setChangePIN] = useState<{otp?:string;pin?:string}>({
             otp:"",
             pin:""
         })
+const [sending,setSending] = useState<boolean>(false);
+const [loading,setLoading] = useState<boolean>(false);
+const {updatePIN,handleSendOtp} = useHttpHook();
 const handleChangePIN = ()=>{
-
+setLoading(true)
+    updatePIN(changePIN).then((res)=>{
+        setLoading(false)
+        if(res.status)
+        {
+            onClose();
+        }
+    })
 }
+ useEffect(()=>{
+        if(!sending)
+        {
+        setSending(true)
+        handleSendOtp(details.email!).then((res)=>{
+        setSending(false);
+        })
+        }
+    },[])
     return <BaseModal 
-        title="Change Transaction PIN"
-        onClose={onClose}
-        >
-        <div>
+        title={!sending?"Change Transaction PIN":""}
+        onClose={()=>{
+                    if(sending)
+                    {
+                        return ;
+                    }
+                    onClose();
+                }}
+                >
+                {sending?<div className="m-auto  mt-5 text-center">
+                <div className="m-auto flex justify-center item-center text-center">
+                <BaseLoader color="green" size="lg" />
+                </div>
+                <div className="m-auto text-center">Please wait while we send you OTP...</div>
+                </div>:<div>
             <div >Enter the 4-digit OTP sent you to your email address <b>({details.email})</b></div>
             <div className="mt-3 mb-2 ">
                 <label  className="flex items-center text-md font-medium text-gray-700" style={{position:"relative"}}><small ><b>Enter 4-digit token</b></small><span className='text-red-600 text-[20px] ps-1'>*</span></label>
@@ -60,6 +93,6 @@ const handleChangePIN = ()=>{
               text="Save PIN"
               />  
             </div>
-        </div>
+        </div>}
         </BaseModal>
 }

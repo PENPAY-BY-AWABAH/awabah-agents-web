@@ -11,6 +11,7 @@ interface BaseSelectProps {
     name:string;
     className?:string;
     custom?:boolean;
+    value:string;
  }
  const BaseSelect = (props:BaseSelectProps)=>{
 const [selected,setSelected] = useState<string | null>("");
@@ -20,15 +21,19 @@ const [show,setShow] = useState<boolean>(false);
 useEffect(()=>{
  if(selected !== "" && props.placeholder)
 {
-  setList(list.filter((a)=>a.name !== props.placeholder));
+  setList(list.filter((a)=>a?.name !== props.placeholder));
 }else{
-  setList(list.filter((a)=>a.name !== "Select an option"));
+  setList(list.filter((a)=>a?.name !== "Select an option"));
 }
 },[selected])
 
 useEffect(()=>{
 setList(props.list)
 },[props.list])
+
+useEffect(()=>{
+setSelected(props.value)
+},[props.value])
 
 return <div className="">
 {props?.label && <label htmlFor={props.name} className="flex items-center text-md font-medium text-gray-700" style={{position:"relative"}}><small ><b>{props?.label}</b></small>{props.required?<span className='text-red-600 text-[20px] ps-1'>*</span>:""}</label>}
