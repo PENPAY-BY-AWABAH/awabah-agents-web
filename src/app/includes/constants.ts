@@ -1,5 +1,5 @@
 import { ReactElement } from "react";
-
+import avatar  from "../assets/pavatar.png"
 export const ROUTES = {
 login:"/login",
 forgotPassword:"/forgot-password",
@@ -44,3 +44,6 @@ export const COLOURS =  {
     green:"[#009668]",
     white:"white"
 }
+
+export const NairaSymbol = "₦";
+export const placeHolderAvatar = avatar;

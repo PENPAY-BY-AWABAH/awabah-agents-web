@@ -15,11 +15,11 @@ interface TabSectionProp {
     value?:UsersStatsType;
     selected?:boolean;
 }
-type UsersStatsType = "usersOnboarded" | "userRemit" | "withdrawal" | "rejected";
+type UsersStatsType = "usersOnboarded" | "approvedUsers" | "pendingVerification" | "rejected";
 interface UsersStatsProps {
   usersOnboarded: number;
-  userRemit: number;
-  withdrawal: number;
+  approvedUsers: number;
+  pendingVerification: number;
   rejected: number;
 }
 
@@ -27,9 +27,9 @@ export const TabSection = ()=>{
     const {getAllUserStats} = useHttpHook()
     const [stats,setStats] = useState<UsersStatsProps>({
         rejected:0,
-        userRemit:0,
+        approvedUsers:0,
         usersOnboarded:0,
-        withdrawal:0
+        pendingVerification:0
     });
       const [btns,setBtns] = useState<TabSectionProp[]>([
             {
@@ -37,36 +37,36 @@ export const TabSection = ()=>{
             icon:<UsersIcon size={40} />,
             route:"text-[#1879F8]",
             selected:true,
-            bgColour:"bg-[#1879F826]",
+            bgColour:"bg-white",
             borderColour:"border-[#1879F8]",
             value:"usersOnboarded"
             },
             {
-            title:"Remit",
+            title:"Approved Users",
             icon:<UserCheckIcon />,
             route:"text-[#009668]",
             selected:false,
-            bgColour:"bg-[#00966826]",
+            bgColour:"bg-white",
             borderColour:"border-[#009668]",
             description:"3893",
-            value:"userRemit"
+            value:"approvedUsers"
             },
             {
-            title:"Withdrawal History",
+            title:"Pending Verification",
             icon:<UserPendingIcon />,
             route:"text-[#F4900C]",
             selected:false,
-            bgColour:"bg-[#F4900C26]",
+            bgColour:"bg-white",
             borderColour:"border-[#F4900C]",
             description:"390",
-            value:"withdrawal"
+            value:"pendingVerification"
             },
             {
             title:"Rejected Onboarding",
             icon:<UserRejectIcon />,
             route:"text-[#EE1A1A]",
             selected:false,
-            bgColour:"bg-[#EE1A1A26]",
+            bgColour:"bg-white",
             borderColour:"border-[#EE1A1A]",
             description:"0",
             value:"rejected"
@@ -82,7 +82,7 @@ export const TabSection = ()=>{
     },[])
     return <div>
         <div className="flex items-center gap-9 my-8 mt-3">
-            {btns.map((a,i)=><div key={i} className={`${a.bgColour} ${a.borderColour} border-[1px] grid grid-cols-1 text-center items-center flex-1 rounded-[40px] p-8 min-h-[163px]`} >
+            {btns.map((a,i)=><div key={i} className={`bg-white shadow grid grid-cols-1 text-center items-center flex-1 rounded-[40px] p-8 min-h-[163px]`} >
             <div className={`text-center m-auto ${a.route} ${String(a.borderColour).replace("border","text")} `}>{a.icon}</div>
             <div className="text-center text-black text-[28.3px] mt-3">{(stats[a.value!] || 0)}</div>
             <div className="text-center text-black text-[18.8px] mt-3">{a.title}</div>

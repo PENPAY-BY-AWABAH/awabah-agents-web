@@ -5,7 +5,7 @@ import React, { ChangeEvent, useState } from 'react'
 import './style.css';
 import { FieldChangePayload } from '@/app/includes/types';
 import { ValidateEmail } from '@/app/includes/functions';
-import { BlocksIcon } from 'lucide-react';
+import { Ban, BlocksIcon } from 'lucide-react';
 import { EyeClose, EyeOpen } from '@/app/assets/eyes';
 
 interface BaseInputProps {
@@ -101,8 +101,8 @@ if(typeof props.value === "string")
    onInvalid={e => (e.target as HTMLInputElement).setCustomValidity(`${props.name} is required.`)}
    onInput={e => (e.target as HTMLInputElement).setCustomValidity('')}
   />}
-   {props.disabled?<span className='input-icon '>
-    <BlocksIcon />
+   {props.disabled?<span className='input-icon pt-2'>
+    <Ban color="red" size={15} />
    </span>:props.type === "password" && <span
    onClick={()=>setToggleEye(!toggleEye)} className='input-icon pt-[5px]'>
     {!toggleEye?<EyeOpen />:<EyeClose />} 

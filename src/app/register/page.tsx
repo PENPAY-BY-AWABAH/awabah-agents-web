@@ -19,6 +19,7 @@ lastName?:string;
 password?:string;
 phoneNumber?:string;
 businessName?:string;
+address?:string;
 }
 const Page = () => {
     const [section, setSection] = useState<RegisterProps>("Create Account")

@@ -403,6 +403,51 @@ const getAgentProfile  = () => {
             })
         })
     }
+    const getAllUser = (page:number = 1)=>{
+          return new Promise<ApiResponse>((resolve) => {
+            setLoading(true);
+           call({
+                path:`agent-get-users?page=${page}`,
+                body:{},
+                method:"GET",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                resolve(res);
+            })
+        })
+    }
+
+const getAllUserStats = ()=>{
+ return new Promise<ApiResponse>((resolve) => {
+            setLoading(true);
+           call({
+                path:`agent-get-users-stats`,
+                body:{},
+                method:"GET",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                resolve(res);
+            })
+        })
+    }
+const handleSearchUser = (searchText:string)=>{
+ return new Promise<ApiResponse>((resolve) => {
+            setLoading(true);
+           call({
+                path:`agent-search-users`,
+                body:{
+                    searchText
+                },
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                resolve(res);
+            })
+        })
+    }
     return {
         loading,
         handleGetTransactions,
@@ -426,7 +471,10 @@ const getAgentProfile  = () => {
         handleRegisterUser,
         handleNextOfKin,
         handleRemiteMicroPensions,
-        getRSAPIN
+        getRSAPIN,
+        getAllUser,
+        getAllUserStats,
+        handleSearchUser
     }
 }
 export default useHttpHook;

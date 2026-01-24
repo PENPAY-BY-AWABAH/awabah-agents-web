@@ -12,71 +12,73 @@ export interface UserDetails {
     lastName?: string;
     accountNumber?: string;
     agentId?: string;
-  id?: string;
-  email?: string;
-  phoneNumber: string;
-  createdAt: string;
-  activated: string;
-  accountType: string;
-  rsaNumber: string;
-  sex?: string;
-  dob?: string;
-  maritalStatus?: string;
-  maidenName?: null;
-  placeOfBirth?: null;
-  nationality?: string;
-  stateOfOrigin?: string;
-  lGAOfOrigin?: string;
-  fatherFirstName?: null;
-  fatherLastName?: null;
-  address?: string;
-  villageTownCity?: null;
-  zipCode?: null;
-  countryResidenceCode?: null;
-  pobox?: null;
-  stateCode?: null;
-  cityCode?: null;
-  lga?: string;
-  pensionProviderName?: string;
-  pensionProviderCode?: string;
-  isAgent?: boolean;
-  nextOfRegistered?: boolean;
-  employerDetailsRegistered?: boolean;
+    id?: string;
+    email?: string;
+    phoneNumber: string;
+    createdAt: string;
+    activated: string;
+    accountType: string;
+    rsaNumber: string;
+    sex?: string;
+    dob?: string;
+    maritalStatus?: string;
+    maidenName?: null;
+    placeOfBirth?: null;
+    nationality?: string;
+    stateOfOrigin?: string;
+    lGAOfOrigin?: string;
+    fatherFirstName?: null;
+    fatherLastName?: null;
+    address?: string;
+    villageTownCity?: null;
+    zipCode?: null;
+    state?:string;
+    countryResidenceCode?: null;
+    pobox?: null;
+    stateCode?: null;
+    cityCode?: null;
+    lga?: string;
+    pensionProviderName?: string;
+    pensionProviderCode?: string;
+    isAgent?: boolean;
+    nextOfRegistered?: boolean;
+    employerDetailsRegistered?: boolean;
+    avatar?: string;
+    fullName?:string;
 }
-const Page = ()=>{
-    const {getAgentProfile} = useHttpHook()
-    const [details,setDetails] = useState<UserDetails>(
+const Page = () => {
+    const { getAgentProfile } = useHttpHook()
+    const [details, setDetails] = useState<UserDetails>(
         {
-            firstName:"",
-            lastName:"",
-            agentId:"",
-            phoneNumber:"",
-            createdAt:"",
-            activated:"",
-            accountType:"",
-            rsaNumber:""
+            firstName: "",
+            lastName: "",
+            agentId: "",
+            phoneNumber: "",
+            createdAt: "",
+            activated: "",
+            accountType: "",
+            rsaNumber: ""
         }
     );
-    const GetProfile = ()=>{
-        getAgentProfile().then((res)=>{
-           if(res.status)
-           {
-            setDetails(res.data)
-           }
+    const GetProfile = () => {
+        getAgentProfile().then((res) => {
+            if (res.status) {
+                setDetails(res.data)
+            }
         })
     }
-    useEffect(()=>{
+    useEffect(() => {
         GetProfile();
-    },[])
+    }, [])
     return <div >
         <div className="text-[34px] font-bold">Welcome, {details?.firstName || "User"}!</div>
-        <div className="text-[20px] text-[#000000A6] font-normal flex items-center gap-1">{details?.agentId} <button 
-        onClick={()=>{
-            CopyToClipboard(details?.agentId || "000123");
-        }}
-        className="cursor-pointer">
-         <CopyIcon />
-         </button></div>
+        <div className="text-[20px] text-[#000000A6] font-normal flex items-center gap-1">{details?.agentId} <button
+            onClick={() => {
+                CopyToClipboard(String(details?.agentId));
+            }}
+            className="cursor-pointer">
+            <CopyIcon />
+        </button></div>
         <WalletBalance />
         <FeaturesBtnSection />
         <PerformanceSection />

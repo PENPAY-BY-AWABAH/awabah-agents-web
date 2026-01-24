@@ -1,8 +1,17 @@
+/* eslint-disable @next/next/no-img-element */
+/* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable react-hooks/set-state-in-effect */
 "use client"
 import { OutflowIcon } from "@/app/assets/outflow-icon";
+import { SliderIcon } from "@/app/assets/slider-filter";
 import { UserIcon } from "@/app/assets/user-icon";
-import { COLOURS, ROUTES } from "@/app/includes/constants"
+import BaseButton from "@/app/components/baseButton";
+import BaseCard from "@/app/components/baseCard";
+import BaseInputSearch from "@/app/components/baseInputSearch";
+import { BaseLoader } from "@/app/components/baseLoader";
+import { COLOURS, NairaSymbol, placeHolderAvatar, ROUTES } from "@/app/includes/constants"
+import useHttpHook from "@/app/includes/useHttpHook";
+import { DatabaseIcon, FilterIcon, SliceIcon } from "lucide-react";
 import moment from "moment";
 import Link from "next/link";
 import { useEffect, useState } from "react"
@@ -20,43 +29,154 @@ export interface UserItemProp {
   rsaNumber?: null;
   nextOfRegistered?: boolean;
   employerDetailsRegistered?: boolean;
+  commission?:string;
 }
+
 export const UsersSection = ({page}:{page?:boolean})=>{
     const [list,setList] = useState<UserItemProp[]>([]);
+    const [searchText,setSearchText] = useState<string>("");
+    const [showFilter,setShowFilter] = useState<boolean>(false);
+    const [filteredlist,setFilteredList] = useState<UserItemProp[]>([]);
+    const {getAllUser,handleSearchUser,loading} = useHttpHook()
+    const GetAllUsers = (page:number)=>{
+    getAllUser(page).then((res)=>{
+        if(res.status)
+        {
+            setList(res.data.users)
+            setFilteredList(res.data.users)
+        }
+    })
+    }
+   
     useEffect(()=>{
-        setList(Array.from({length:15}).map((a,i)=>{
-            return  {
-            firstName:"John",
-            lastName:"Paul",
-            description:"dkdkdkd",
-            date:moment().format("Do, MMM YYYY hh:mm A"),
-        } as unknown as UserItemProp
-        }))
+        GetAllUsers(1);
     },[])
+    const handleSearch = (search:string)=>{
+        setSearchText(search);
+        if(search == "")
+        {
+        return setFilteredList(list)
+        }
+        handleSearchUser(search).then((res)=>{
+            if(res.status)
+            {
+            setFilteredList(res.data?.users)
+            }else{
+              setFilteredList([])  
+            }
+        })
+       
+    }
+    const handleFilter = (value:string)=>{
+        const filterValue = value == "Approved";
+        setFilteredList(value === "All"?list:list.filter((a)=>a.approved == filterValue))
+        setShowFilter(false)
+    }
     return <div>
         <div className="flex" >
         <div className="text-[24px] flex-1" >All Users</div>
         {!page &&<Link href={ROUTES.history} className={`text-[22px] text-${COLOURS.green}`} >View All</Link>}
         </div>
+        <div className="relative">
+        <BaseInputSearch 
+        name="search"
+        onValueChange={({target})=>{
+            handleSearch(target.value)
+         }}
+        value={searchText}
+        placeholder="Search..."
+        className="bg-[#C4C4C426] h-[100px]"
+        trailingIcon={<button
+        onClick={()=>{
+           setShowFilter(!showFilter) 
+        }}
+        className="border-[1px] cursor-pointer gap-[10px] flex item-center border-[#00000059] py-[8px] px-[15px] rounded-[8px]"
+        >
+            <span className="text-[14px] text-black whitespace-nowrap" >Filter by</span>
+            <SliderIcon />
+        </button>}
+        />
+        {/* search drop down */}
+        {showFilter && <BaseCard className="w-[180px] absolute right-[10px] z-[10] bg-white top-[48px]" >
+            <ul 
+                onMouseLeave={()=>setShowFilter(false)}
+                className="grid gap-2 grid-col-1">
+                <li 
+                onClick={()=>handleFilter("All")}
+                className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-[14px] border-b-[0.5px] border-b-gray-300">All</li>
+                <li 
+                onClick={()=>handleFilter("Approved")}
+                className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-[14px] border-b-[0.5px] border-b-gray-300">Approved</li>
+                <li 
+                onClick={()=>handleFilter("Pending")}
+                className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-[14px]">Pending</li>
+            </ul>
+        </BaseCard>}
+        </div>
+        {loading && <div className="m-auto  mt-5 text-center">
+            <div className="m-auto flex justify-center item-center text-center">
+            <BaseLoader color="green" size="lg" />
+            </div>
+            <div className="m-auto text-center">Fetching users...</div>
+        </div>}
+        {filteredlist.length === 0 &&<div className="m-auto my-5 mt-[50px] text-center">
+        <div className="m-auto flex justify-center item-center text-center">
+        <DatabaseIcon className="text-[#999]" size={50}/>
+        </div>
+        <div className="m-auto text-center text-[#44444]">No record found!</div>
+        </div>}
         <div className="my-8 mt-6 grid grid-cols-4 gap-3 ">
-        {list.map((item,i)=><div key={i} className="flex items-center h-[200px] border-[#C4C4C459] border-[0.5px] rounded-[30px] p-5 shadow">
+        {filteredlist.map((item,i)=><div key={i} className="items-center  border-[#C4C4C459] border-[0.5px] rounded-[30px] p-5 shadow">
         <div className="flex items-center gap-3">
             <div className="" >
-            <div className="h-[55px] w-[55px] bg-[#C4C4C459] border-[0.5px] rounded-[55px]" ></div>
+            <div className="h-[55px] w-[55px] bg-[#C4C4C459] border-[0.5px] rounded-[55px] overflow-hidden" >
+            <img src={item?.avatar?item?.avatar:placeHolderAvatar.src}
+            alt={item.id}
+            className="h-full w-full"/>
             </div>
-             <div className="flex-1" >
+            </div>
+            <div className="flex-1" >
             <div className="text-[#000000] text-[16px] font-bold">{item.firstName} {item.lastName}</div>
-            {!item.approved?<div  className="flex text-[10px] gap-1 items-center bg-[#00A55826] text-[#00A558] rounded-[30px] px-2 py-1" >
-              <ApprovedIcon />
-              <div>Approved</div>
+            <div className="flex mt-[5px]" >
+            {item.approved?<div  className="flex text-[10px] gap-1 items-center bg-[#00A55826] text-[#00A558] rounded-[30px] px-2 py-1" >
+            <ApprovedIcon />
+            <div>Approved</div>
             </div>:<div className="flex text-[10px] gap-1 items-center bg-[#F4900C26] text-[#F4900C] rounded-[30px] px-2 py-1" >
-                <PendingIcon />
-                <div >Pending</div>
+            <PendingIcon />
+            <div >Pending</div>
             </div>}
+            </div>
         </div>
         </div>
+        <div className="grid gap-[2px] mt-2 mb-4 ">
+        <div className="flex items-center gap-[2px] h-[20px]">
+            <div className="font-normal text-[12px] text-[#000000A6]">Date:</div>
+            <div className="font-normal text-[12px]"> {moment(item.createdAt).format("DD MMM YYYY")}</div>
+        </div>
+        <div className="flex items-center gap-[2px] h-[20px]">
+            <div className="font-normal text-[12px] text-[#000000A6]">Commission Earned:</div>
+            <div className="font-normal text-[12px]"> {NairaSymbol}{item?.commission}</div>
+        </div>
+        <div className="flex items-center gap-[2px] h-[20px]">
+            <div className="font-normal text-[12px] text-[#000000A6]">Contact:</div>
+            <div className="font-normal text-[12px]"> {item.phoneNumber}</div>
+        </div>
+         <div className="flex items-center gap-[2px] h-[20px]">
+            <div className="font-normal text-[12px] text-[#000000A6]">User status:</div>
+            <div className={`font-normal text-[12px] ${item.approved?"text-[#00A558]":"text-[#F4900C]"}`}> Active</div>
+        </div>
+        </div>
+        <BaseButton 
+        text="View Profile"
+        onClick={()=>{
+
+        }}
+        white
+        type="button"
+        />
         </div>)}
         </div>
+        
         </div>
 }
 export const ApprovedIcon = ()=>{
