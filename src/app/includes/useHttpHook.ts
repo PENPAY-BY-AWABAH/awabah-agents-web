@@ -508,6 +508,26 @@ const updatePIN = (data:any)=>{
             })
         })
     }
+    const updateAvatar = (data:any)=>{
+         return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-update-profile-image`,
+                body:{
+                    avatar:data
+                },
+                method:"POST",
+                requestType:"form-data"
+            }).then((res) => {
+                setLoading(false);
+                ShowMessage({
+                    position:"center",
+                    ...res
+                })
+                resolve(res);
+            })
+        })
+    }
     return {
         loading,
         handleGetTransactions,
@@ -537,7 +557,8 @@ const updatePIN = (data:any)=>{
         handleSearchUser,
         saveProfileDetails,
         updatePassword,
-        updatePIN
+        updatePIN,
+        updateAvatar
     }
 }
 export default useHttpHook;

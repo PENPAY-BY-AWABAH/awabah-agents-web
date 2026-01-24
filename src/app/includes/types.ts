@@ -23,6 +23,8 @@ import { ReactNode } from "react";
     otp?:string;
     }
     export interface ItemProps {
+        name: string | undefined;
+        value: string;
         title:string;
         icon?:string | ReactNode;
         description?:string;

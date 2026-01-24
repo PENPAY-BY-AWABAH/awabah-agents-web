@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
 "use client"
 import { useRouter } from "next/navigation";
 import { ApprovedIcon, PendingIcon, UsersSection } from "../components/users";
 import { TabSection } from "./components/Tabs";
-import { FormEvent, useEffect, useState } from "react";
+import { ChangeEventHandler, FormEvent, useEffect, useRef, useState } from "react";
 import useHttpHook from "@/app/includes/useHttpHook";
 import { UserDetails } from "../page";
 import { placeHolderAvatar } from "@/app/includes/constants";
@@ -23,10 +24,11 @@ import { LogoutModal } from "./components/logout-modal";
 import { SaveProfileModal } from "./components/save-profile-modal";
 import BaseSelect from "@/app/components/baseSelect";
 import { ItemProps } from "@/app/includes/types";
+import { BaseLoader } from "@/app/components/baseLoader";
 
 const Page = () => {
     const navigate = useRouter();
-    const { getAgentProfile } = useHttpHook();
+    const { getAgentProfile,updateAvatar } = useHttpHook();
     const [formData, setFormData] = useState<UserDetails>({
         firstName: "",
         lastName: "",
@@ -41,6 +43,7 @@ const Page = () => {
         state: ""
     })
     const [showPasswordChange, setShowPasswordChange] = useState<boolean>(false);
+    const [uploading, setUploading] = useState<boolean>(false);
     const [showLogin, setShowLogin] = useState<boolean>(false);
     const [showSaveProfile, setShowSaveProfile] = useState<boolean>(false);
     const [showTransactionPINChange, setShowTransactionPINChange] = useState<boolean>(false);
@@ -84,9 +87,44 @@ const Page = () => {
         e.preventDefault()
         setShowSaveProfile(ifChanges)
     }
+const fileUploadInputRef = useRef<HTMLInputElement>(null)
 
-
+const handleFileChange = (e:any) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      const selectedFile = files[0];
+      console.log("Selected file:", selectedFile.name);
+      uploadFile(selectedFile);
+    }
+  };
+const uploadFile = (selectedFile:any)=>{
+    if(uploading)
+    {
+        return;
+    }
+    setUploading(true)
+    updateAvatar(selectedFile).then((res)=>{
+     setUploading(false) 
+     if(res.status) 
+     {
+       GetProfile(); 
+     }
+    })
+}
+  const triggerClick = () => {
+    // Safely trigger the hidden input
+    if (fileUploadInputRef.current) {
+      fileUploadInputRef.current?.click();
+    }
+  };
     return <div className="mb-6">
+        <input 
+        ref={fileUploadInputRef}
+        type="file"
+        onChange={handleFileChange}
+        className="absolute top-[0px] opacity-0"
+        accept="image/*"
+        />
         <div className="flex items-center gap-3">
             <UserIcon />
             <div className="text-[32px]">Profile</div>
@@ -95,16 +133,24 @@ const Page = () => {
             <div className="flex item-center">
                 <div  >
                     <div className="flex items-center gap-5">
-                        <div className="items-center text-center" >
-                            <div className="h-[150px] w-[150px] bg-[#C4C4C459] border-[0.5px] rounded-[150px] overflow-hidden" >
+                        <div className="items-center text-center " >
+                            <div
+                            onClick={triggerClick}
+                            className="h-[150px] w-[150px] relative cursor-pointer bg-[#C4C4C459] border-[0.5px] rounded-[150px] overflow-hidden" >
                                 <img src={details?.avatar ? details?.avatar : placeHolderAvatar.src}
                                     alt={details.id}
                                     className="h-full w-full" />
+                            {uploading &&<div className="h-full flex item-center text-center justify-center w-full absolute top-0 left-0 bg-[#00000061] " >
+                            <div className="m-auto">
+                            <BaseLoader color="green" size="lg" />
+                            </div>
+                            </div>}
                             </div>
                             <button
+                            onClick={triggerClick}
                                 className="underline cursor-pointer text-[16px] text-[#1455E0] mt-3 "
                             >
-                                Change Image
+                            Change Image
                             </button>
                         </div>
                         <div className="flex-1" >

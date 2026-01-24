@@ -27,6 +27,7 @@ export const useApiRequest = ()=>{
         const accessToken = await localStorage.getItem(name)
         setLoading(true)
         Object.keys(props.body).forEach((a:string)=>{
+          console.log("keys:",a);
             body.append(a,props.body[a])
         })
         const options:any = {
@@ -38,6 +39,12 @@ export const useApiRequest = ()=>{
             }
         if(props.method !== "GET")
         {
+          if(props.requestType == "form-data")
+          {
+            options.headers = {
+              "Authorization":`Bearer ${accessToken}`
+            }
+          }
           options["body"] = props.requestType == "form-data"? body:JSON.stringify(props.body);
         }
         console.log(options)
