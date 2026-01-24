@@ -10,6 +10,7 @@ import BaseInput from "@/app/components/baseInput";
 import BaseButton from "@/app/components/baseButton";
 import { BaseHorizontalIndicator } from "@/app/components/baseHorizontalIndicator";
 import BaseSelect from "@/app/components/baseSelect";
+import { ItemProps } from "@/app/includes/types";
 
 export interface NextOfKinProps {
   email?: string;
@@ -115,23 +116,24 @@ export const NextOfKinPage = ({onClose,onSuccess,email}:{onClose:()=>void;onSucc
                             label="Phone Number"
                             placeholder="Enter phone number."
                         />
-                         <BaseSelect
-                            name="bvn"
-                            list={["AUNTY","BROTHER","BROTHER-IN-LAW","COUSIN","DAUGHTER","DAUGHTER-IN-LAW","FATHER","FATHER-IN-LAW","FIANCE","FIANCEE","GRANDFATHER","GRANDDAUGHTER","GRANDMOTHER","GRANDSON","HUSBAND","MOTHER","MOTHER-IN-LAW","NEPHEW","NIECE","SISTER","SISTER-IN-LAW","SON","SON-IN-LAW","SPOUSE","UNCLE","WIFE","Guardian","FRIEND","RELATIVES"].map((item,index)=>{
-                                return {title:item, description:item}
-                            })}
-                            required
-                            custom
-                            onValueChange={(value ) => {
-                                setFormData({
-                                    ...formData,
-                                    relationShip: value.title
-                                })
-                            }}
-                            label="RelationShip"
-                            placeholder="Enter relationShip."
-                            className="mb-5"
-                        />
+                    <BaseSelect
+                    name="bvn"
+                    list={["AUNTY", "BROTHER", "BROTHER-IN-LAW", "COUSIN", "DAUGHTER", "DAUGHTER-IN-LAW", "FATHER", "FATHER-IN-LAW", "FIANCE", "FIANCEE", "GRANDFATHER", "GRANDDAUGHTER", "GRANDMOTHER", "GRANDSON", "HUSBAND", "MOTHER", "MOTHER-IN-LAW", "NEPHEW", "NIECE", "SISTER", "SISTER-IN-LAW", "SON", "SON-IN-LAW", "SPOUSE", "UNCLE", "WIFE", "Guardian", "FRIEND", "RELATIVES"].map((item, index) => {
+                        return { title: item, description: item };
+                    }) as unknown as ItemProps[]}
+                    required
+                    custom
+                    onValueChange={(value) => {
+                        setFormData({
+                            ...formData,
+                            relationShip: value.title
+                        });
+                    } }
+                    label="RelationShip"
+                    placeholder="Enter relationShip."
+                    className="mb-5" 
+                    value={formData.relationShip!}                
+                            />
                         <BaseInput
                             type="text"
                             name="nin"
@@ -152,9 +154,10 @@ export const NextOfKinPage = ({onClose,onSuccess,email}:{onClose:()=>void;onSucc
                             list={[
                                 {title:"Male", description:"Male"},
                                 {title:"Female", description:"Female"}
-                            ]}
+                            ] as unknown as ItemProps[]}
                             required
                             custom
+                            value={formData.gender!}
                             onValueChange={(value ) => {
                                 setFormData({
                                     ...formData,
@@ -166,7 +169,6 @@ export const NextOfKinPage = ({onClose,onSuccess,email}:{onClose:()=>void;onSucc
                             className="mb-5"
                         />
                         <BaseButton
-                        
                             loading={loading}
                             text="Next"
                             type="submit"
