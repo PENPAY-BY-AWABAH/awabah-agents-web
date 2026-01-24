@@ -12,7 +12,14 @@ import { CopyToClipboard } from "@/app/includes/functions";
 import { CopyIcon } from "@/app/assets/copy-icon";
 import BaseInput from "@/app/components/baseInput";
 import BaseButton from "@/app/components/baseButton";
-import Stream from "stream";
+import { ChangePasswordIcon } from "@/app/assets/change-password-icon";
+import { ChevronRightIcon } from "@/app/assets/chevron-right";
+import { ChangeTransactionPinIcon } from "@/app/assets/change-txt-pin";
+import BaseModal from "@/app/components/baseModal";
+import { OTPBaseInput } from "@/app/components/baseOTPInput";
+import { PasswordModal } from "./components/password-modal";
+import { TxtPINModal } from "./components/txt-pin-modal";
+import { LogoutModal } from "./components/logout-modal";
 
 const Page = () => {
     const navigate = useRouter();
@@ -30,6 +37,9 @@ const Page = () => {
         address:"",
         state:""
     })
+    const [showPasswordChange,setShowPasswordChange] = useState<boolean>(false);
+    const [showLogin,setShowLogin] = useState<boolean>(false);
+    const [showTransactionPINChange,setShowTransactionPINChange] = useState<boolean>(false);
     const [details, setDetails] = useState<UserDetails>(
         {
             firstName: "",
@@ -60,6 +70,7 @@ const Page = () => {
             }
         })
     }
+    
     useEffect(() => {
     GetProfile();
     }, [])
@@ -218,32 +229,67 @@ const Page = () => {
                 </div>
             </form>
         </div>
-        <div className="bg-[#C4C4C426] p-[15px] rounded-[15px] my-[20px] mb-[120px]">
+        <div className="bg-[#C4C4C426] p-[15px] rounded-[15px] my-[20px] ">
             <div className="text-[24px]">Personal Information</div>
-            <form 
-            onSubmit={handlePasswordUpdate}
+            <div 
             >
- <BaseInput
-                    type="text"
-                    name="fullName"
-                    value={formData.fullName}
-                    required
-                    onValueChange={({ value }) => {
-                        if(String(value).split(" ").length > 2)
-                        {
-                            return ;
-                        }
-                          setFormData({
-                            ...formData,
-                            fullName:value
-                        })  
-                    }}
-                    max={80}
-                    label="Change Password"
-                    placeholder="Change Password."
-                />
-            </form>
+            <button
+            onClick={()=>{
+                setShowPasswordChange(true)
+            }}
+            className="flex item-center gap-3 p-2 bg-white rounded-[12px] shadow-[0.5px] w-full mt-4 cursor-pointer"
+            >
+           <div 
+            className="flex flex-grow item-center gap-3 "
+            >
+            <ChangePasswordIcon />
+            <span className="text-[16px] text-[#000000A6]" >Change Password</span>
             </div>
+            <ChevronRightIcon />
+            </button>
+            <button
+            onClick={()=>{
+                setShowTransactionPINChange(true)
+            }}
+            className="flex item-center gap-3 p-2 bg-white rounded-[12px] shadow-[0.5px] w-full mt-4 cursor-pointer"
+            >
+           <div 
+            className="flex flex-grow item-center gap-3 "
+            >
+            <ChangeTransactionPinIcon />
+            <span className="text-[16px] text-[#000000A6]" >Change Transaction PIN</span>
+            </div>
+            <ChevronRightIcon />
+            </button>
+            </div>
+        </div>
+        <div className="bg-[#C4C4C426] p-[15px] rounded-[15px] my-[20px] mb-[120px]">
+            <div className="text-[24px]">Log Out</div>
+            <div 
+            className="w-[150px] mt-[20px]"
+            >
+              <BaseButton
+              type="button"
+              onClick={()=>{
+                setShowLogin(true)
+              }}
+              text="Logout"
+              />  
+            </div>
+            <div className="text-[16px] text-[#000000A6] mt-[20px]" >You’ll need your login details to sign in again.</div>
+        </div>
+        {showPasswordChange &&<PasswordModal 
+        details={details}
+        onClose={()=>setShowPasswordChange(false)}
+        />}
+        {showTransactionPINChange &&<TxtPINModal 
+        details={details}
+        onClose={()=>setShowTransactionPINChange(false)}
+        />}
+        {showLogin &&<LogoutModal
+        onClose={()=>setShowLogin(false)}
+        details={details}
+        />}
     </div>
 }
 export default Page;
