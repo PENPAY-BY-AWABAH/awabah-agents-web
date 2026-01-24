@@ -273,3 +273,31 @@ window.dispatchEvent(CustomMessage);
     toast.error("Failed to copy text: " + err);
   });
 }
+
+export const MaskBalance = (balance:string, isVisible = false, options = {}) => {
+  const {
+    maskChar = "•",
+    maskLength = 4,
+    currencySymbol = "₦",
+    decimalPlaces = 2
+  } = options as {
+    maskChar:string;
+    maskLength:number;
+    currencySymbol:string;
+    decimalPlaces:number;
+  };
+
+  // If visible, format as a standard currency string
+  if (isVisible) {
+    const numericBalance = typeof balance === 'string' ? parseFloat(balance) : balance;
+    if (isNaN(numericBalance)) return `${currencySymbol} 0.00`;
+    return `${currencySymbol} ${numericBalance.toLocaleString(undefined, {
+      minimumFractionDigits: decimalPlaces,
+      maximumFractionDigits: decimalPlaces,
+    })}`;
+  }
+
+  // If hidden, return the mask characters
+  // Example output: "₦ ••••"
+  return `${currencySymbol} ${maskChar.repeat(maskLength)}`;
+};

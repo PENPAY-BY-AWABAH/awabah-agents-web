@@ -10,13 +10,13 @@ export interface WalletBalanceProps {
 balance:string;
 earnings?:string;
 }
-export const WalletBalance =()=>{
+export const CommissionWalletBalance =()=>{
     const {GetBalance} = useHttpHook()
-     const [showBalance,setShowBalance] = useState<boolean>(false)
     const [balance,setBalance] = useState<WalletBalanceProps>({
         balance:"0.00",
         earnings:"0.00"
     })
+    const [showBalance,setShowBalance] = useState<boolean>(false)
     const GetWalletInfo = ()=>{
         GetBalance().then((res)=>{
             if(res.status)
@@ -28,18 +28,18 @@ export const WalletBalance =()=>{
     useEffect(()=>{
         GetWalletInfo();
     },[])
-    return  <div className="mt-10 relative h-30">
+    return  <div className="mt-3 relative ">
             <GreenBackground />
             <div className="absolute top-0 left-0 w-full p-7 flex " >
             <div className="flex-1" >
-                <div className="text-[#FFFFFFD9] font-light flex item-center gap-2">Available Balance<button
+                <div className="text-[#FFFFFFD9] font-light flex item-center gap-2">Total Commission Earned <button
                 className="cursor-pointer "
                 onClick={()=>setShowBalance(!showBalance)}
                 >
                 {showBalance?<EyeOpen />:<EyeClosed />}
                 </button></div>
                 <div className="text-white text-[38px] ">{MaskBalance(balance.balance,!showBalance)}</div>
-                <div className="text-[#FFD983]">Total Earned: {MaskBalance((balance?.earnings || "0.00"),!showBalance)}<span></span></div>
+                <div className="text-[#FFD983]">Current balance: {MaskBalance((balance?.earnings || "0.00"),!showBalance)}<span></span></div>
             </div>
             <div className="me-20 flex items-center">
                 <Link 

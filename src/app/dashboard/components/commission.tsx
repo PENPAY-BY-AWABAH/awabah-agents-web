@@ -1,40 +1,69 @@
+/* eslint-disable @next/next/no-img-element */
 /* eslint-disable react-hooks/set-state-in-effect */
 "use client"
-import { OutflowIcon } from "@/app/assets/outflow-icon";
-import { UserIcon } from "@/app/assets/user-icon";
-import { COLOURS, ROUTES } from "@/app/includes/constants"
+import { COLOURS, placeHolderAvatar, ROUTES } from "@/app/includes/constants"
 import moment from "moment";
 import Link from "next/link";
 import { useEffect, useState } from "react"
-export interface CommissionItemProp {
-firstName?:string;
-lastName?:string;
-date?:string;
-description?:string;
-}
+import { ApprovedIcon, PendingIcon, UserItemProp } from "./users";
+import useHttpHook from "@/app/includes/useHttpHook";
+import { DatabaseIcon } from "lucide-react";
+import { BaseLoader } from "@/app/components/baseLoader";
+
 export const CommissionSection = ({page}:{page?:boolean})=>{
-    const [list,setList] = useState<CommissionItemProp[]>([]);
+
+    const [list,setList] = useState<UserItemProp[]>([]);
+    const {getAllComission,handleSearchUser,loading} = useHttpHook()
+    const GetAllUsers = (page:number)=>{
+    getAllComission(page).then((res)=>{
+        if(res.status)
+        {
+            setList(res.data.users)
+        }
+    })
+    }
+   
     useEffect(()=>{
-        setList(Array.from({length:15}).map((a,i)=>{
-            return  {
-            firstName:"John",
-            lastName:"Paul",
-            description:"dkdkdkd",
-            date:moment().format("Do, MMM YYYY hh:mm A"),
-        } as unknown as CommissionItemProp
-        }))
+        GetAllUsers(1);
     },[])
+
+   
     return <div>
         <div className="flex" >
-        <div className="text-[24px] flex-1" >Commission</div>
+        <div className="text-[24px]">Commission History</div>
         {!page &&<Link href={ROUTES.history} className={`text-[22px] text-${COLOURS.green}`} >View All</Link>}
         </div>
+        {loading && <div className="m-auto  mt-5 text-center">
+            <div className="m-auto flex justify-center item-center text-center">
+            <BaseLoader color="green" size="lg" />
+            </div>
+            <div className="m-auto text-center">Fetching users...</div>
+        </div>}
+        {list.length === 0 &&<div className="m-auto my-5 mt-[50px] text-center">
+        <div className="m-auto flex justify-center item-center text-center">
+        <DatabaseIcon className="text-[#999]" size={50}/>
+        </div>
+        <div className="m-auto text-center text-[#44444]">No record found!</div>
+        </div>}
         <div className="my-8 mt-6">
         {list.map((item,i)=><div key={i} className="h-[80px] flex gap-3 items-center border-b-[0.5px] border-b-gray-200">
-        <UserIcon />
+        <div
+            className="h-[59px] w-[59px] relative cursor-pointer bg-[#C4C4C459] border-[0.5px] rounded-[59px] overflow-hidden" >
+            <img src={placeHolderAvatar.src}
+             alt={String(i)}
+             className="h-full w-full" />
+            </div>
         <div className="flex-1">
-            <div className="text-[#000000] text-[18px]">{item.firstName} {item.lastName}</div>
-            <div className="text-[#000000A6] text-[14px]" >{item.date}</div>
+            <div className="text-[#000000] text-[18px]">{item.firstName} {item.lastName}<span className="ms-3 text-[#00000073]">~ Onboarding</span></div>
+            <div className="text-[#000000A6] text-[14px] flex gap-2 item-center text-[#000000A6] " >
+                {item.approved?<div  className="flex item-center text-[10px] gap-1 items-center bg-[#00A55826] text-[#00A558] rounded-[30px] px-2 py-1" >
+                            <ApprovedIcon />
+                            <div>Approved</div>
+                            </div>:<div className="flex text-[10px] gap-1 items-center bg-[#F4900C26] text-[#F4900C] rounded-[30px] px-2 py-1" >
+                            <PendingIcon />
+                            <div >Pending</div>
+                            </div>}
+                {item.createdAt}</div>
         </div>
         </div>)}
         </div>

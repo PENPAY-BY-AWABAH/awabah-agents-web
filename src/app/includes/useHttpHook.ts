@@ -420,7 +420,20 @@ const getAgentProfile  = () => {
             })
         })
     }
-
+    const getAllComission = (page:number = 1)=>{
+          return new Promise<ApiResponse>((resolve) => {
+            setLoading(true);
+           call({
+                path:`agent-get-commission?page=${page}`,
+                body:{},
+                method:"GET",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                resolve(res);
+            })
+        })
+    }
 const getAllUserStats = ()=>{
  return new Promise<ApiResponse>((resolve) => {
             setLoading(true);
@@ -558,7 +571,8 @@ const updatePIN = (data:any)=>{
         saveProfileDetails,
         updatePassword,
         updatePIN,
-        updateAvatar
+        updateAvatar,
+        getAllComission
     }
 }
 export default useHttpHook;
