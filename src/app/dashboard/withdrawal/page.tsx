@@ -4,13 +4,18 @@ import { HistorySection } from "../components/history";
 import { useRouter } from "next/navigation";
 import { BankIcon } from "@/app/assets/bank-icon";
 import { SaveIcon } from "@/app/assets/save-icon";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import BaseButton from "@/app/components/baseButton";
 import { ROUTES } from "@/app/includes/constants";
+import BaseInputSearch from "@/app/components/baseInputSearch";
+import useHttpHook from "@/app/includes/useHttpHook";
+import { SliderIcon } from "@/app/assets/slider-filter";
+import { BaseLoader } from "@/app/components/baseLoader";
 
 const Page = ()=>{
     const [selectedOption,setSelectedOption] = useState<string>("")
-    const [showForm,setShowForm] = useState<boolean>(false)
+    
+   
     const navigate = useRouter()
     return <div className="fixed top-0 left-0 w-full h-full bg-white p-6 z-10">
         <div className="mb-6">
@@ -23,6 +28,7 @@ const Page = ()=>{
             <div className="">Back</div>
         </button>
         </div>
+         
         <div className="m-auto items-center text-center   ">
       <div  className="m-auto items-center text-center  rounded-[30px] min-h-[400px] shadow w-[500px] p-[30px] pb-[60px]">
       <div className="m-auto items-center text-center   ">

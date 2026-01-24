@@ -541,6 +541,34 @@ const updatePIN = (data:any)=>{
             })
         })
     }
+    const getAllTransactions = (page:any)=>{
+         return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-all-withdrawals?page=${page}`,
+                body:{},
+                method:"GET",
+                requestType:"form-data"
+            }).then((res) => {
+                setLoading(false);
+                resolve(res);
+            })
+        })
+    }
+    const handleSearchTransactions = (page:any,search:string)=>{
+         return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-all-search-withdrawals?page=${page}&searchText=${search}`,
+                body:{},
+                method:"GET",
+                requestType:"form-data"
+            }).then((res) => {
+                setLoading(false);
+                resolve(res);
+            })
+        })
+    }
     return {
         loading,
         handleGetTransactions,
@@ -572,7 +600,9 @@ const updatePIN = (data:any)=>{
         updatePassword,
         updatePIN,
         updateAvatar,
-        getAllComission
+        getAllComission,
+        getAllTransactions,
+        handleSearchTransactions
     }
 }
 export default useHttpHook;

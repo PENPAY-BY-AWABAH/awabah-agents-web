@@ -2,9 +2,15 @@
 import { BackIcon } from "@/app/assets/back-icon";
 import { HistorySection } from "../components/history";
 import { useRouter } from "next/navigation";
-
+import { useEffect, useState } from "react";
+import useHttpHook from "@/app/includes/useHttpHook";
+export interface TransactionItem {
+    title?:string
+}
 const Page = ()=>{
-    const navigate = useRouter()
+    
+    const navigate = useRouter();
+    
     return <div >
         <div className="mb-6">
         <button 
