@@ -28,7 +28,7 @@ export interface UserItemProp {
   secondaryPhoneNumber?: null;
   approved?: boolean;
   rsaNumber?: null;
-  nextOfRegistered?: boolean;
+  nextOfKinRegistered?: boolean;
   employerDetailsRegistered?: boolean;
   commission?:string;
 }

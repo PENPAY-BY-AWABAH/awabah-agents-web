@@ -41,7 +41,7 @@ export interface UserDetails {
     pensionProviderName?: string;
     pensionProviderCode?: string;
     isAgent?: boolean;
-    nextOfRegistered?: boolean;
+    nextOfKinRegistered?: boolean;
     employerDetailsRegistered?: boolean;
     avatar?: string;
     fullName?:string;
