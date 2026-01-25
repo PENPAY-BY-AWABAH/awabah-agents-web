@@ -6,6 +6,8 @@ import { PaymentResponseProp } from "../page"
 import moment from "moment"
 import BaseButton from "@/app/components/baseButton"
 import html2canvas from 'html2canvas';
+import { ReturnComma } from "@/app/includes/functions"
+import { NairaSymbol } from "@/app/includes/constants"
 export const PaymentVericationModal = ({onClose,details}:{onClose:()=>void;details:PaymentResponseProp})=>{
     const navigate = useRouter();
     const [downloading,setDownloading] = useState<boolean>(false)
@@ -46,7 +48,7 @@ export const PaymentVericationModal = ({onClose,details}:{onClose:()=>void;detai
             <div className="font-normal">{String(details.memo).replace("initialized","")}</div>
               <div className="w-full flex gap-3 item-center ">
                 <div className="font-bold">Full Name:</div>
-                <div >{details.email}</div>
+                <div >{details?.fullName}</div>
                 </div> 
                 <div className="w-full flex gap-3 item-center ">
                 <div className="font-bold">Email:</div>
@@ -54,11 +56,11 @@ export const PaymentVericationModal = ({onClose,details}:{onClose:()=>void;detai
                 </div>
                 <div className="w-full flex gap-3 item-center ">
                 <div className="font-bold">Phone number:</div>
-                <div >{details.phoneNumber}</div>
+                <div >{String(details.phoneNumber).replace("+234","0")}</div>
                 </div>
                 <div className="w-full flex gap-3 item-center ">
                 <div className="font-bold">Amount:</div>
-                <div >{details.amount}</div>
+                <div >{NairaSymbol}{ReturnComma(String(details.amount))}</div>
                 </div>
                 <div className="w-full flex gap-3 item-center ">
                 <div className="font-bold">Ref. No.:</div>

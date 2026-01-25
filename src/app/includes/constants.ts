@@ -30,7 +30,8 @@ export const CONSTANT = {
     LocalStore:{
         token:"token",
         baseUrl:"baseurl",
-        resetPassword:"resetPassword"
+        resetPassword:"resetPassword",
+        remit:"remit"
     }
 }
 export const Currency = {

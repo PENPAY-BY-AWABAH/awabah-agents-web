@@ -13,6 +13,7 @@ import { ReturnAllNumbers, ReturnComma } from "@/app/includes/functions";
 import BaseButton from "@/app/components/baseButton";
 import { PaymentVericationModal } from "./components/payment_verification_modal";
 import { Split } from "lucide-react";
+import { CONSTANT } from "@/app/includes/constants";
 interface PaymentProp {
     rsaPin?: string;
     pfaName?: string;
@@ -40,6 +41,7 @@ export interface PaymentResponseProp {
     paymentUrl?: string;
     paymentRef?: string;
     phoneNumber?: string;
+    fullName?:string;
 }
 const Page = () => {
     const [listOfPfa, setListOfPfa] = useState<ListOfPfa[]>([])
@@ -52,6 +54,7 @@ const Page = () => {
             pfaName: "",
             providerId: "",
             amount: "",
+            fullName: "",
             isValid: false
         }
     )
@@ -88,6 +91,10 @@ const Page = () => {
                     status: res.status,
                     loading: false
                 })
+                if(res.status)
+                {
+                    localStorage.removeIteme(CONSTANT.LocalStore.remit);
+                }
             })
         }
     }, [])
@@ -95,6 +102,7 @@ const Page = () => {
         e.preventDefault();
         setLoading(true)
         if (!formData.isValid) {
+            localStorage.setItem(CONSTANT.LocalStore.remit,JSON.stringify(formData))
             validateRSA({
                 rsaPin: formData.rsaPin,
                 providerId: formData.providerId
@@ -111,17 +119,25 @@ const Page = () => {
             })
         } else {
             const webhook = String(window.location.href).split("?").filter((a,i)=>i == 0).join("");
+            
             remitMicroPension({
                 ...formData,
                 callback_url:webhook
             }).then((res) => {
                 setLoading(false)
                 if (res.status && res.data?.paymentUrl) {
-                    window.open(res.data.paymentUrl)
+                    window.open(res.data.paymentUrl,"_self")
                 }
             })
         }
     }
+    useEffect(()=>{
+     const data = localStorage.getItem(CONSTANT.LocalStore.remit);
+     if(data)
+     {
+        setFormData(JSON.parse(data))
+     }
+    },[])
     return <div className="bg-white h-screen p-4">
         <div className="mb-6">
             <button
