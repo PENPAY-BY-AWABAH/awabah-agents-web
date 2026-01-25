@@ -619,6 +619,20 @@ const updatePIN = (data:any)=>{
             })
         })
     }
+    const verifyTransaction = (data:any)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-verify-micro-pension-transaction`,
+                body:data,
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                resolve(res);
+            })
+        })
+    }
     return {
         loading,
         handleGetTransactions,
@@ -655,7 +669,8 @@ const updatePIN = (data:any)=>{
         handleSearchTransactions,
         getProviders,
         validateRSA,
-        remitMicroPension
+        remitMicroPension,
+        verifyTransaction
     }
 }
 export default useHttpHook;
