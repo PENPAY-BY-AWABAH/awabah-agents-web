@@ -19,7 +19,6 @@ const BaseModal = (props:BaseModalProps)=>{
           </svg>
         </button>
       </div>
-  
       <div className="mb-4 p-3">
        {props.children}
       </div>

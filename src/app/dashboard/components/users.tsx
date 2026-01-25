@@ -9,11 +9,12 @@ import BaseButton from "@/app/components/baseButton";
 import BaseCard from "@/app/components/baseCard";
 import BaseInputSearch from "@/app/components/baseInputSearch";
 import { BaseLoader } from "@/app/components/baseLoader";
-import { COLOURS, NairaSymbol, placeHolderAvatar, ROUTES } from "@/app/includes/constants"
+import { COLOURS, CONSTANT, NairaSymbol, placeHolderAvatar, ROUTES } from "@/app/includes/constants"
 import useHttpHook from "@/app/includes/useHttpHook";
 import { DatabaseIcon, FilterIcon, SliceIcon } from "lucide-react";
 import moment from "moment";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react"
 export interface UserItemProp {
   id?: string;
@@ -33,6 +34,7 @@ export interface UserItemProp {
 }
 
 export const UsersSection = ({page}:{page?:boolean})=>{
+    const navigate = useRouter()
     const [list,setList] = useState<UserItemProp[]>([]);
     const [searchText,setSearchText] = useState<string>("");
     const [showFilter,setShowFilter] = useState<boolean>(false);
@@ -167,9 +169,18 @@ export const UsersSection = ({page}:{page?:boolean})=>{
         </div>
         </div>
         <BaseButton 
-        text="View Profile"
+        text="Pay Now"
         onClick={()=>{
-
+            localStorage.setItem(CONSTANT.LocalStore.remit,JSON.stringify({
+            rsaPin: item.rsaNumber,
+            pfaName: "",
+            providerId: "",
+            phoneNumber:String(item.phoneNumber).replace("+234","0"),
+            amount: 3000,
+            fullName: item.firstName+" "+item.lastName,
+            isValid: false
+            }))
+            navigate.push(ROUTES.remit)
         }}
         white
         type="button"

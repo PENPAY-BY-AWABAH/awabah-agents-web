@@ -5,8 +5,12 @@ import { UserCheckIcon } from "@/app/assets/user-check-icon"
 import { UserPendingIcon } from "@/app/assets/user-pending-icon"
 import { UserRejectIcon } from "@/app/assets/user-reject-icon"
 import { UsersIcon } from "@/app/assets/users-icon"
+import { NairaSymbol } from "@/app/includes/constants"
+import { ReturnComma } from "@/app/includes/functions"
 import useHttpHook from "@/app/includes/useHttpHook"
-import { ReactElement, useEffect, useState } from "react"
+import { ReactElement, useEffect, useState } from "react";
+
+type CommissionStatsType = "commissionEarn" | "withdrawals" | "balance" ;
 interface TabSectionProp {
     title:string;
     icon?:string | ReactElement;
@@ -14,24 +18,21 @@ interface TabSectionProp {
     bgColour?:string;
     borderColour?:string;
     route?:string;
-    value?:UsersStatsType;
+    value?:CommissionStatsType;
     selected?:boolean;
 }
-type UsersStatsType = "usersOnboarded" | "approvedUsers" | "pendingVerification" | "rejected";
-interface UsersStatsProps {
-  usersOnboarded: number;
-  approvedUsers: number;
-  pendingVerification: number;
-  rejected: number;
+interface CommissionStatsProps {
+  commissionEarn: number;
+  withdrawals: number;
+  balance: number;
 }
 
 export const TabSection = ()=>{
-    const {getAllUserStats} = useHttpHook()
-    const [stats,setStats] = useState<UsersStatsProps>({
-        rejected:0,
-        approvedUsers:0,
-        usersOnboarded:0,
-        pendingVerification:0
+    const {getAllCommisionStats} = useHttpHook()
+    const [stats,setStats] = useState<CommissionStatsProps>({
+        commissionEarn:0,
+        withdrawals:0,
+        balance:0,
     });
       const [btns,setBtns] = useState<TabSectionProp[]>([
             {
@@ -41,7 +42,7 @@ export const TabSection = ()=>{
             selected:true,
             bgColour:"bg-white",
             borderColour:"border-[#1879F8]",
-            value:"usersOnboarded"
+            value:"commissionEarn"
             },
             {
             title:"Available Balance",
@@ -51,7 +52,7 @@ export const TabSection = ()=>{
             bgColour:"bg-white",
             borderColour:"border-[#009668]",
             description:"3893",
-            value:"approvedUsers"
+            value:"balance"
             },
             {
             title:"Withdrawn",
@@ -61,11 +62,11 @@ export const TabSection = ()=>{
             bgColour:"bg-white",
             borderColour:"border-[#F4900C]",
             description:"390",
-            value:"pendingVerification"
+            value:"withdrawals"
             }
         ])
     useEffect(()=>{
-        getAllUserStats().then((res)=>{
+        getAllCommisionStats().then((res)=>{
             if(res.status)
             {
                 setStats(res.data)
@@ -76,7 +77,7 @@ export const TabSection = ()=>{
         <div className="grid grid-cols-4 items-center gap-9 my-8 mt-3">
             {btns.map((a,i)=><div key={i} className={`bg-[#C4C4C426] shadow grid grid-cols-1 text-center items-center flex-1 rounded-[40px] p-8 min-h-[163px]`} >
             <div className={`text-center m-auto ${a.route} ${String(a.borderColour).replace("border","text")} `}>{a.icon}</div>
-            <div className="text-center text-black text-[28.3px] mt-3">{(stats[a.value!] || 0)}</div>
+            <div className="text-center text-black text-[28.3px] mt-3">{a.value !== "withdrawals"?NairaSymbol:""}{String(stats[a.value!]) === "0"?"0":ReturnComma(String(stats[a.value!] || 0))}</div>
             <div className="text-center text-black text-[18.8px] mt-3">{a.title}</div>
             </div>)}
         </div>

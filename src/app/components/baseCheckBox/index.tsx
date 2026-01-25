@@ -7,7 +7,7 @@ type:"checkbox"|"radio"|"custom";
 onChange:(value:boolean)=>void;
 value:boolean;
 disabled?:boolean;
-requred?:boolean;
+required?:boolean;
 }
 const BaseToggleBtn = (props:BaseToggleBtnProps)=>{
     const [checked,setChecked] = useState<boolean>(false)
@@ -35,7 +35,7 @@ const BaseToggleBtn = (props:BaseToggleBtnProps)=>{
     }
     return <input 
     type={props.type}
-    required={props.requred}
+    required={props.required}
     disabled={props.disabled}
     checked={checked}
     onChange={()=>{

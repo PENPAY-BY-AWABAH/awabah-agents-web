@@ -5,7 +5,7 @@ import { UsersIcon } from "@/app/assets/users-icon"
 import { RouteItem } from "@/app/includes/constants"
 import useHttpHook from "@/app/includes/useHttpHook"
 import { ReactElement, useEffect, useState } from "react"
-interface TabSectionProp {
+export interface TabSectionProp {
     title:string;
     icon?:string | ReactElement;
     description?:string;
@@ -16,7 +16,7 @@ interface TabSectionProp {
     selected?:boolean;
 }
 type UsersStatsType = "usersOnboarded" | "userRemit" | "withdrawal" | "rejected";
-interface UsersStatsProps {
+export interface UsersStatsProps {
   usersOnboarded: number;
   userRemit: number;
   withdrawal: number;
@@ -62,7 +62,7 @@ export const TabSection = ()=>{
             value:"withdrawal"
             },
             {
-            title:"Rejected Onboarding",
+            title:"Pending Onboarding",
             icon:<UserRejectIcon />,
             route:"text-[#EE1A1A]",
             selected:false,

@@ -9,16 +9,27 @@ import { ApprovedIcon, PendingIcon, UserItemProp } from "./users";
 import useHttpHook from "@/app/includes/useHttpHook";
 import { DatabaseIcon } from "lucide-react";
 import { BaseLoader } from "@/app/components/baseLoader";
-
+export interface CommissionItemProp {
+id?:string;
+fullName?:string;
+email?:string;
+amount?:string;
+createdAt?:string;
+avatar?:string;
+phoneNumber?:string;
+rsaNumber?:string;
+ref?:string;
+approved?:boolean;
+}
 export const CommissionSection = ({page}:{page?:boolean})=>{
 
-    const [list,setList] = useState<UserItemProp[]>([]);
+    const [list,setList] = useState<CommissionItemProp[]>([]);
     const {getAllComission,handleSearchUser,loading} = useHttpHook()
     const GetAllUsers = (page:number)=>{
     getAllComission(page).then((res)=>{
         if(res.status)
         {
-            setList(res.data.users)
+            setList(res.data.list)
         }
     })
     }
@@ -54,16 +65,17 @@ export const CommissionSection = ({page}:{page?:boolean})=>{
              className="h-full w-full" />
             </div>
         <div className="flex-1">
-            <div className="text-[#000000] text-[18px]">{item.firstName} {item.lastName}<span className="ms-3 text-[#00000073]">~ Onboarding</span></div>
+            <div className="text-[#000000] text-[18px]">{item.fullName}<span className="ms-3 text-[#00000073]">~ Onboarding</span></div>
             <div className="text-[#000000A6] text-[14px] flex gap-2 item-center text-[#000000A6] " >
                 {item.approved?<div  className="flex item-center text-[10px] gap-1 items-center bg-[#00A55826] text-[#00A558] rounded-[30px] px-2 py-1" >
                             <ApprovedIcon />
                             <div>Approved</div>
-                            </div>:<div className="flex text-[10px] gap-1 items-center bg-[#F4900C26] text-[#F4900C] rounded-[30px] px-2 py-1" >
+                            </div>
+                            :<div className="flex text-[10px] gap-1 items-center bg-[#F4900C26] text-[#F4900C] rounded-[30px] px-2 py-1" >
                             <PendingIcon />
                             <div >Pending</div>
                             </div>}
-                {item.createdAt}</div>
+                {moment(item.createdAt).format("Do MMM YYYY, hh:mm A")}</div>
         </div>
         </div>)}
         </div>

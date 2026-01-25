@@ -85,6 +85,7 @@ const Page = () => {
                 status: false,
                 loading: true
             })
+
             verifyTransaction({ reference: urlParams.reference }).then((res) => {
                 setPaymentDetails({
                     ...res.data,
@@ -96,6 +97,7 @@ const Page = () => {
                     localStorage.removeIteme(CONSTANT.LocalStore.remit);
                 }
             })
+
         }
     }, [])
     const handleSubmit = (e: FormEvent) => {

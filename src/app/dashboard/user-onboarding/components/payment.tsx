@@ -52,13 +52,11 @@ export const PaymentComponent = ({onSuccess,userdata}:{onSuccess:()=>void;userda
     <div className="flex items-center justify-center">
         <div >RSA Pin:</div>
         <div className="flex-1 items-center justify-end">
-
         </div>
     </div>
      <div className="flex items-center justify-center">
         <div >PFA Name:</div>
         <div className="flex-1 items-center justify-end">
-
         </div>
     </div>
     </div>

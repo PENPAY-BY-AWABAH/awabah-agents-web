@@ -1,8 +1,5 @@
 "use client"
-import { BackIcon } from "@/app/assets/back-icon";
-import { HistorySection } from "../components/history";
 import { useRouter } from "next/navigation";
-import { UsersSection } from "../components/users";
 import { TabSection } from "./components/Tabs";
 import { CommissionSection } from "../components/commission";
 import { CommissionWalletBalance } from "./components/walletBalanceSection";

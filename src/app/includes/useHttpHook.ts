@@ -424,7 +424,7 @@ const getAgentProfile  = () => {
           return new Promise<ApiResponse>((resolve) => {
             setLoading(true);
            call({
-                path:`agent-get-commission?page=${page}`,
+                path:`agent-get-list-of-commission?page=${page}`,
                 body:{},
                 method:"GET",
                 requestType:"json"
@@ -545,7 +545,7 @@ const updatePIN = (data:any)=>{
          return new Promise<ApiResponse>((resolve) => {
          setLoading(true);
            call({
-                path:`agent-all-withdrawals?page=${page}`,
+                path:`agent-get-transaction-history?page=${page}`,
                 body:{},
                 method:"GET",
                 requestType:"form-data"
@@ -559,7 +559,7 @@ const updatePIN = (data:any)=>{
          return new Promise<ApiResponse>((resolve) => {
          setLoading(true);
            call({
-                path:`agent-all-search-withdrawals?page=${page}&searchText=${search}`,
+                path:`agent-search-transaction?page=${page}&searchText=${search}`,
                 body:{},
                 method:"GET",
                 requestType:"form-data"
@@ -633,6 +633,57 @@ const updatePIN = (data:any)=>{
             })
         })
     }
+    
+    const getAllCommisionStats = ()=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-commision-stats`,
+                body:{},
+                method:"GET",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                resolve(res);
+            })
+        })
+    }
+const handleEmploymentDetails =(data:any)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-save-employment-details`,
+                body:data,
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                ShowMessage({
+                    position:"center",
+                    ...res
+                })
+                resolve(res);
+            })
+        })
+    }
+    const handleParentDetails =(data:any)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-save-parent-information`,
+                body:data,
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                ShowMessage({
+                    position:"center",
+                    ...res
+                })
+                resolve(res);
+            })
+        })
+    }
     return {
         loading,
         handleGetTransactions,
@@ -670,7 +721,10 @@ const updatePIN = (data:any)=>{
         getProviders,
         validateRSA,
         remitMicroPension,
-        verifyTransaction
+        verifyTransaction,
+        getAllCommisionStats,
+        handleEmploymentDetails,
+        handleParentDetails
     }
 }
 export default useHttpHook;

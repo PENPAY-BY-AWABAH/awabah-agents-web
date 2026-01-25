@@ -1,0 +1,16 @@
+.input-wrapper{
+    height: 48px;
+    border-radius: 16px;
+    gap: 10px;
+    border-width: 1px;
+    border-color: #EDEDED;
+    overflow: hidden;
+}
+input {
+    width: 100%; 
+    height: 100%; 
+    padding-left: 16px;
+    padding-right: 16px;
+    outline: none;
+    border: none;
+}

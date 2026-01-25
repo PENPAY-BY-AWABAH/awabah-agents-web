@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import useHttpHook from "@/app/includes/useHttpHook";
-import { ROUTES } from "@/app/includes/constants";
+import { CONSTANT, ROUTES } from "@/app/includes/constants";
 import { BackIcon } from "@/app/assets/back-icon";
 import BaseInput from "@/app/components/baseInput";
 import BaseButton from "@/app/components/baseButton";
@@ -13,77 +13,105 @@ import { OtpSection } from "./components/otpSection";
 import { NextOfKinPage } from "./components/nextOfKin";
 import { SuccessComponent } from "./components/success";
 import { PaymentComponent } from "./components/payment";
-type RegisterProps = "User Details" | "Verify Email" | "Next Of Kin" | "Success" | "Pay";
+import { EmploymentPage } from "./components/employment";
+import { ParentDetailPage } from "./components/parentDetails";
+type RegisterProps = "User Details" | "Verify Email" | "Next Of Kin" | "Success" | "Pay" | "Employment Details" | "Parent Details - (Father)" | "Parent Details - (Mother)";
 export interface SignUpProps {
-email?:string;
-firstName?:string;
-lastName?:string;
-phoneNumber?:string;
-address?:string;
-nin?:string;
-bvn?:string;
+    email?: string;
+    firstName?: string;
+    lastName?: string;
+    phoneNumber?: string;
+    address?: string;
+    nin?: string;
+    bvn?: string;
+    rsaPin?: string;
+    trackingId?:string;
 }
 const Page = () => {
-    const [index,setIndex] =  useState<number>(0)
+    const [index, setIndex] = useState<number>(0)
     const [section, setSection] = useState<RegisterProps>("User Details")
     const navigate = useRouter();
     const { handleRegisterUser, loading } = useHttpHook();
     const [formData, setFormData] = useState<SignUpProps>({
         email: "",
-        firstName:"",
-        lastName:"",
-        phoneNumber:"",
-        address:"",
-        nin:"",
-        bvn:""
+        firstName: "",
+        lastName: "",
+        phoneNumber: "",
+        address: "",
+        nin: "",
+        bvn: "",
+        rsaPin: "",
+        trackingId:""
     })
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault()
         handleRegisterUser(formData).then((res) => {
-            if(String(res.message).includes("OTP"))
-            {
+            if (String(res.message).includes("OTP")) {
+                const data = {
+                    ...formData,
+                    ...res.data
+                }
+                localStorage.setItem(CONSTANT.LocalStore.userFormFields,JSON.stringify(data))
+                setFormData(data);
                 return setSection("Verify Email");
             }
             if (res.status) {
-               setSection("Verify Email")
-            }else{
-                
-                
-                if(res.data?.nextOfKinRegistered === false)
-                {
-
+                const data = {
+                    ...formData,
+                    ...res.data
                 }
-                if(res.data?.employerDetailsRegistered === false)
-                {
-
+                setFormData(data);
+                setSection("Verify Email")
+            } else {
+                if (res.data?.nextOfKinRegistered === false) {
+                    setSection("Next Of Kin")
                 }
+                if (res.data?.employerDetailsRegistered === false) {
+                    setSection("Employment Details")
+                }
+                if (res.data?.parentDetailsRegistered === false) {
+                    setSection("Parent Details - (Father)")
+                }
+                
             }
         })
     }
-    useEffect(()=>{ 
-        if(section === "User Details")
-        {
+
+    useEffect(() => {
+        if (section === "User Details") {
             setIndex(0)
         }
-         if(section === "Verify Email")
-        {
+        if (section === "Verify Email") {
             setIndex(1)
         }
-          if(section === "Next Of Kin")
-        {
+        if (section === "Next Of Kin") {
             setIndex(2)
         }
-    },[section])
+        if (section === "Parent Details - (Father)") {
+            setIndex(3)
+        }
+         if (section === "Parent Details - (Mother)") {
+            setIndex(4)
+        }
+         if (section === "Employment Details") {
+            setIndex(5)
+        }
+    }, [section])
+    useEffect(()=>{
+      const formFields = localStorage.getItem(CONSTANT.LocalStore.userFormFields);
+      if(formFields)
+      {
+        setFormData(JSON.parse(formFields));
+      }
+    },[])
     return <div className="bg-white h-full px-[100px] py-[60px]">
         {section !== "Success" && <div className="mb-6">
             <button
                 onClick={() => {
-                    if(section === "Next Of Kin")
-                    {
+                    if (section === "Next Of Kin") {
                         return setSection("Verify Email")
                     }
-                    if(section === "Verify Email")
-                    {
+                    if (section === "Verify Email") {
                         return setSection("User Details")
                     }
                     navigate.back();
@@ -93,19 +121,19 @@ const Page = () => {
                 <div className="text-black text-[18px]">Back</div>
             </button>
         </div>}
-        {section !== "Success" ?<div className="m-auto items-center text-center h-full overflow-x-scroll   ">
+        {section !== "Success" ? <div className="m-auto items-center text-center h-full overflow-x-scroll   ">
             <div className="m-auto items-center text-center  rounded-[30px] min-h-[400px] shadow w-[500px] p-[30px] pb-[60px]">
                 <div className="text-black text-[24px] font-bold text-center mb-[20px] ">{section}</div>
                 <div className="w-[200px]">
-                <BaseHorizontalIndicator 
-                count={4} 
-                selectedIndex={index}
-                 />
+                    <BaseHorizontalIndicator
+                        count={5}
+                        selectedIndex={index}
+                    />
                 </div>
-                {section === "User Details" &&<div className="mt-[20px]">
+                {section === "User Details" && <div className="mt-[20px]">
                     <div className="text-[#909090] text-[12px] text-left">Please provide some information about the user, these information are used to protect users account and for compliance purpose.</div>
                     <div className="text-[#009668] text-[14px] text-left mt-4">Personal Details</div>
-                <form onSubmit={handleSubmit}>
+                    <form onSubmit={handleSubmit}>
                         <BaseInput
                             type="text"
                             name="firstName"
@@ -197,7 +225,7 @@ const Page = () => {
                             label="NIN (National Identity Number)"
                             placeholder="Enter NIN."
                         />
-                         <BaseInput
+                        <BaseInput
                             type="text"
                             name="bvn"
                             value={formData.bvn}
@@ -217,42 +245,77 @@ const Page = () => {
                             text="Next"
                             type="submit"
                         />
-                        
-                </form>
+
+                    </form>
                 </div>}
-                    {section === "Verify Email" &&<div >
+                {section === "Verify Email" && <div >
                     <OtpSection
-                     email={formData.email!}
-                     onClose={()=>{
-                       setSection("Next Of Kin")
-                     }}
+                        email={formData.email!}
+                        trackingId={formData.trackingId!}
+                        onClose={() => {
+                            setSection("Next Of Kin")
+                        }}
                     />
-                    </div>}
-
-                    {section === "Next Of Kin" &&<div >
-                    <NextOfKinPage 
-                     onClose={()=>{
-                       setSection("Next Of Kin")
-                     }}
-                     onSuccess={()=>{
-                       setSection("Success") 
-                     }}
-                     email={formData.email!}
+                </div>}
+                {section === "Next Of Kin" && <div >
+                    <NextOfKinPage
+                        onClose={() => {
+                            setSection("Next Of Kin")
+                        }}
+                        onSuccess={() => {
+                            setSection("Parent Details - (Father)")
+                        }}
+                        trackingId={formData.trackingId!}
                     />
-                    </div>}
-                    {section === "Pay" &&<div >
+                </div>}
+                {section === "Pay" && <div >
                     <PaymentComponent
-                       onSuccess={()=>{
+                        onSuccess={() => {
 
-                       }}   
-                       userdata={formData}  
+                        }}
+                        userdata={formData}
                     />
-                    </div>}
+                </div>}
+                {section === "Employment Details" && <div >
+                    <EmploymentPage
+                        onSuccess={() => {
+                        setSection("Success")
+                        }}
+                        onClose={() => {
+
+                        }}
+                        trackingId={formData.trackingId!}
+                    />
+                </div>}
+                {section === "Parent Details - (Father)" && <div >
+                    <ParentDetailPage
+                        onSuccess={() => {
+                        setSection("Parent Details - (Mother)")
+                        }}
+                        isFather={true}
+                        onClose={() => {
+
+                        }}
+                        trackingId={formData.trackingId!}
+                    />
+                </div>}
+                {section === "Parent Details - (Mother)" && <div >
+                    <ParentDetailPage
+                        isFather={false}
+                        onSuccess={() => {
+                        setSection("Employment Details")
+                        }}
+                        onClose={() => {
+
+                        }}
+                        trackingId={formData.trackingId!}
+                    />
+                </div>}
             </div>
-        </div>:<SuccessComponent 
-        onPay={()=>{
-         setSection("Pay")
-        }}
+        </div> : <SuccessComponent
+            onPay={() => {
+                navigate.push(ROUTES.users)
+            }}
         />}
     </div>
 }

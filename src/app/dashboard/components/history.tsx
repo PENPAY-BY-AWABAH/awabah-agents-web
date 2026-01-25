@@ -3,7 +3,8 @@
 import { OutflowIcon } from "@/app/assets/outflow-icon";
 import BaseInputSearch from "@/app/components/baseInputSearch";
 import { BaseLoader } from "@/app/components/baseLoader";
-import { COLOURS, ROUTES } from "@/app/includes/constants"
+import { COLOURS, NairaSymbol, ROUTES } from "@/app/includes/constants"
+import { ReturnComma } from "@/app/includes/functions";
 import useHttpHook from "@/app/includes/useHttpHook";
 import { DatabaseIcon } from "lucide-react";
 import moment from "moment";
@@ -15,6 +16,8 @@ export interface HistoryItemProp {
     description?: string;
     type?: string;
     currency?: string;
+    fullName?:string;
+    createdAt?:string;
 }
 export const HistorySection = ({ page }: { page?: boolean }) => {
     const [list, setList] = useState<HistoryItemProp[]>([]);
@@ -40,10 +43,11 @@ export const HistorySection = ({ page }: { page?: boolean }) => {
         {
         return setFilteredList(list)
         }
+
         handleSearchTransactions(1,search).then((res)=>{
             if(res.status)
             {
-            setFilteredList(res.data?.users)
+            setFilteredList(res.data?.list)
             }else{
               setFilteredList([])  
             }
@@ -81,12 +85,13 @@ export const HistorySection = ({ page }: { page?: boolean }) => {
         </div>
         <div className="m-auto text-center text-[#44444]">No record found!</div>
         </div>}
-        <div className="my-8 mt-6">
-            {list.map((item, i) => <div key={i} className="h-[80px] flex gap-3 items-center border-b-[0.5px] border-b-gray-200">
+        <div className="my-8 mt-6 grid gap-3">
+            {filteredList.map((item, i) => <div key={i} className="h-[80px] flex gap-3 items-center border-b-[0.5px] border-b-gray-200">
                 <OutflowIcon />
                 <div className="flex-1">
-                    <div className="text-[#000000] text-[18px]">{item.currency}{item.amount}</div>
-                    <div className="text-[#000000A6] text-[14px]" >{item.date}</div>
+                    <div className="text-[#000000] text-[18px]">{item.fullName}</div>
+                    <div className="text-[#000000] text-[14px]">{NairaSymbol}{ReturnComma(String(parseFloat(String(item.amount)).toFixed(2)))}</div>
+                    <div className="text-[#000000A6] text-[12px]" >{moment(item.createdAt).format("Do MMM YYYY, hh:mm A")}</div>
                 </div>
             </div>)}
         </div>

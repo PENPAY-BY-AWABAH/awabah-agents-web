@@ -1,17 +1,11 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 "use client"
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
-import Link from "next/link";
 import useHttpHook from "@/app/includes/useHttpHook";
-import { ROUTES } from "@/app/includes/constants";
-import { BackIcon } from "@/app/assets/back-icon";
 import BaseInput from "@/app/components/baseInput";
 import BaseButton from "@/app/components/baseButton";
-import { BaseHorizontalIndicator } from "@/app/components/baseHorizontalIndicator";
 import BaseSelect from "@/app/components/baseSelect";
 import { ItemProps } from "@/app/includes/types";
-
 export interface NextOfKinProps {
   email?: string;
   firstName?: string;
@@ -21,14 +15,15 @@ export interface NextOfKinProps {
   phoneNumber?: string;
   nokemail?: string;
   streetName?: string;
+  trackingId?:string;
 }
 
-export const NextOfKinPage = ({onClose,onSuccess,email}:{onClose:()=>void;onSuccess:()=>void;email:string}) => {
+export const NextOfKinPage = ({onClose,onSuccess,trackingId}:{onClose:()=>void;onSuccess:()=>void;trackingId:string}) => {
     const [index,setIndex] =  useState<number>(0)
     const navigate = useRouter();
     const { handleNextOfKin, loading } = useHttpHook();
     const [formData, setFormData] = useState<NextOfKinProps>({
-        email:"",
+        trackingId:"",
         firstName:"",
         lastName:"",
         relationShip:"",
@@ -41,7 +36,7 @@ export const NextOfKinPage = ({onClose,onSuccess,email}:{onClose:()=>void;onSucc
         e.preventDefault()
         handleNextOfKin({
         ...formData,
-        email:formData.nokemail
+        trackingId:trackingId
     }).then((res) => {
             if (res.status) {
             onSuccess()
@@ -116,6 +111,7 @@ export const NextOfKinPage = ({onClose,onSuccess,email}:{onClose:()=>void;onSucc
                             label="Phone Number"
                             placeholder="Enter phone number."
                         />
+                        <div className="text-left">
                     <BaseSelect
                     name="bvn"
                     list={["AUNTY", "BROTHER", "BROTHER-IN-LAW", "COUSIN", "DAUGHTER", "DAUGHTER-IN-LAW", "FATHER", "FATHER-IN-LAW", "FIANCE", "FIANCEE", "GRANDFATHER", "GRANDDAUGHTER", "GRANDMOTHER", "GRANDSON", "HUSBAND", "MOTHER", "MOTHER-IN-LAW", "NEPHEW", "NIECE", "SISTER", "SISTER-IN-LAW", "SON", "SON-IN-LAW", "SPOUSE", "UNCLE", "WIFE", "Guardian", "FRIEND", "RELATIVES"].map((item, index) => {
@@ -131,9 +127,11 @@ export const NextOfKinPage = ({onClose,onSuccess,email}:{onClose:()=>void;onSucc
                     } }
                     label="RelationShip"
                     placeholder="Enter relationShip."
-                    className="mb-5" 
+                    className="mb-5 " 
+                    left
                     value={formData.relationShip!}                
-                            />
+                      />
+                    </div>
                         <BaseInput
                             type="text"
                             name="nin"
@@ -149,8 +147,10 @@ export const NextOfKinPage = ({onClose,onSuccess,email}:{onClose:()=>void;onSucc
                             label="Street Name"
                             placeholder="Enter street Name."
                         />
+                        <div className="text-left mb-3">
                          <BaseSelect
                             name="bvn"
+                            left
                             list={[
                                 {title:"Male", description:"Male"},
                                 {title:"Female", description:"Female"}
@@ -168,11 +168,14 @@ export const NextOfKinPage = ({onClose,onSuccess,email}:{onClose:()=>void;onSucc
                             placeholder="Enter gender."
                             className="mb-5"
                         />
+                        </div>
+                        <div style={{zIndex:10}}>
                         <BaseButton
                             loading={loading}
                             text="Next"
                             type="submit"
                         />
+                        </div>
                 </form>
     </div>
     </div>

@@ -60,7 +60,7 @@ export const PaymentVericationModal = ({onClose,details}:{onClose:()=>void;detai
                 </div>
                 <div className="w-full flex gap-3 item-center ">
                 <div className="font-bold">Amount:</div>
-                <div >{NairaSymbol}{ReturnComma(String(details.amount))}</div>
+                <div >{NairaSymbol}{ReturnComma(String(parseFloat(String(details.amount)).toFixed(2)))}</div>
                 </div>
                 <div className="w-full flex gap-3 item-center ">
                 <div className="font-bold">Ref. No.:</div>

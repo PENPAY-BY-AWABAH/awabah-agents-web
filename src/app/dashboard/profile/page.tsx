@@ -253,7 +253,7 @@ const uploadFile = (selectedFile:any)=>{
                     label="Address"
                     placeholder="Address"
                 />
-                <div className="w-[230px] mb-5" >
+                <div className="w-[230px] mb-5 text-left" >
                 <BaseSelect
                     value={formData.state!}
                     required

@@ -13,6 +13,7 @@ interface BaseSelectProps {
     custom?:boolean;
     value:string;
     disabled?:boolean;
+    left?:boolean;
  }
  const BaseSelect = (props:BaseSelectProps)=>{
 const [selected,setSelected] = useState<string | null>("");
@@ -37,6 +38,15 @@ setSelected(props.value)
 },[props.value])
 
 return <div className="relative">
+  <input
+required={props.required }
+value={props.value}
+className="absolute top-[70px] opacity-0 "
+onChange={()=>{
+  return
+}}
+style={{zIndex:0,height:1,width:1}}
+/>
 {props?.label && <label htmlFor={props.name} className="flex items-center text-md font-medium text-gray-700" style={{position:"relative"}}><small ><b>{props?.label}</b></small>{props.required?<span className='text-red-600 text-[20px] ps-1'>*</span>:""}</label>}
 <div className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm sm:text-sm relative ${props.custom?"":"p-3"}  ${props.className?props.className:""}`}>
 {props.custom?<div 
@@ -72,17 +82,10 @@ selected={selected === a.value}
 key={i} 
 value={a.value} >{a.name}</option>)}
 </select>}
-<input
-required={props.required }
-value={props.value}
-className="opacity-0 absolute top-[15px]"
-onChange={()=>{
-  return
-}}
-/>
+
 {props.custom && show && !props?.disabled &&<div 
  onMouseLeave={()=>setShow(false)}
-className="absolute z-40 right-0 min-w-48 mt-1 origin-top-right rounded-md shadow-sm bg-white ring-1 ring-gray-300 ring-opacity-5 group-hover:block overflow-hidden">
+className={props?.left?`absolute z-40 left-0 min-w-48 mt-1 origin-top-left rounded-md shadow-sm bg-white ring-1 ring-gray-300 ring-opacity-5 group-hover:block overflow-hidden`:`absolute z-40 right-0 min-w-48 mt-1 origin-top-right rounded-md shadow-sm bg-white ring-1 ring-gray-300 ring-opacity-5 group-hover:block overflow-hidden`}>
  <div className="py-1 bg-white max-h-[200px] overflow-scroll "
  >
 {list.map((a,i)=><div 

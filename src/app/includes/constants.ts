@@ -24,6 +24,7 @@ icon?:string | ReactElement;
 description?:string;
 route?:string;
 selected?:boolean;
+value?:string;
 } 
 export const CONSTANT = {
     BaseURL:process.env.NODE_ENV === "development"?"http://localhost/awabah-api/v1/":"https://staging.awabah.com/v1/",
@@ -31,7 +32,8 @@ export const CONSTANT = {
         token:"token",
         baseUrl:"baseurl",
         resetPassword:"resetPassword",
-        remit:"remit"
+        remit:"remit",
+        userFormFields:"userFormFields"
     }
 }
 export const Currency = {
