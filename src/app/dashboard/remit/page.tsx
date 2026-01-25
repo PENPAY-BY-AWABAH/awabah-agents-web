@@ -62,7 +62,6 @@ const Page = () => {
             }
         })
     }
-    const queryParams = new URLSearchParams(window.location.search);
     const [paymentDetails, setPaymentDetails] = useState<PaymentResponseProp | null>(null);
     const getUrlParams = (queryParams: URLSearchParams) => {
         // Get individual values
@@ -75,6 +74,7 @@ const Page = () => {
         getListOfProvider();
     }, [])
     useEffect(() => {
+    const queryParams = new URLSearchParams(window.location.search);
         const urlParams = getUrlParams(queryParams);
         if (urlParams.verifyPayment !== null) {
             setPaymentDetails({

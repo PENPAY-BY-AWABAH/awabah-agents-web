@@ -1,15 +1,30 @@
 import BaseModal from "@/app/components/baseModal"
-import { useState } from "react"
-import { UserDetails } from "../../page"
+import { RefObject, useRef, useState } from "react"
 import { BaseLoader } from "@/app/components/baseLoader"
-import { ROUTES } from "@/app/includes/constants"
 import { useRouter } from "next/navigation"
 import { PaymentResponseProp } from "../page"
 import moment from "moment"
 import BaseButton from "@/app/components/baseButton"
-
+import html2canvas from 'html2canvas';
 export const PaymentVericationModal = ({onClose,details}:{onClose:()=>void;details:PaymentResponseProp})=>{
-    const navigate = useRouter()
+    const navigate = useRouter();
+    const [downloading,setDownloading] = useState<boolean>(false)
+    const divRef = useRef<HTMLDivElement>(null);
+    const HandleDownloadReceipt = async()=>{
+    setDownloading(true)
+    const canvas = await html2canvas(divRef.current!);
+    const dataURL = canvas.toDataURL('image/png');
+    // Create a temporary link to trigger download
+    const link = document.createElement('a');
+    link.href = dataURL;
+    link.download = `payment-receipt-${details.reference}`;
+    link.click();
+    setTimeout(()=>{
+    setDownloading(false)
+    onClose()
+    },500)
+
+}
     return <BaseModal 
         title={details?.loading || !details?.createdAt?"":"Payment Receipt"}
         onClose={()=>{
@@ -26,8 +41,8 @@ export const PaymentVericationModal = ({onClose,details}:{onClose:()=>void;detai
             </div>
             <div className="m-auto text-center">Please wait while we verify your transaction...</div>
         </div>:details?.createdAt?<div className="relative">
-        <div className="relative">
-        <div className="p-5 grid gap-2 bg-gray-200">
+        <div ref={divRef} className="relative">
+        <div className="p-5 grid gap-2" style={{backgroundColor:"#f1f1f1"}}>
             <div className="font-normal">{String(details.memo).replace("initialized","")}</div>
               <div className="w-full flex gap-3 item-center ">
                 <div className="font-bold">Full Name:</div>
@@ -71,8 +86,10 @@ export const PaymentVericationModal = ({onClose,details}:{onClose:()=>void;detai
         </div>
         <div className="mt-5" >
         <BaseButton
+        loading={downloading}
         text="Download Receipt"
         type="button"
+        onClick={HandleDownloadReceipt}
         white
         />
         </div>

@@ -72,11 +72,14 @@ selected={selected === a.value}
 key={i} 
 value={a.value} >{a.name}</option>)}
 </select>}
-{props.required && <input
-required
+<input
+required={props.required }
 value={props.value}
 className="opacity-0 absolute top-[15px]"
-/>}
+onChange={()=>{
+  return
+}}
+/>
 {props.custom && show && !props?.disabled &&<div 
  onMouseLeave={()=>setShow(false)}
 className="absolute z-40 right-0 min-w-48 mt-1 origin-top-right rounded-md shadow-sm bg-white ring-1 ring-gray-300 ring-opacity-5 group-hover:block overflow-hidden">
