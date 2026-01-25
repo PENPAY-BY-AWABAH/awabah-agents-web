@@ -569,6 +569,56 @@ const updatePIN = (data:any)=>{
             })
         })
     }
+    const getProviders = ()=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`get-pension-providers`,
+                body:{},
+                method:"GET",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                resolve(res);
+            })
+        })
+    }
+    const validateRSA = (data:any)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-verify-user-rsa-pin`,
+                body:data,
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                    ShowMessage({
+                    position:"center",
+                    ...res
+                })
+                resolve(res);
+            })
+        })
+    }
+    const remitMicroPension = (data:any)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-naira-micro-pension`,
+                body:data,
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                    ShowMessage({
+                    position:"center",
+                    ...res
+                })
+                resolve(res);
+            })
+        })
+    }
     return {
         loading,
         handleGetTransactions,
@@ -602,7 +652,10 @@ const updatePIN = (data:any)=>{
         updateAvatar,
         getAllComission,
         getAllTransactions,
-        handleSearchTransactions
+        handleSearchTransactions,
+        getProviders,
+        validateRSA,
+        remitMicroPension
     }
 }
 export default useHttpHook;
