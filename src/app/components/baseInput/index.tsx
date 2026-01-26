@@ -5,8 +5,8 @@ import React, { ChangeEvent, useState } from 'react'
 import './style.css';
 import { FieldChangePayload } from '@/app/includes/types';
 import { ValidateEmail } from '@/app/includes/functions';
-import { Ban, BlocksIcon } from 'lucide-react';
-import { EyeClose, EyeOpen } from '@/app/assets/eyes';
+import { Ban, BlocksIcon, EyeClosed, EyeIcon } from 'lucide-react';
+import { EyeOpen } from '@/app/assets/eyes';
 
 interface BaseInputProps {
     arrayList?:boolean;
@@ -105,7 +105,7 @@ if(typeof props.value === "string")
     <Ban color="red" size={15} />
    </span>:props.type === "password" && <span
    onClick={()=>setToggleEye(!toggleEye)} className='input-icon pt-[5px]'>
-    {!toggleEye?<EyeOpen />:<EyeClose />} 
+    {toggleEye?<EyeOpen />:<EyeIcon />} 
    </span>}
 </div>
 {props?.error?<div className='text-red-600' >{props.error}</div>:null}

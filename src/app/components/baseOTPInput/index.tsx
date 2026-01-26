@@ -5,6 +5,7 @@ import OTPInput from 'react18-input-otp';
 interface OTPBaseInputProps {
     count?: number;
     onChange:(otp:string)=>void;
+    isInputNum?:boolean;
 }
 export const OTPBaseInput = (props: OTPBaseInputProps) => {
     const [otp, setOtp] = useState<string>("")
@@ -35,6 +36,7 @@ export const OTPBaseInput = (props: OTPBaseInputProps) => {
                 transition: "border-color .15s ease-in-out",
                 boxShadow: ".15s ease-in-out"
             }}
+            isInputNum={props?.isInputNum}
             separator={<span style={{ width: 10 }}></span>}
         />
     </div>

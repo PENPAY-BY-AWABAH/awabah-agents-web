@@ -40,6 +40,7 @@ export const OtpSection = ({email,onClose,trackingId}:{email:string;onClose:()=>
             email
         })
     },[email])
+    
      useEffect(()=>{
         if(startTimer)
         {
