@@ -36,11 +36,11 @@ const Page = ()=>{
         })
     }
     useEffect(()=>{
-    //  localStorage.clear();
+     localStorage.clear();
      const token =localStorage.getItem(CONSTANT.LocalStore.token);
      if(token)
      {
-        navigate.replace(ROUTES.dashboard) 
+        // navigate.replace(ROUTES.dashboard) 
      }
     },[])
     return <div className="bg-white min-h-full lg:px-[100px] p-[16px] lg:py-[60px] overflow-hidden">

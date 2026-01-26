@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client"
 import { useEffect, useState } from "react";
 import { CardOne } from "./dashboard/components/card1";
@@ -17,12 +18,12 @@ export default function Home() {
       description:"Help new users get started on Awabah and earn commissions for every successful onboarding."
     },
     {
-      graphics:<CardTwo />,
+      graphics:<CardTwo size={220} />,
       title:"Onboard & Track Users",
       description:"Register new users, monitor their verification status, and track when your commissions are earned — all from one dashboard."
     },
     {
-      graphics:<CardThree />,
+      graphics:<CardThree size={220} />,
       title:"Earn & Withdraw Commissions",
       description:"Earn 300Naira per onboarding and Convert your earned commissions to cash and withdraw directly to your bank account when eligible."
     }
@@ -52,12 +53,12 @@ export default function Home() {
           navigate.replace(ROUTES.dashboard) 
        }
       },[])
-  return (<div className="min-h-screen overflow-scroll pb-[140px] items-center justify-center bg-white font-sans grid grid-cols-1 ">
-     <div className="m-auto items-center text-center  h-[500px] ">
+  return (<div className="lg:min-h-screen overflow-scroll lg:pb-[140px] items-center justify-center bg-white font-sans grid grid-cols-1 ">
+     <div className="m-auto items-center text-center  lg:h-[500px] ">
      {slider.filter((a,i)=>selectedIndex === i).map((item,index)=>{
-      return <div key={index} className="m-auto items-center text-center  rounded-[30px] shadow w-[400px] p-[30px] pb-[60px]">
-     <div className="m-auto items-center text-center justify-center flex overflow-hidden">
-        {item.graphics}
+      return <div key={index} className="m-auto items-center text-center  rounded-[30px] shadow lg:w-[400px] pt-[10px]  my-[60px] lg:p-[30px] pb-[60px]">
+     <div className="m-auto items-center text-center justify-center flex overflow-hidden max-h-[280px] lg:h-auto">
+      {item.graphics}
      </div>
      <div className="flex items-center justify-center  mt-[50px] gap-2">
       {slider?.map((item,index)=><button 
@@ -80,11 +81,11 @@ export default function Home() {
      </div>
      </div>})}
      </div>
-      <div className="flex p-10 items-center fixed top-0 left-0  w-full">
+      <div className="flex p-3 lg:p-10 items-center fixed top-0 left-0  w-full">
       <div >
       <Link 
        href={ROUTES.login}
-      className="rounded-[12px] text-[16px] cursor-pointer bg-[#C4C4C440] px-[20px] py-2 text-black text-[18px]"
+      className="rounded-[12px] cursor-pointer bg-[#C4C4C440] px-[15px] lg:px-[20px] py-[8px] lg:py-2 text-black text-[14px] lg:text-[18px]"
       >
       Skip
       </Link>
@@ -103,20 +104,20 @@ export default function Home() {
         return count + 1
       })
        }}
-      className={`rounded-[12px] text-[16px] cursor-pointer bg-[#009668] px-[20px] py-2 text-${COLOURS.white} text-[18px]`}
+      className={`rounded-[12px] cursor-pointer bg-[#009668] px-[20px] py-2 text-${COLOURS.white} text-[14px] lg:text-[18px]`}
       >
       Next
       </button>
      </div>:<div className="flex gap-4">
        <Link 
        href={ROUTES.login}
-      className={`rounded-[12px] text-[16px] cursor-pointer border-[1px] border-[#009668] px-[20px] py-2 text-[#009668] text-[18px]`}
+      className={`rounded-[12px] cursor-pointer border-[1px] border-[#009668] px-[20px] py-2 text-[#009668] text-[14px] lg:text-[18px]`}
       >
       Log In
       </Link>
       <Link 
       href={ROUTES.register}
-      className={`rounded-[12px] text-[16px] cursor-pointer bg-[#009668] px-[20px] py-2 text-white text-[18px]`}
+      className={`rounded-[12px] cursor-pointer bg-[#009668] px-[20px] py-2 text-white text-[14px] lg:text-[18px]`}
       >
       Create Account
       </Link>
