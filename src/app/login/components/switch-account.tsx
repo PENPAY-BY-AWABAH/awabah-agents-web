@@ -233,7 +233,7 @@ export const SwitchAccount = ({email,password,onClose}:{email:string;password:st
             onChange={()=>{
             setAgreeTerms(!agreeTerms);
             }}
-            requred
+            required
             type="checkbox"
             value={agreeTerms}
             />

@@ -140,7 +140,7 @@ const Page = () => {
             onChange={()=>{
 
             }}
-            requred
+            required
             type="checkbox"
             value={true}
 
