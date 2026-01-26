@@ -99,7 +99,6 @@ export const OtpSection = ()=>{
         loading={loading}
         text="Save Password"
         type="submit"
-        
         />
         </div>
         </form>

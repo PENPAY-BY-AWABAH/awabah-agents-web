@@ -2,7 +2,9 @@
 /* eslint-disable react/no-unescaped-entities */
 import BaseButton from "@/app/components/baseButton"
 import BaseInput from "@/app/components/baseInput"
+import { BaseLoader } from "@/app/components/baseLoader"
 import { OTPBaseInput } from "@/app/components/baseOTPInput"
+import { ROUTES } from "@/app/includes/constants"
 import { LoginProps } from "@/app/includes/types"
 import useHttpHook from "@/app/includes/useHttpHook"
 import { useRouter } from "next/navigation"
@@ -17,15 +19,26 @@ export const OtpSection = ({email}:{email:string})=>{
         confirmPassword:""
     })
     const [counter,setCounter] = useState<number>(0);
+    const [loading,setLoading] = useState<boolean>(false);
     const [otp,setOtp] = useState<string>("");
-    const {handleEmailOTPVerification,loading} = useHttpHook();
+    const {handleEmailOTPVerification,handleCreatePassword} = useHttpHook();
     
     const handleOTPSubmit = ()=>{
+        setLoading(true)
         handleEmailOTPVerification({otp,email}).then((res)=>{
-            setSuccess(res.status)
+            setLoading(false)
+            // setSuccess(res.status)
+            if(res.status)
+            {
+                navigate.replace(ROUTES.login)
+            }
         })
     }
-   
+   const handleResetPassword = ()=>{
+    handleCreatePassword(formData).then((res)=>{
+        
+    })
+   }
     const handleResend = ()=>{
         // handleOtp({otp});
     }
@@ -35,53 +48,7 @@ export const OtpSection = ({email}:{email:string})=>{
             email
         })
     },[email])
-    
-    if(success)
-    {
-        return <div >
-        <div className="text-black text-[24px]  text-center ">Create New Password</div>
-        <div 
-        className="text m-auto my-[30px] w-[220px] w-full " >
-        <BaseInput 
-        type="password"
-        name="password"
-        value={formData.password}
-        required
-        onValueChange={({value})=>{
-            setFormData({
-                ...formData,
-                password:value
-            })
-        }}
-        label="New Password"
-        placeholder="Enter New Password."
-        />
-         <BaseInput 
-        type="password"
-        name="confirmPassword"
-        max={20}
-        value={formData.confirmPassword}
-        required
-        onValueChange={({value})=>{
-            setFormData({
-                ...formData,
-                confirmPassword:value
-            })
-        }}
-        label="Confirm Password"
-        placeholder="Enter confirm Password."
-        />
-         <div 
-        className="mt-10" />
-        <BaseButton
-        loading={loading}
-        text="Save Password"
-        type="submit"
-        
-        />
-        </div>
-    </div>
-    }
+   
     return <div >
         <div className="text-black text-[16px] font-semibold text-center mt-4 ">OTP Code</div>
       <div className="text-[#000000A6] text-[12px] font-normal text-center mb-4 mt-4 w-[80%] m-auto">Please enter the code sent to your email to verify your identity and continue.</div>
@@ -111,5 +78,6 @@ export const OtpSection = ({email}:{email:string})=>{
             >Resend</button>
         </div>
         </div>
+        {loading && <BaseLoader modal color="green" text="" size={"lg"} />}
     </div>
 }

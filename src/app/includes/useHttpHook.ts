@@ -280,13 +280,10 @@ const useHttpHook = () => {
                 requestType:"json"
             }).then((res) => {
                 setLoading(false);
-                if(!res.status)
-                {
                     ShowMessage({
                     position:"center",
                     ...res
                 })
-                }
                 resolve(res);
             })
         })
@@ -684,6 +681,24 @@ const handleEmploymentDetails =(data:any)=>{
             })
         })
     }
+    const handleCreatePassword  =(data:any)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-save-parent-information`,
+                body:data,
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                ShowMessage({
+                    position:"center",
+                    ...res
+                })
+                resolve(res);
+            })
+        })
+    }
     return {
         loading,
         handleGetTransactions,
@@ -724,7 +739,8 @@ const handleEmploymentDetails =(data:any)=>{
         verifyTransaction,
         getAllCommisionStats,
         handleEmploymentDetails,
-        handleParentDetails
+        handleParentDetails,
+        handleCreatePassword
     }
 }
 export default useHttpHook;
