@@ -28,10 +28,10 @@ useEffect(() => {
   return (
     <html lang="en">
       <body
-        className={`h-screen`}
+        className={`h-screen bg-white overflow-hidden`}
       >
         <Suspense
-        fallback={<div className="flex items-center justify-center h-screen w-screen">
+        fallback={<div className="flex items-center justify-center h-screen w-screen bg-white">
           <BaseLoader color="green" size="lg" />
           <div className="mt-4 text-[16px] font-medium text-black">Loading...</div>
           </div>}

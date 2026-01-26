@@ -681,7 +681,7 @@ const handleEmploymentDetails =(data:any)=>{
             })
         })
     }
-    const handleCreatePassword  =(data:any)=>{
+    const handleCreatePassword  = (data:any)=>{
         return new Promise<ApiResponse>((resolve) => {
          setLoading(true);
            call({
@@ -695,6 +695,27 @@ const handleEmploymentDetails =(data:any)=>{
                     position:"center",
                     ...res
                 })
+                resolve(res);
+            })
+        })
+    }
+const handleRSAPINRequest =(data:any)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-request-rsa-pin`,
+                body:data,
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                if(!res.status)
+                {
+                ShowMessage({
+                    position:"center",
+                    ...res
+                })
+            }
                 resolve(res);
             })
         })
@@ -740,7 +761,8 @@ const handleEmploymentDetails =(data:any)=>{
         getAllCommisionStats,
         handleEmploymentDetails,
         handleParentDetails,
-        handleCreatePassword
+        handleCreatePassword,
+        handleRSAPINRequest
     }
 }
 export default useHttpHook;

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable react/no-unescaped-entities */
 import BaseButton from "@/app/components/baseButton"
@@ -10,7 +11,7 @@ import useHttpHook from "@/app/includes/useHttpHook"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
-export const OtpSection = ({email}:{email:string})=>{
+export const OtpSection = ({email,onSuccess}:{email:string;onSuccess:()=>void})=>{
     const navigate = useRouter()
     const [success,setSuccess] = useState<boolean>(false)
     const [formData,setFormData] = useState<LoginProps>({
@@ -28,6 +29,10 @@ export const OtpSection = ({email}:{email:string})=>{
         handleEmailOTPVerification({otp,email}).then((res)=>{
             setLoading(false)
             setSuccess(res.status)
+            if(res.status)
+            {
+            onSuccess();
+            }
         })
     }
    const handleResetPassword = ()=>{
@@ -44,6 +49,8 @@ export const OtpSection = ({email}:{email:string})=>{
             email
         })
     },[email])
+    useEffect(()=>{
+    },[success])
     if(success)
     {
         return <div 
@@ -57,13 +64,7 @@ export const OtpSection = ({email}:{email:string})=>{
         </div>
         <div className="text-black text-[14px] font-normal text-center mt-4 ">Your email has been verified and registration successful.</div>
         <div className="item-center justify-center px-10 pt-5">
-        <BaseButton
-        text="Go to Login"
-        onClick={()=>{
-            navigate.replace(ROUTES.login)
-        }}
-        type="button"
-        />
+        
     </div>
     </div>
     }

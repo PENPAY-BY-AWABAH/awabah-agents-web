@@ -43,19 +43,24 @@ const Page = ()=>{
         navigate.replace(ROUTES.dashboard) 
      }
     },[])
-    return <div className="bg-white min-h-full px-[100px] py-[60px]">
+    return <div className="bg-white min-h-full lg:px-[100px] p-[16px] lg:py-[60px] overflow-hidden">
      <div className="mb-6">
              <button 
              onClick={()=>{
              navigate.back();
              }}
-             className="flex items-center gap-2 cursor-pointer">
-                 <BackIcon />
+             className="flex items-center gap-2 cursor-pointer ">
+                <span className="hidden lg:block" >
+                 <BackIcon  />
+                 </span>
+                 <span className="lg:hidden">
+                 <BackIcon size={30}  />
+                 </span>
                  <div className="text-black text-[18px]">Back</div>
              </button>
              </div>
-       <div className="m-auto items-center text-center   ">
-      <div  className="m-auto items-center text-center  rounded-[30px] min-h-[400px] shadow w-[500px] p-[30px] pb-[60px]">
+       <div className="m-auto items-center text-center overflow-scroll px-[8px] pb-[8px] ">
+      <div  className="m-auto items-center text-center rounded-[30px] lg:min-h-[400px] shadow lg:w-[500px] px-[16px]  lg:p-[30px] pb-[20px]  lg:pb-[60px]">
       <div className="text-black text-[24px] font-bold text-center">Login</div>
       <form onSubmit={handleSubmit}>
         <BaseInput 
