@@ -31,7 +31,7 @@ export interface SignUpProps {
 }
 const Page = () => {
     const [index, setIndex] = useState<number>(0)
-    const [section, setSection] = useState<RegisterProps>("User Details")
+    const [section, setSection] = useState<RegisterProps>("Success")
     const navigate = useRouter();
     const { handleRegisterUser, loading } = useHttpHook();
     const [formData, setFormData] = useState<SignUpProps>({

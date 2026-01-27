@@ -40,7 +40,23 @@ export const OtpSection = ({email,onClose,trackingId}:{email:string;onClose:()=>
             email
         })
     },[email])
-    
+     useEffect(()=>{
+        if(startTimer)
+        {
+        setCounter(30)
+        setStartTimer(false)
+       const intv = setInterval(()=>{
+        setCounter((count)=>{
+            if(count < 1)
+            {
+              clearInterval(intv)
+              return 0; 
+            }
+            return count - 1;
+        })
+       },1000)
+    }
+    },[startTimer])
      useEffect(()=>{
         if(startTimer)
         {
@@ -71,6 +87,8 @@ export const OtpSection = ({email,onClose,trackingId}:{email:string;onClose:()=>
         onChange={(otp)=>{
         setOtp(otp)
         }}
+        isInputNum
+        count={4}
         />
         </div>
       <div className="text-[#B8860B] text-[14px] font-normal text-center mb-4 mt-4 w-[80%] m-auto">0.{counter.toPrecision(2).replace("0.","")}</div>
