@@ -14,6 +14,7 @@ import BaseButton from "@/app/components/baseButton";
 import { PaymentVericationModal } from "./components/payment_verification_modal";
 import { Split } from "lucide-react";
 import { CONSTANT } from "@/app/includes/constants";
+import { BaseLoader } from "@/app/components/baseLoader";
 interface PaymentProp {
     rsaPin?: string;
     pfaName?: string;
@@ -140,21 +141,26 @@ const Page = () => {
         setFormData(JSON.parse(data))
      }
     },[])
-    return <div className="bg-white h-screen p-4">
+    return <div className="bg-white h-screen lg:p-4">
         <div className="mb-6">
             <button
                 onClick={() => {
                     navigate.back();
                 }}
                 className="flex items-center gap-2 cursor-pointer">
-                <BackIcon />
+                 <span className="hidden lg:block" >
+                 <BackIcon  />
+                 </span>
+                 <span className="lg:hidden">
+                 <BackIcon size={30}  />
+                 </span>
                 <div className="">Back</div>
             </button>
         </div>
         <form
             onSubmit={handleSubmit}
         >
-            <div className="m-auto items-center text-center  rounded-[30px] min-h-[400px] shadow w-[500px] p-[30px] pb-[60px]">
+            <div className="m-auto items-center text-center  rounded-[30px] min-h-[400px] shadow lg:w-[500px] p-[16px] lg:p-[30px] pb-[180px] lg:pb-[60px]">
                 <div className="text-black text-[24px] text-center mb-5">Fill in the details to pay</div>
                 <BaseInput
                     required
@@ -170,6 +176,7 @@ const Page = () => {
                             rsaPin: value
                         });
                     }}
+                    max={15}
                 />
                 <BaseInput
                     required
@@ -244,7 +251,6 @@ const Page = () => {
                     <BaseButton
                         text={formData?.isValid ? "Continue" : "Validate RSA PIN"}
                         type="submit"
-                        loading={loading}
                     />
                 </div>
             </div>
@@ -253,6 +259,7 @@ const Page = () => {
         onClose={()=>setPaymentDetails(null)}
         details={paymentDetails}
         />}
+        {loading && <BaseLoader modal color="green" size="lg" />}
     </div>
 }
 export default Page;

@@ -101,7 +101,7 @@ if(typeof props.value === "string")
    onInvalid={e => (e.target as HTMLInputElement).setCustomValidity(`${props.name} is required.`)}
    onInput={e => (e.target as HTMLInputElement).setCustomValidity('')}
   />}
-   {props.disabled?<span className='input-icon pt-2'>
+   {props.disabled?<span className='input-icon pt-2 bg-white'>
     <Ban color="red" size={15} />
    </span>:props.type === "password" && <span
    onClick={()=>setToggleEye(!toggleEye)} className='input-icon pt-[5px]'>

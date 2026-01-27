@@ -76,7 +76,7 @@ export const UsersSection = ({page}:{page?:boolean})=>{
     }
     return <div>
         <div className="flex" >
-        <div className="text-[24px] flex-1" >All Users</div>
+        <div className="text-[18px] font-medium lg:text-[24px] flex-1" >All Users</div>
         {!page &&<Link href={ROUTES.history} className={`text-[22px] text-${COLOURS.green}`} >View All</Link>}
         </div>
         <div className="relative">
@@ -119,15 +119,15 @@ export const UsersSection = ({page}:{page?:boolean})=>{
             <div className="m-auto flex justify-center item-center text-center">
             <BaseLoader color="green" size="lg" />
             </div>
-            <div className="m-auto text-center">Fetching users...</div>
+            <div className="m-auto text-center text-[12px] lg:text-[14px]">Fetching users...</div>
         </div>}
         {filteredlist.length === 0 &&<div className="m-auto my-5 mt-[50px] text-center">
         <div className="m-auto flex justify-center item-center text-center">
         <DatabaseIcon className="text-[#999]" size={50}/>
         </div>
-        <div className="m-auto text-center text-[#44444]">No record found!</div>
+        <div className="m-auto text-center text-[#44444] text-[12px] lg:text-[14px]">No record found!</div>
         </div>}
-        <div className="my-8 mt-6 grid grid-cols-4 gap-3 ">
+        <div className="mt-[16px] lg:mb-8 grid lg:grid-cols-4 gap-[16px] mb-[150px] ">
         {filteredlist.map((item,i)=><div key={i} className="items-center  border-[#C4C4C459] border-[0.5px] rounded-[30px] p-5 shadow">
         <div className="flex items-center gap-3">
             <div className="" >
