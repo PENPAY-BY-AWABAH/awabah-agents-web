@@ -28,9 +28,9 @@ export const CommissionWalletBalance =()=>{
     useEffect(()=>{
         GetWalletInfo();
     },[])
-    return  <div className="mt-4 lg:mt-10 relative lg:h-30">
+    return  <div className="mt-4 lg:mt-10 relative lg:h-40">
             <GreenBackground />
-            <div className="absolute top-0 left-0 w-full p-[16px] lg:p-7 flex " >
+            <div className="absolute top-0 left-0 w-full p-[16px] lg:p-[16px] lg:px-[30px] flex " >
             <div className="flex-grow" >
                 <div className="text-[#FFFFFFD9] font-light flex item-center gap-1"><span className="w-[170px]">Total Commission Earned</span><button
                 className="cursor-pointer ms-[-30px]"
@@ -38,7 +38,7 @@ export const CommissionWalletBalance =()=>{
                 >
                 {showBalance?<EyeOpen />:<EyeClosed />}
                 </button></div>
-                <div className="text-white lg:font-normal font-bold text-[20px] lg:text-[38px] ">{MaskBalance(balance.earnings!,!showBalance)}</div>
+                <div className="text-white lg:font-normal font-bold text-[20px] lg:text-[30px] ">{MaskBalance(balance.earnings!,!showBalance)}</div>
                 <div className="text-[#FFD983] text-[12px] lg:text-[14px]">Current balance: {MaskBalance((balance?.earnings || "0.00"),!showBalance)}<span></span></div>
             </div>
             <div className="lg:me-20 flex items-center">

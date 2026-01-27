@@ -40,8 +40,8 @@ export const CommissionSection = ({page}:{page?:boolean})=>{
 
    
     return <div>
-        <div className="flex" >
-        <div className="text-[18px] font-medium lg:text-[24px] mt-[16px]">Commission History</div>
+        <div className="flex mt-[16px] " >
+        <div className="text-[18px] font-medium lg:text-[24px] ">Commission History</div>
         {!page &&<Link href={ROUTES.history} className={`text-[22px] text-${COLOURS.green}`} >View All</Link>}
         </div>
         {loading && <div className="m-auto  mt-5 text-center">
