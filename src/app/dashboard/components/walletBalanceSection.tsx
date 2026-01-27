@@ -39,7 +39,7 @@ export const WalletBalance =()=>{
                 {showBalance?<EyeOpen />:<EyeClosed />}
                 </button></div>
                 <div className="text-white lg:font-normal font-bold text-[20px] lg:text-[38px] ">{MaskBalance(balance.balance,!showBalance)}</div>
-                <div className="text-[#FFD983] text-[12px] lg:text-[38px]">Total Earned: {MaskBalance((balance?.earnings || "0.00"),!showBalance)}<span></span></div>
+                <div className="text-[#FFD983] text-[12px] lg:text-[14px]">Total Earned: {MaskBalance((balance?.earnings || "0.00"),!showBalance)}<span></span></div>
             </div>
             <div className="lg:me-20 flex items-center">
                 <Link 

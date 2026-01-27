@@ -69,7 +69,7 @@ export const PerformanceSection = ()=>{
             {btns.map((a,i)=><div key={i} className="bg-[#C4C4C426] min-h-[200px] grid grid-cols-1 text-center items-center flex-1 rounded-[20px] lg:rounded-[40px] p-8 min-h-[163px]" >
             <div className={`text-center m-auto ${a.route} `}>{a.icon}</div>
             <div className="text-center text-black font-bold lg:font-medium text-[20px] lg:text-[28.3px] mt-3">{(stats[a.value!] || 0)}</div>
-            <div className="text-center text-black lg:text-[18.8px] mt-3">{a.title}</div>
+            <div className="text-center text-black text-[12px] lg:text-[18.8px] mt-3">{a.title}</div>
             </div>)}
         </div>
     </div>

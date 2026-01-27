@@ -71,7 +71,7 @@ const Page = ()=>{
         onValueChange={({value})=>{
             setFormData({
                 ...formData,
-                email:value
+                email:String(value).trim().toLowerCase()
             })
         }}
         label="Email"
@@ -85,7 +85,7 @@ const Page = ()=>{
         onValueChange={({value})=>{
             setFormData({
                 ...formData,
-                password:value
+                password:String(value).trim()
             })
         }}
         label="Password"

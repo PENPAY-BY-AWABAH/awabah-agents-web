@@ -69,9 +69,9 @@ export const HistorySection = ({ page }: { page?: boolean }) => {
                 className="bg-[#C4C4C426] h-[100px]"
             />
         </div>}
-        <div className="flex" >
-            <div className="text-[24px] flex-1 mt-4" >Withdrawal History</div>
-            {!page && <Link href={ROUTES.history} className={`text-[22px] text-${COLOURS.green}`} >View All</Link>}
+        <div className="flex font-medium item-center mt-4 text-[14px] lg:text-[24px]" >
+            <div className=" flex-1 " >Withdrawal History</div>
+            {!page && <Link href={ROUTES.history} className={`text-${COLOURS.green} m-auto`} >View All</Link>}
         </div>
         {loading && <div className="m-auto  mt-5 text-center">
             <div className="m-auto flex justify-center item-center text-center">
@@ -79,7 +79,7 @@ export const HistorySection = ({ page }: { page?: boolean }) => {
             </div>
             <div className="m-auto text-center">Fetching Withdrawals...</div>
         </div>}
-        {filteredList.length === 0 &&<div className="m-auto my-5 mt-[50px] mb-[120px] text-center">
+        {filteredList.length === 0 &&<div className="m-auto my-5 mt-[50px] mb-[150px] text-center">
         <div className="m-auto flex justify-center item-center text-center">
         <DatabaseIcon className="text-[#999]" size={50}/>
         </div>

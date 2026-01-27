@@ -41,7 +41,7 @@ const Page = () => {
         })
     }
     const list = searchText === "" ? listOfBanks : listOfBanks.filter((bnk) => bnk.name?.toLowerCase().includes(searchText.toLowerCase()));
-    return <div className="fixed top-0 left-0 w-full h-full bg-white p-6 z-10">
+    return <div className="fixed top-0 left-0 w-full h-full bg-white p-[16px] lg:p-6 z-10">
         <div className="mb-6">
             <button
                 onClick={() => {
@@ -51,7 +51,12 @@ const Page = () => {
                     navigate.back();
                 }}
                 className="flex items-center gap-2 cursor-pointer">
-                <BackIcon />
+                <span className="hidden lg:block" >
+                    <BackIcon />
+                </span>
+                <span className="lg:hidden">
+                    <BackIcon size={30} />
+                </span>
                 <div className="">Back</div>
             </button>
         </div>
