@@ -15,6 +15,8 @@ import { SuccessComponent } from "./components/success";
 import { PaymentComponent } from "./components/payment";
 import { EmploymentPage } from "./components/employment";
 import { ParentDetailPage } from "./components/parentDetails";
+import { ReturnAllNumbers } from "@/app/includes/functions";
+import { BaseLoader } from "@/app/components/baseLoader";
 type RegisterProps = "User Details" | "Verify Email" | "Next Of Kin" | "Success" | "Pay" | "Employment Details" | "Parent Details - (Father)" | "Parent Details - (Mother)";
 export interface SignUpProps {
     email?: string;
@@ -104,7 +106,7 @@ const Page = () => {
         setFormData(JSON.parse(formFields));
       }
     },[])
-    return <div className="bg-white h-full px-[100px] py-[60px]">
+    return <div className="bg-white h-full lg:px-[100px] lg:py-[60px] overflow-none">
         {section !== "Success" && <div className="mb-6">
             <button
                 onClick={() => {
@@ -117,12 +119,17 @@ const Page = () => {
                     navigate.back();
                 }}
                 className="flex items-center gap-2 cursor-pointer">
-                <BackIcon />
+                <span className="hidden lg:block" >
+                    <BackIcon />
+                </span>
+                <span className="lg:hidden">
+                    <BackIcon size={30} />
+                </span>
                 <div className="text-black text-[18px]">Back</div>
             </button>
         </div>}
-        {section !== "Success" ? <div className="m-auto items-center text-center h-full overflow-x-scroll   ">
-            <div className="m-auto items-center text-center  rounded-[30px] min-h-[400px] shadow w-[500px] p-[30px] pb-[60px]">
+        {section !== "Success" ? <div className="m-auto items-center text-center h-full overflow-x-scroll">
+            <div className="m-auto items-center text-center  rounded-[30px] min-h-[400px] p-[16px] shadow lg:w-[500px] lg:p-[30px] pb-[180px] lg:pb-[60px]">
                 <div className="text-black text-[24px] font-bold text-center mb-[20px] ">{section}</div>
                 <div className="w-[200px]">
                     <BaseHorizontalIndicator
@@ -219,7 +226,7 @@ const Page = () => {
                             onValueChange={({ value }) => {
                                 setFormData({
                                     ...formData,
-                                    nin: value
+                                    nin:ReturnAllNumbers(value)
                                 })
                             }}
                             label="NIN (National Identity Number)"
@@ -234,19 +241,19 @@ const Page = () => {
                             onValueChange={({ value }) => {
                                 setFormData({
                                     ...formData,
-                                    bvn: value
+                                    bvn: ReturnAllNumbers(value)
                                 })
                             }}
                             label="BVN (BANK Verification Number)"
                             placeholder="Enter BVN."
                         />
                         <BaseButton
-                            loading={loading}
                             text="Next"
                             type="submit"
                         />
 
                     </form>
+                {loading && <BaseLoader modal color="green" size="lg" />}
                 </div>}
                 {section === "Verify Email" && <div >
                     <OtpSection

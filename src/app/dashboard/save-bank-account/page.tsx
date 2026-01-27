@@ -42,24 +42,29 @@ const Page = () => {
         }
     }, []);
 
-    return <div className="fixed top-0 left-0 w-full h-full bg-white p-6 z-10">
+    return <div className="fixed top-0 left-0 w-full h-full bg-white p-[16px] lg:p-6 z-10">
         <div className="mb-6">
             <button
                 onClick={() => {
                     navigate.back();
                 }}
                 className="flex items-center gap-2 cursor-pointer">
-                <BackIcon />
+                <span className="hidden lg:block" >
+                    <BackIcon />
+                </span>
+                <span className="lg:hidden">
+                    <BackIcon size={30} />
+                </span>
                 <div className="">Back</div>
             </button>
         </div>
         <div className="m-auto items-center text-center   ">
-            <div className="m-auto items-center text-center  rounded-[30px] min-h-[400px] shadow w-[500px] p-[30px] pb-[60px]">
+            <div className="m-auto items-center text-center  rounded-[30px] min-h-[400px] shadow lg:w-[500px] p-[16px] lg:p-[30px] pb-[60px]">
                 <div className="m-auto items-center text-center   ">
                     <div className="w-full">
-                        <div className="text-black text-[24px] font-bold text-center mb-6">Saved Accounts</div>
-                        <div className="text-black text-[14px] font-normal text-left mb-4 mt-6">Select the account you want to send funds to</div>
-                        <div className="grid grid-cols-1 gap-4 mb-12 ">
+                        <div className="text-black text-[24px] font-bold text-center mb-3 lg:mb-6">Saved Accounts</div>
+                        <div className="text-black text-[14px] font-normal text-left mb-4 lg:mt-6">Select the account you want to send funds to</div>
+                        <div className="grid grid-cols-1 lg:gap-4 mb-3 lg:mb-12 ">
                             {listOfBanks.map((bnk, i) => <button
                                 key={i}
                                 onClick={() => {
@@ -76,7 +81,7 @@ const Page = () => {
                                 <div className="text-center flex justify-center items-center mx-3">
                                     <BankIcon selected={selectedOption !== bnk} />
                                 </div>
-                                <div className="text-left flex-1">{bnk?.bankName} : {bnk?.accountNumber}</div>
+                                <div className="text-left text-[13px] flex-1">{bnk?.bankName} : {bnk?.accountNumber}</div>
                             </button>)}
                             {listOfBanks.length < 2 && <button
                                 onClick={() => {
@@ -142,7 +147,7 @@ const Page = () => {
             </div>
         </div>
         {addNewAccountDetails && !loading && <div className="fixed flex inset-0 items-center justify-center z-50 m-auto bg-[rgba(0,0,0,0.5)] bg-opacity-50 h-full w-full ">
-    <div className="m-auto items-center justify-center">
+    <div className="m-auto items-center justify-center p-[16px]">
             <div className="m-auto items-center text-center  mb-[30px] rounded-[30px] shadow w-full max-w-[500px] p-[20px] pb-[30px] bg-white ">
                 <div className="text-black flex font-medium text-center mb-2 m-auto items-center justify-center">
                     <svg width="86" height="86" viewBox="0 0 86 86" fill="none" xmlns="http://www.w3.org/2000/svg">

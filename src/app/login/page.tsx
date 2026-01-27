@@ -36,7 +36,6 @@ const Page = ()=>{
         })
     }
     useEffect(()=>{
-     localStorage.clear();
      const token =localStorage.getItem(CONSTANT.LocalStore.token);
      if(token)
      {
