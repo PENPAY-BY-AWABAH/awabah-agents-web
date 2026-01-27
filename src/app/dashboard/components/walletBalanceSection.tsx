@@ -152,7 +152,7 @@ export const WalletBalance = () => {
                     <BaseButton
                         text="Okay"
                         onClick={() => {
-
+                            update({showCommissionBalance:false});
                         }}
                         type="button"
                     />
