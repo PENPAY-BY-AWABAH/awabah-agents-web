@@ -767,6 +767,29 @@ const handleRSAPINRequest =(data:any)=>{
             })
         })
     }
+    const handleWithdrawalToAccount  =(data:any)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-withdrawal-commission`,
+                body:data,
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                
+                if(!res.status)
+                {
+                
+                ShowMessage({
+                    position:"center",
+                    ...res
+                })
+                }
+                resolve(res);
+            })
+        })
+    }
     return {
         loading,
         handleGetTransactions,
@@ -811,7 +834,8 @@ const handleRSAPINRequest =(data:any)=>{
         handleCreatePassword,
         handleRSAPINRequest,
         handleOtherDetails,
-        handleUpdateWalletPIN
+        handleUpdateWalletPIN,
+        handleWithdrawalToAccount
     }
 }
 export default useHttpHook;

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 /* eslint-disable react-hooks/set-state-in-effect */
 "use client"
 import { BackIcon } from "@/app/assets/back-icon";
@@ -11,16 +12,19 @@ import useHttpHook from "@/app/includes/useHttpHook";
 import { ROUTES } from "@/app/includes/constants";
 import { LinkBankModal } from "./components/link-modal";
 import BaseModal from "@/app/components/baseModal";
+import { TransactionPINModal } from "../withdrawal/components/transaction-PIN";
 
 const Page = () => {
     const [loadingRemoveAccount, setLoadingRemoveAccount] = useState<boolean>(false);
     const [listOfBanks, setListOfBanks] = useState<SavedAccountProps[]>([]);
     const [selectedOption, setSelectedOption] = useState<SavedAccountProps | null>(null)
     const [addNewAccount, setAddNewAccount] = useState<boolean>(false);
+    const [txtPin, setTxtPin] = useState<string>("");
     const [addNewAccountDetails, setAddNewAccountDetails] = useState<BankItemProps | null>(null);
+    const [showTxtPin, setShowTxtPin] = useState<boolean>(false);
 
     const navigate = useRouter();
-    const { getMyBanks, removeAcount, loading } = useHttpHook()
+    const { getMyBanks, removeAcount, loading,handleWithdrawalToAccount } = useHttpHook()
     const ListOfBanks = () => {
         getMyBanks().then((res) => {
             if (res.status) {
@@ -41,7 +45,13 @@ const Page = () => {
             localStorage.removeItem("newlyAddedAccount");
         }
     }, []);
+const handleWithdrawal = ()=>{
+handleWithdrawalToAccount({
+    pin:txtPin
+}).then((res)=>{
 
+})
+}
     return <div className="fixed top-0 left-0 w-full h-full bg-white p-[16px] lg:p-6 z-10">
         <div className="mb-6">
             <button
@@ -116,8 +126,8 @@ const Page = () => {
                             <div className="mb-3"  >
                                 <BaseButton
                                     disabled={selectedOption === null}
-                                    onClick={() => {
-
+                                    onClick={()=>{
+                                        setShowTxtPin(true)
                                     }}
                                     text="Withdraw to this Account"
                                     type="button"
@@ -169,6 +179,13 @@ const Page = () => {
         {loading && <LinkBankModal
             onClose={() => { }}
             text={listOfBanks.length > 0 ? "Linking your bank account..." : "Loading your bank accounts..."}
+        />}
+        {showTxtPin &&<TransactionPINModal
+        onClose={()=>{
+            setShowTxtPin(false)
+        }}
+        account_number={selectedOption?.accountNumber!}
+        bankName={selectedOption?.bankName!}
         />}
     </div>
 }
