@@ -29,9 +29,9 @@ function Layout({
         <BaseLoader modal size="lg" color="green" text="Authenticating user..."/>
       </div>
     }
-    return <div className="grid grid-cols-1 ">
+    return <div className="grid grid-cols-1 h-screen overflow-hidden">
     <Navbar />
-    <main className=" flex-1 h-screen overflow-scroll w-screen bg-white pt-30 text-black px-18 m-auto ">
+    <main className=" flex-1 h-screen overflow-scroll w-screen bg-white p-[16px] lg:pt-30 text-black lg:px-18 m-auto ">
     {children} 
     </main>
     </div>

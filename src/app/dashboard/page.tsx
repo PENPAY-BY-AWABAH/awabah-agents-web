@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 import { useEffect, useState } from "react";
 import { CopyIcon } from "../assets/copy-icon";
@@ -7,6 +8,7 @@ import { PerformanceSection } from "./components/performanceSection";
 import { WalletBalance } from "./components/walletBalanceSection";
 import { CopyToClipboard } from "../includes/functions";
 import useHttpHook from "../includes/useHttpHook";
+import { placeHolderAvatar } from "../includes/constants";
 export interface UserDetails {
     firstName?: string;
     lastName?: string;
@@ -71,14 +73,24 @@ const Page = () => {
         GetProfile();
     }, [])
     return <div >
-        <div className="text-[34px] font-bold">Welcome, {details?.firstName || "User"}!</div>
-        <div className="text-[20px] text-[#000000A6] font-normal flex items-center gap-1">{details?.agentId} <button
+        <div className="flex item-center gap-2">
+         <div className="lg:hidden h-[55px] w-[55px] bg-[#C4C4C459] border-[0.5px] rounded-[55px] overflow-hidden" >
+            <img src={details.avatar?details.avatar:placeHolderAvatar.src}
+                alt={"oo"}
+                className="h-full w-full"/>
+        </div>
+        <div className="flex-grow">
+        <div className="text-[18px] lg:text-[34px] font-bold">Welcome, {details?.firstName || "User"}!</div>
+        <div className="text-[14px] lg:text-[20px]  text-[#000000A6] font-normal flex items-center gap-1">{details?.agentId} <button
             onClick={() => {
                 CopyToClipboard(String(details?.agentId));
             }}
             className="cursor-pointer">
             <CopyIcon />
-        </button></div>
+        </button>
+        </div>
+        </div>
+        </div>
         <WalletBalance />
         <FeaturesBtnSection />
         <PerformanceSection />
