@@ -34,7 +34,7 @@ export const FeaturesBtnSection =()=>{
         }
     ])
     const navigation = useRouter()
-    return  <div className="my-10 mt-20">
+    return  <div className="my-[10px] lg:my-10 lg:mt-20">
             <div className="flex items-center gap-10 text-center">
                 {btns.map((btn,i)=><div 
                 key={i}
@@ -47,11 +47,11 @@ export const FeaturesBtnSection =()=>{
                    })) 
                    navigation.push(btn.route!)
                 }}
-                className={`flex cursor-pointer shadow items-center gap-1 justify-center  p-2 px-4 text-[20px] ${btn.selected?`bg-${COLOURS.green}`:`bg-${COLOURS.white}`}  ${!btn.selected?`text-${COLOURS.green}`:`text-${COLOURS.white}`} w-30 h-30 rounded-[100px]`}
+                className={`flex m-auto cursor-pointer shadow items-center gap-1 justify-center  p-2 lg:px-4 text-[20px] ${btn.selected?`bg-${COLOURS.green}`:`bg-${COLOURS.white}`}  ${!btn.selected?`text-${COLOURS.green}`:`text-${COLOURS.white}`} w-[65px] h-[65px] lg:w-30 lg:h-30 rounded-[65px] lg:rounded-[100px]`}
                 >
                     {btn.icon}
                 </button>
-                <div className="text-[16px] mt-3">{btn.title}</div>
+                <div className="text-[12px] text-center m-auto lg:text-[16px] mt-3">{btn.title}</div>
                 </div>
                 )}
             </div>

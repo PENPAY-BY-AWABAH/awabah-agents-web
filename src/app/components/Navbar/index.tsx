@@ -38,7 +38,7 @@ export const Navbar = ()=>{
         <span >{item.title}</span>
         </Link>)}
         <div className="flex-1 gap-1 flex text-center items-center justify-center">
-        <Link href={ROUTES.notification} className="flex-1 gap-1 flex py-5 text-center items-center justify-center"  >
+        <Link href={"#"} className="flex-1 gap-1 flex py-5 text-center items-center justify-center"  >
         <BellIcon />
         </Link>
         </div>

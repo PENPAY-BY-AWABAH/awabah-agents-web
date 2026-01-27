@@ -8,7 +8,9 @@ import { PerformanceSection } from "./components/performanceSection";
 import { WalletBalance } from "./components/walletBalanceSection";
 import { CopyToClipboard } from "../includes/functions";
 import useHttpHook from "../includes/useHttpHook";
-import { placeHolderAvatar } from "../includes/constants";
+import { placeHolderAvatar, ROUTES } from "../includes/constants";
+import Link from "next/link";
+import { BellIcon } from "../assets/bell-icon";
 export interface UserDetails {
     firstName?: string;
     lastName?: string;
@@ -89,6 +91,13 @@ const Page = () => {
             <CopyIcon />
         </button>
         </div>
+        </div>
+        <div className="lg:hidden flex-1 gap-1 flex text-center items-center justify-center">
+        <Link 
+        href={"#"} 
+        className="flex-1 gap-1 flex text-center items-center justify-center"  >
+        <BellIcon />
+        </Link>
         </div>
         </div>
         <WalletBalance />
