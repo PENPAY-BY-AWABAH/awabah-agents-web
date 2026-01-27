@@ -12,7 +12,10 @@ import { toast } from "react-toastify";
 import { OtpSection } from "./components/otpSection";
 import { RSAPinSection } from "./components/rsaPINRequest";
 import { CreatAccounContinue } from "./components/create_account_continue";
-type RegisterProps = "Create Account" | "Verify Email" | "RSA PIN Request" ;
+import { SuccessComponent } from "../dashboard/user-onboarding/components/success";
+import { SuccessSection } from "./components/success";
+import { WalletPINSection } from "./components/walletPINSection";
+type RegisterProps = "Create Account" | "Verify Email" | "RSA PIN Request" | "Account" | "Wallet Pin" | "Confirm Pin" ;
 export interface SignUpProps {
 email?:string;
 firstName?:string;
@@ -25,6 +28,7 @@ businessName?:string;
 state?:string;
 howDoYouFindUs?:string;
 address?:string;
+agentId?:string;
 }
 const Page = () => {
     const [section, setSection] = useState<RegisterProps>("Create Account")
@@ -33,7 +37,8 @@ const Page = () => {
     const { handleRegister, loading, } = useHttpHook();
     const [formData, setFormData] = useState<SignUpProps>({
         email: "",
-        password: ""
+        password: "",
+        agentId:""
     })
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault()
@@ -91,6 +96,11 @@ const Page = () => {
                             value={formData.fullName}
                             required
                             onValueChange={({ value }) => {
+                                const splitName = String(value).split(" ")
+                                if(splitName.length > 2)
+                                {
+                                    return
+                                }
                                 setFormData({
                                     ...formData,
                                     fullName: value
@@ -108,7 +118,7 @@ const Page = () => {
                             onValueChange={({ value }) => {
                                 setFormData({
                                     ...formData,
-                                    email: value
+                                    email: String(value).toLowerCase().trim()
                                 })
                             }}
                             max={140}
@@ -197,7 +207,7 @@ const Page = () => {
                        setSuccess(true)
                        setTimeout(()=>{
                        setSection("Create Account") 
-                       },2500)
+                       },3000)
                     }}
                     />}
                     {section === "RSA PIN Request" && <RSAPinSection
@@ -209,7 +219,31 @@ const Page = () => {
 
                     }}
                     />}
-                {section === "Create Account" && success && <CreatAccounContinue />}
+                {section === "Create Account" && success && <CreatAccounContinue
+                signUpform={formData}
+                onSuccess={(agentId)=>{
+                    setFormData({
+                                 ...formData,
+                                 agentId
+                                })
+                    setSection("Account")
+                }}
+                />}
+                {section === "Account" && <SuccessSection 
+                signUpForm={formData}
+                onClose={()=>{
+
+                }}
+                onContinue={()=>{
+                   setSection("Wallet Pin") 
+                }}
+                />}
+                {section === "Wallet Pin" && <WalletPINSection 
+                signUpForm={formData}
+                onSuccess={()=>{
+                   setSection("Confirm Pin") 
+                }}
+                />}
                 </div>
             </div>
         </div>

@@ -56,10 +56,14 @@ onClick={()=>{
     setShow(true);
   }
 }}
-className={`h-[45px] p-3 ${selected?"text-black":"text-gray-500"} relative cursor-pointer`} 
+className={`h-[45px] p-3 ${selected?"text-black":"text-gray-500"} relative cursor-pointer overflow-hidden whitespace-nowrap`} 
 >
 <span >{selected?selected:props.placeholder}</span>
-{props.disabled?<Ban className="absolute right-[10px] top-[15px]" size={15} color="red"/>:<ChevronDown className="absolute right-[10px] top-[15px]" size={15} />}
+{props.disabled?<Ban className="absolute right-[10px] top-[15px]" size={15} color="red"/>:<div 
+className="absolute right-[0px] top-[15px] bg-white px-[10px] py-[2px]"
+>
+  <ChevronDown className="" size={15} />
+  </div>}
 </div>:<select 
 disabled={props?.disabled}
 required={props.required}

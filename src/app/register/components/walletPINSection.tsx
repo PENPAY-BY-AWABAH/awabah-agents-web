@@ -10,8 +10,9 @@ import { LoginProps } from "@/app/includes/types"
 import useHttpHook from "@/app/includes/useHttpHook"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import { SignUpProps } from "../page"
 
-export const OtpSection = ({email,onSuccess}:{email:string;onSuccess:()=>void})=>{
+export const WalletPINSection = ({signUpForm,onSuccess}:{signUpForm:SignUpProps;onSuccess:()=>void})=>{
     const navigate = useRouter()
     const [success,setSuccess] = useState<boolean>(false)
     const [formData,setFormData] = useState<LoginProps>({
@@ -20,55 +21,26 @@ export const OtpSection = ({email,onSuccess}:{email:string;onSuccess:()=>void})=
         confirmPassword:""
     })
     const [counter,setCounter] = useState<number>(0);
-    const [loading,setLoading] = useState<boolean>(false);
-    const [otp,setOtp] = useState<string>("");
-    const {handleEmailOTPVerification,handleCreatePassword} = useHttpHook();
+    const [pin,setPin] = useState<string>("");
+    const [confirmPin,setConfirmPin] = useState<string>("");
+    const {handleUpdateWalletPIN,loading} = useHttpHook();
     
-    const handleOTPSubmit = ()=>{
-        setLoading(true)
-        handleEmailOTPVerification({otp,email}).then((res)=>{
-            setLoading(false)
+    const handleWalletPIN = ()=>{
+        handleUpdateWalletPIN({
+            email:signUpForm.email,
+            pin:confirmPin
+        }).then((res)=>{
             setSuccess(res.status)
-            if(res.status)
-            {
-            onSuccess();
-            }
         })
     }
-   const handleResetPassword = ()=>{
-    handleCreatePassword(formData).then((res)=>{
-        
-    })
-   }
-    const handleResend = ()=>{
-        // handleOtp({otp});
-    }
+   
     useEffect(()=>{
         setFormData({
             ...formData,
-            email
+            ...signUpForm
         })
-    },[email])
-    const [startTimer,setStartTimer] = useState<boolean>(true)
-    useEffect(()=>{
-        if(startTimer)
-        {
-        setCounter(30)
-        setStartTimer(false)
-       const intv = setInterval(()=>{
-        setCounter((count)=>{
-            if(count < 1)
-            {
-              clearInterval(intv)
-              return 0; 
-            }
-            return count - 1;
-        })
-       },1000)
-    }
-    },[startTimer])
-    useEffect(()=>{
-    },[success])
+    },[signUpForm])
+    
     if(success)
     {
         return <div 
@@ -80,42 +52,52 @@ export const OtpSection = ({email,onSuccess}:{email:string;onSuccess:()=>void})=
         </svg>
         </div>
         </div>
-        <div className="text-black text-[14px] font-normal text-center mt-4 ">Your email has been verified and registration successful.</div>
+        <div className="text-black text-[14px] font-normal text-center mt-4 ">Wallet Pin set successfully!</div>
+        <div className="text-black text-[14px] font-normal text-center mt-4 ">You can now securely use your agent account.</div>
         <div className="item-center justify-center px-10 pt-5">
-        
+        <BaseButton
+        text="Go to login"
+        type="button"
+        onClick={()=>{
+            navigate.replace(ROUTES.login)
+        }}
+        />
     </div>
     </div>
     }
     return <div >
-        <div className="text-black text-[16px] font-semibold text-center mt-4 ">OTP Code</div>
-      <div className="text-[#000000A6] text-[12px] font-normal text-center mb-4 mt-4 w-[80%] m-auto">Please enter the code sent to your email to verify your identity and continue.</div>
+      <div className="text-[#000000A6] text-[12px] font-normal text-center mb-4 mt-4 w-[80%] m-auto">Set a 4-digit PIN to secure withdrawals and sensitive actions on your account.</div>
       <div 
       className="text m-auto "
       >
+      <div className="text-black text-[14px] font-normal text-center mb-1 mt-4 w-[80%] m-auto">Enter PIN</div>
         <div 
-        className="text m-auto my-[30px] w-[220px] " >
+        className="text m-auto mb-[10px] w-[220px] " >
         <OTPBaseInput
         onChange={(otp)=>{
-        setOtp(otp)
+        setPin(otp)
         }}
         isInputNum
         count={4}
         />
         </div>
-      <div className="text-[#B8860B] text-[14px] font-normal text-center mb-4 mt-4 w-[80%] m-auto">{counter.toPrecision(2)}</div>
-        <BaseButton
-        disabled={otp.length !== 4}
-        text="Verify"
-        type="button"
-        onClick={()=>handleOTPSubmit()}
+          <div className="text-black text-[14px] font-normal text-center mb-1 mt-4 w-[80%] m-auto">Confirm PIN</div>
+         <div 
+        className="text m-auto mb-[30px] w-[220px] " >
+        <OTPBaseInput
+        onChange={(otp)=>{
+        setConfirmPin(otp)
+        }}
+        isInputNum
+        count={4}
         />
-         <div className="flex items-center justify-center mt-[30px] gap-1">
-            <span className="text-[14px] text-black">Didn't get a code?</span>
-            <button 
-            onClick={handleResend}
-            className="text-[14px] text-[#009668] cursor-pointer"
-            >Resend</button>
         </div>
+        <BaseButton
+        disabled={pin.length !== 4 || confirmPin.length !== 4 || (pin !== confirmPin)}
+        text="Continue"
+        type="button"
+        onClick={()=>handleWalletPIN()}
+        />
         </div>
         {loading && <BaseLoader modal color="green" text="" size={"lg"} />}
     </div>

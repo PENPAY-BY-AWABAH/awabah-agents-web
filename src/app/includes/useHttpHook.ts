@@ -720,6 +720,48 @@ const handleRSAPINRequest =(data:any)=>{
             })
         })
     }
+    const handleOtherDetails =(data:any)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-save-other-info`,
+                body:data,
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                if(!res.status)
+                {
+                ShowMessage({
+                    position:"center",
+                    ...res
+                })
+            }
+                resolve(res);
+            })
+        })
+    }
+    const handleUpdateWalletPIN  =(data:any)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-update-wallet-pin`,
+                body:data,
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                if(!res.status)
+                {
+                ShowMessage({
+                    position:"center",
+                    ...res
+                })
+                }
+                resolve(res);
+            })
+        })
+    }
     return {
         loading,
         handleGetTransactions,
@@ -762,7 +804,9 @@ const handleRSAPINRequest =(data:any)=>{
         handleEmploymentDetails,
         handleParentDetails,
         handleCreatePassword,
-        handleRSAPINRequest
+        handleRSAPINRequest,
+        handleOtherDetails,
+        handleUpdateWalletPIN
     }
 }
 export default useHttpHook;
