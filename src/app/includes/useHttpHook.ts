@@ -870,7 +870,8 @@ const handleRSAPINRequest =(data:any)=>{
         handleUpdateWalletPIN,
         handleWithdrawalToAccount,
         getAllWithdrawals,
-        getUserByEmail
+        getUserByEmail,
+        ShowMessage
     }
 }
 export default useHttpHook;

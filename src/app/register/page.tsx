@@ -21,6 +21,7 @@ email?:string;
 firstName?:string;
 fullName?:string;
 lastName?:string;
+middleName?:string;
 password?:string;
 phoneNumber?:string;
 nin?:string;
@@ -34,7 +35,7 @@ const Page = () => {
     const [section, setSection] = useState<RegisterProps>("Create Account")
     const [success, setSuccess] = useState<boolean>(false)
     const navigate = useRouter();
-    const { handleRegister, loading, } = useHttpHook();
+    const { handleRegister, loading,ShowMessage } = useHttpHook();
     const [formData, setFormData] = useState<SignUpProps>({
         email: "",
         password: "",
@@ -45,14 +46,16 @@ const Page = () => {
         const data = {...formData}
         if(formData.fullName){
             const nameParts = formData.fullName.split(" ");
+            if(nameParts.length !== 3)
+            {
+                return ShowMessage({message:`full name must contain (first name,middle name & surname)`,position:"center",data:null,status:false,statusCode:0});
+            }
             data.firstName = nameParts[0];
-            data.lastName = nameParts.slice(1).join(" ");
+            data.middleName = nameParts[1];
+            data.lastName = nameParts[2];
         }
         delete data.fullName;
-        if(!data.lastName){
-           toast.error("Please provide a valid full name")
-           return; 
-        }
+        
         handleRegister(data).then((res) => {
             if (res.status) {
               setSection("Verify Email")
@@ -97,7 +100,7 @@ const Page = () => {
                             required
                             onValueChange={({ value }) => {
                                 const splitName = String(value).split(" ")
-                                if(splitName.length > 2)
+                                if(splitName.length > 3)
                                 {
                                     return
                                 }
@@ -107,7 +110,7 @@ const Page = () => {
                                 })
                             }}
                             max={80}
-                            label="Full Name"
+                            label="Full Name (first name, middle name & surname)"
                             placeholder="Enter full name."
                         />
                         <BaseInput
