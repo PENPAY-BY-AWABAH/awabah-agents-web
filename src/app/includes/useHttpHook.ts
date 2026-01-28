@@ -790,6 +790,20 @@ const handleRSAPINRequest =(data:any)=>{
             })
         })
     }
+    const getAllWithdrawals  =(page:number)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-get-withdrawal-history?page=${page}`,
+                body:{},
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                resolve(res);
+            })
+        })
+    }
     return {
         loading,
         handleGetTransactions,
@@ -835,7 +849,8 @@ const handleRSAPINRequest =(data:any)=>{
         handleRSAPINRequest,
         handleOtherDetails,
         handleUpdateWalletPIN,
-        handleWithdrawalToAccount
+        handleWithdrawalToAccount,
+        getAllWithdrawals
     }
 }
 export default useHttpHook;

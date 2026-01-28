@@ -12,20 +12,25 @@ import Link from "next/link";
 import { useEffect, useState } from "react"
 export interface HistoryItemProp {
     amount?: string;
-    date?: string;
-    description?: string;
+    id?:string;
+    email?:string;
+    ref?:string;
+    status?:string;
+    memo?: string;
+    accountNumber?:string;
+    bankName?:string;
+    createdAt?:string;
     type?: string;
     currency?: string;
     fullName?:string;
-    createdAt?:string;
 }
 export const HistorySection = ({ page }: { page?: boolean }) => {
     const [list, setList] = useState<HistoryItemProp[]>([]);
     const [filteredList, setFilteredList] = useState<HistoryItemProp[]>([]);
     const [searchText, setSearchText] = useState<string>("");
-    const { getAllTransactions, handleSearchTransactions, loading } = useHttpHook()
-    const GetAllTransactions = (page: number) => {
-        getAllTransactions(page).then((res) => {
+    const { getAllWithdrawals, handleSearchTransactions, loading } = useHttpHook()
+    const GetWithdrawals = (page: number) => {
+        getAllWithdrawals(page).then((res) => {
             if (res.status) {
                 setList(res.data.list)
                 setFilteredList(res.data.list)
@@ -34,7 +39,7 @@ export const HistorySection = ({ page }: { page?: boolean }) => {
     }
 
     useEffect(() => {
-        GetAllTransactions(1);
+        GetWithdrawals(1);
     }, [])
 
     const handleSearch = (search: string) => {
@@ -89,8 +94,8 @@ export const HistorySection = ({ page }: { page?: boolean }) => {
             {filteredList.map((item, i) => <div key={i} className="h-[80px] flex gap-3 items-center border-b-[0.5px] border-b-gray-200">
                 <OutflowIcon />
                 <div className="flex-1">
-                    <div className="text-[#000000] text-[18px]">{item.fullName}</div>
-                    <div className="text-[#000000] text-[14px]">{NairaSymbol}{ReturnComma(String(parseFloat(String(item.amount)).toFixed(2)))}</div>
+                    <div className="text-[#000000] text-[18px]">{item.memo}</div>
+                    <div className="text-[#000000] text-[14px]">{NairaSymbol}{item.amount}</div>
                     <div className="text-[#000000A6] text-[12px]" >{moment(item.createdAt).format("Do MMM YYYY, hh:mm A")}</div>
                 </div>
             </div>)}
