@@ -170,7 +170,7 @@ export const UsersSection = ({page}:{page?:boolean})=>{
         </div>
         </div>
         <BaseButton 
-        text={item.nextOfKinRegistered === false || item.employerDetailsRegistered === false || item.parentDetailRegistered === false?"Complete Registration":item.approved?"Pay Now":"Pay now to Activate"}
+        text={item.nextOfKinRegistered === false || item.employerDetailsRegistered === false || item.parentDetailRegistered === false?"Complete Registration":"Pay Now"}
         onClick={()=>{
         if(item.nextOfKinRegistered === false || item.employerDetailsRegistered === false || item.parentDetailRegistered === false)
         {
