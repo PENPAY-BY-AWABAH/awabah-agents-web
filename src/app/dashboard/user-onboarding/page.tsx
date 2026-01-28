@@ -33,7 +33,7 @@ export interface SignUpProps {
 const Page = () => {
     const {update} = useCommissionStore()
     const [index, setIndex] = useState<number>(0)
-    const [section, setSection] = useState<RegisterProps>("Success")
+    const [section, setSection] = useState<RegisterProps>("User Details")
     const navigate = useRouter();
     const { handleRegisterUser, loading } = useHttpHook();
     const [formData, setFormData] = useState<SignUpProps>({
