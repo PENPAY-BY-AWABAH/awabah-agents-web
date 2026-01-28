@@ -229,6 +229,7 @@ export const SwitchAccount = ({email,password,onClose}:{email:string;password:st
         </div>
         <div className="text-black text-[16px] font-normal text-center m-auto mb-3 max-w-[340px]">It appears your account is not registered as an agent. Would you like to switch now?</div>
         <div className="flex items-center gap-3 text-black mb-[30px]">
+        <div className="w-[35x] h-[35px]">
             <BaseToggleBtn
             onChange={()=>{
             setAgreeTerms(!agreeTerms);
@@ -237,6 +238,7 @@ export const SwitchAccount = ({email,password,onClose}:{email:string;password:st
             type="checkbox"
             value={agreeTerms}
             />
+            </div>
           <span className="text-[14px] text-black text-left ">By switching you agree to our <Link 
           href={ROUTES.terms}
           className="text-[14px] text-[#B8860B]">terms</Link> and <Link href={ROUTES.terms} className="text-[14px] text-[#B8860B]">conditions.</Link> Privacy Policy</span>
