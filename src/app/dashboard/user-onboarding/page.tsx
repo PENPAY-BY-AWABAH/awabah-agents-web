@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 "use client"
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import useHttpHook from "@/app/includes/useHttpHook";
@@ -35,7 +35,7 @@ const Page = () => {
     const [index, setIndex] = useState<number>(0)
     const [section, setSection] = useState<RegisterProps>("User Details")
     const navigate = useRouter();
-    const { handleRegisterUser, loading } = useHttpHook();
+    const { handleRegisterUser,getUserByEmail, loading } = useHttpHook();
     const [formData, setFormData] = useState<SignUpProps>({
         email: "",
         firstName: "",
@@ -80,7 +80,8 @@ const Page = () => {
             }
         })
     }
-
+    const searchParams = useSearchParams()
+    const email = searchParams.get('email')
     useEffect(() => {
         if (section === "User Details") {
             setIndex(0)
@@ -102,12 +103,34 @@ const Page = () => {
         }
     }, [section])
     useEffect(()=>{
+         if(email)
+        {
+         getUserByEmail(email).then((res)=>{
+            if(res.data?.nextOfKinRegistered === false)
+            {
+                setSection("Next Of Kin")
+            }else if(res.data?.parentDetailRegistered === false)
+            {
+                setSection("Parent Details - (Father)")
+            }else if(res.data?.employerDetailsRegistered === false)
+            {
+                setSection("Employment Details")
+            }
+            setFormData({
+                ...res.data,
+                phoneNumber:String(res.data?.phoneNumber).replace("+234","0"),
+                trackingId:res.data?.trackingId
+            })
+         })   
+        }else{
       const formFields = localStorage.getItem(CONSTANT.LocalStore.userFormFields);
       if(formFields)
       {
         setFormData(JSON.parse(formFields));
       }
-    },[])
+    }
+    },[email])
+    
     return <div className="bg-white h-full lg:px-[100px] lg:py-[60px] overflow-none">
         {section !== "Success" && <div className="mb-6">
             <button

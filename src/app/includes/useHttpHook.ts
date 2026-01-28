@@ -804,6 +804,21 @@ const handleRSAPINRequest =(data:any)=>{
             })
         })
     }
+
+    const getUserByEmail  =(email:string)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-get-user-by-email`,
+                body:{email},
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                resolve(res);
+            })
+        })
+    }
     return {
         loading,
         handleGetTransactions,
@@ -850,7 +865,8 @@ const handleRSAPINRequest =(data:any)=>{
         handleOtherDetails,
         handleUpdateWalletPIN,
         handleWithdrawalToAccount,
-        getAllWithdrawals
+        getAllWithdrawals,
+        getUserByEmail
     }
 }
 export default useHttpHook;

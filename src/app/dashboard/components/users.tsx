@@ -30,6 +30,7 @@ export interface UserItemProp {
   rsaNumber?: null;
   nextOfKinRegistered?: boolean;
   employerDetailsRegistered?: boolean;
+  parentDetailRegistered?:boolean;
   commission?:string;
 }
 
@@ -169,10 +170,12 @@ export const UsersSection = ({page}:{page?:boolean})=>{
         </div>
         </div>
         <BaseButton 
-        text={!item.approved?"Complete Registration":"Pay Now"}
+        text={item.nextOfKinRegistered === false || item.employerDetailsRegistered === false || item.parentDetailRegistered === false?"Complete Registration":item.approved?"Pay Now":"Pay now to Activate"}
         onClick={()=>{
-            if(item.approved)
-            {
+        if(item.nextOfKinRegistered === false || item.employerDetailsRegistered === false || item.parentDetailRegistered === false)
+        {
+           navigate.push(`${ROUTES.userOnboarding}?email=${item.email}`) 
+        }else{
             localStorage.setItem(CONSTANT.LocalStore.remit,JSON.stringify({
             rsaPin: item.rsaNumber,
             pfaName: "",
@@ -183,19 +186,6 @@ export const UsersSection = ({page}:{page?:boolean})=>{
             isValid: false
             }))
             navigate.push(ROUTES.remit)
-        }else{
-            localStorage.setItem(CONSTANT.LocalStore.userFormFields,JSON.stringify({
-            email:item.email,
-            firstName: item.firstName,
-            lastName: item.lastName,
-            phoneNumber: item.phoneNumber,
-            address: "",
-            nin: "",
-            bvn: "",
-            rsaPin: "",
-            trackingId:""
-            }))
-           navigate.push(ROUTES.userOnboarding) 
         }
         }}
         white
