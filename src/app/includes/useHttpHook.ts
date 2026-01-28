@@ -771,7 +771,7 @@ const handleRSAPINRequest =(data:any)=>{
         return new Promise<ApiResponse>((resolve) => {
          setLoading(true);
            call({
-                path:`agent-withdrawal-commission`,
+                path:`agent-withdraw-commission`,
                 body:data,
                 method:"POST",
                 requestType:"json"
