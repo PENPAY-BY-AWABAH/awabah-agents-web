@@ -307,6 +307,10 @@ const useHttpHook = () => {
                     position:"center",
                     ...res
                 })
+                if(res.status && res.data?.accessToken)
+                {
+                    window.localStorage.setItem(name,res.data.accessToken);
+                } 
                 }
                 resolve(res);
             })
