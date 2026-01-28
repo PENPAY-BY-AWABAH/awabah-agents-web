@@ -32,12 +32,7 @@ export const WalletBalance = () => {
         GetWalletInfo();
     }, [])
 
-    useEffect(()=>{
-        if(parseFloat(balance.balance) !== 0)
-        {
-            update({showCommissionBalance:true})
-        }
-    },[balance])
+    
     return <div className="mt-4 lg:mt-10 relative lg:h-30">
         <GreenBackground />
         <div className="absolute top-0 left-0 w-full p-[16px] lg:p-7 flex " >

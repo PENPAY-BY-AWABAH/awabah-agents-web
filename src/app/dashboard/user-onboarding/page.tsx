@@ -17,6 +17,7 @@ import { EmploymentPage } from "./components/employment";
 import { ParentDetailPage } from "./components/parentDetails";
 import { ReturnAllNumbers } from "@/app/includes/functions";
 import { BaseLoader } from "@/app/components/baseLoader";
+import useCommissionStore from "@/app/includes/store";
 type RegisterProps = "User Details" | "Verify Email" | "Next Of Kin" | "Success" | "Pay" | "Employment Details" | "Parent Details - (Father)" | "Parent Details - (Mother)";
 export interface SignUpProps {
     email?: string;
@@ -30,6 +31,7 @@ export interface SignUpProps {
     trackingId?:string;
 }
 const Page = () => {
+    const {update} = useCommissionStore()
     const [index, setIndex] = useState<number>(0)
     const [section, setSection] = useState<RegisterProps>("Success")
     const navigate = useRouter();
@@ -286,6 +288,7 @@ const Page = () => {
                 {section === "Employment Details" && <div >
                     <EmploymentPage
                         onSuccess={() => {
+                        update({showCommissionBalance:true});
                         setSection("Success")
                         }}
                         onClose={() => {
