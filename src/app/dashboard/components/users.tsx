@@ -184,14 +184,16 @@ export const UsersSection = ({page}:{page?:boolean})=>{
             }))
             navigate.push(ROUTES.remit)
         }else{
-            localStorage.setItem(CONSTANT.LocalStore.remit,JSON.stringify({
-            rsaPin: item.rsaNumber,
-            pfaName: "",
-            providerId: "",
-            phoneNumber:String(item.phoneNumber).replace("+234","0"),
-            amount: 3000,
-            fullName: item.firstName+" "+item.lastName,
-            isValid: false
+            localStorage.setItem(CONSTANT.LocalStore.userFormFields,JSON.stringify({
+            email:item.email,
+            firstName: item.firstName,
+            lastName: item.lastName,
+            phoneNumber: item.phoneNumber,
+            address: "",
+            nin: "",
+            bvn: "",
+            rsaPin: "",
+            trackingId:""
             }))
            navigate.push(ROUTES.userOnboarding) 
         }
