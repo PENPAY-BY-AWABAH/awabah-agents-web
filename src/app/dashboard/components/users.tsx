@@ -165,12 +165,14 @@ export const UsersSection = ({page}:{page?:boolean})=>{
         </div>
          <div className="flex items-center gap-[2px] h-[20px]">
             <div className="font-normal text-[12px] text-[#000000A6]">User status:</div>
-            <div className={`font-normal text-[12px] ${item.approved?"text-[#00A558]":"text-[#F4900C]"}`}> Active</div>
+            <div className={`font-normal text-[12px] ${item.approved?"text-[#00A558]":"text-[#F4900C]"}`}>{item.approved?"Active":"Pending"}</div>
         </div>
         </div>
         <BaseButton 
-        text="Pay Now"
+        text={!item.approved?"Complete Registration":"Pay Now"}
         onClick={()=>{
+            if(item.approved)
+            {
             localStorage.setItem(CONSTANT.LocalStore.remit,JSON.stringify({
             rsaPin: item.rsaNumber,
             pfaName: "",
@@ -181,6 +183,18 @@ export const UsersSection = ({page}:{page?:boolean})=>{
             isValid: false
             }))
             navigate.push(ROUTES.remit)
+        }else{
+            localStorage.setItem(CONSTANT.LocalStore.remit,JSON.stringify({
+            rsaPin: item.rsaNumber,
+            pfaName: "",
+            providerId: "",
+            phoneNumber:String(item.phoneNumber).replace("+234","0"),
+            amount: 3000,
+            fullName: item.firstName+" "+item.lastName,
+            isValid: false
+            }))
+           navigate.push(ROUTES.userOnboarding) 
+        }
         }}
         white
         type="button"
