@@ -40,6 +40,7 @@ export const OtpSection = ({email,onClose,trackingId}:{email:string;onClose:()=>
             email
         })
     },[email])
+
      useEffect(()=>{
         if(startTimer)
         {
@@ -57,23 +58,7 @@ export const OtpSection = ({email,onClose,trackingId}:{email:string;onClose:()=>
        },1000)
     }
     },[startTimer])
-     useEffect(()=>{
-        if(startTimer)
-        {
-        setCounter(30)
-        setStartTimer(false)
-       const intv = setInterval(()=>{
-        setCounter((count)=>{
-            if(count < 1)
-            {
-              clearInterval(intv)
-              return 0; 
-            }
-            return count - 1;
-        })
-       },1000)
-    }
-    },[startTimer])
+    
     
     return <div >
         <div className="text-black text-[16px] font-semibold text-center mt-4 ">OTP Code</div>

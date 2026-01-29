@@ -11,6 +11,9 @@ import useHttpHook from "../includes/useHttpHook";
 import { LoginProps } from "../includes/types";
 import BaseModal from "../components/baseModal";
 import { SwitchAccount } from "./components/switch-account";
+import { HandleResetData } from "./components/handleReset";
+import BaseInputDate from "../components/baseInputDate";
+import dayjs from "dayjs";
 
 const Page = ()=>{
     
@@ -124,6 +127,9 @@ const Page = ()=>{
             </Link>
         </div>
       </form>
+      <HandleResetData 
+      />
+       
      </div>
      </div>
     {showAccountSwitch &&<SwitchAccount 

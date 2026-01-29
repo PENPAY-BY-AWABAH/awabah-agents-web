@@ -47,7 +47,7 @@ export interface PaymentResponseProp {
 const Page = () => {
     const [listOfPfa, setListOfPfa] = useState<ListOfPfa[]>([])
     const navigate = useRouter();
-    const { getProviders, validateRSA, remitMicroPension, verifyTransaction } = useHttpHook();
+    const { getProviders, validateRSA,ShowMessage, remitMicroPension, verifyTransaction } = useHttpHook();
     const [loading, setLoading] = useState<boolean>(false);
     const [formData, setFormData] = useState<PaymentProp>(
         {
@@ -121,8 +121,11 @@ const Page = () => {
                 }
             })
         } else {
+            if(parseFloat(String(formData.amount)) < 3000)
+            {
+                return ShowMessage({status:false,message:"Oops! the minimum amount is N3,000",data:null,position:"center"})
+            }
             const webhook = String(window.location.href).split("?").filter((a,i)=>i == 0).join("");
-            
             remitMicroPension({
                 ...formData,
                 callback_url:webhook

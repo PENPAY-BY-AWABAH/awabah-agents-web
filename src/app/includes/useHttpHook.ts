@@ -781,15 +781,10 @@ const handleRSAPINRequest =(data:any)=>{
                 requestType:"json"
             }).then((res) => {
                 setLoading(false);
-                
-                if(!res.status)
-                {
-                
                 ShowMessage({
                     position:"center",
                     ...res
                 })
-                }
                 resolve(res);
             })
         })
@@ -819,6 +814,24 @@ const handleRSAPINRequest =(data:any)=>{
                 requestType:"json"
             }).then((res) => {
                 setLoading(false);
+                resolve(res);
+            })
+        })
+    }
+    const ResetTestData   =(email:string)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-reset`,
+                body:{email},
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                ShowMessage({
+                    position:"center",
+                    ...res
+                })
                 resolve(res);
             })
         })
@@ -871,7 +884,8 @@ const handleRSAPINRequest =(data:any)=>{
         handleWithdrawalToAccount,
         getAllWithdrawals,
         getUserByEmail,
-        ShowMessage
+        ShowMessage,
+        ResetTestData
     }
 }
 export default useHttpHook;

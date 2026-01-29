@@ -29,6 +29,7 @@ export interface SignUpProps {
     bvn?: string;
     rsaPin?: string;
     trackingId?:string;
+    tempPIN?:string;
 }
 const Page = () => {
     const {update} = useCommissionStore()
@@ -45,7 +46,8 @@ const Page = () => {
         nin: "",
         bvn: "",
         rsaPin: "",
-        trackingId:""
+        trackingId:"",
+        tempPIN:""
     })
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault()
@@ -310,8 +312,12 @@ const Page = () => {
                 </div>}
                 {section === "Employment Details" && <div >
                     <EmploymentPage
-                        onSuccess={() => {
+                        onSuccess={(tempPIN) => {
                         update({showCommissionBalance:true});
+                        setFormData({
+                            ...formData,
+                            tempPIN
+                        })
                         setSection("Success")
                         }}
                         onClose={() => {
@@ -347,8 +353,18 @@ const Page = () => {
             </div>
         </div> : <SuccessComponent
             onPay={() => {
-                navigate.push(ROUTES.users)
+            localStorage.setItem(CONSTANT.LocalStore.remit,JSON.stringify({
+            rsaPin: formData.tempPIN,
+            pfaName: "",
+            providerId: "",
+            phoneNumber:String(formData.phoneNumber).replace("+234","0"),
+            amount: 3000,
+            fullName: formData.firstName+" "+formData.lastName,
+            isValid: false
+            }))
+            navigate.push(ROUTES.remit)
             }}
+            tempPIN={formData.tempPIN!}
         />}
     </div>
 }

@@ -4,12 +4,23 @@ import BaseModal from "@/app/components/baseModal"
 import { OTPBaseInput } from "@/app/components/baseOTPInput"
 import useHttpHook from "@/app/includes/useHttpHook"
 import { useEffect, useState } from "react"
+import { CommissionStatsProps } from "../../commission/components/Tabs"
 
 export const TransactionPINModal = ({onClose,account_number,bankName}:{onClose:()=>void;account_number:string;bankName:string})=>{
     const [pin,setPIN] = useState<string>("");
-    const {handleWithdrawalToAccount,loading} = useHttpHook();
+    const {handleWithdrawalToAccount,loading,getAllCommisionStats} = useHttpHook();
+    const [stats,setStats] = useState<CommissionStatsProps>({
+        commissionEarn:0,
+        withdrawals:0,
+        balance:0,
+    });
     useEffect(()=>{
-        // alert(account_number)
+      getAllCommisionStats().then((res)=>{
+        if(res.status)
+        {
+            setStats(res.data)
+        }
+      })
     },[])
     return <BaseModal 
     onClose={()=>{
@@ -22,15 +33,21 @@ export const TransactionPINModal = ({onClose,account_number,bankName}:{onClose:(
     >
      {!loading?<div>
      <div className="text-center p-2 bg-green-100 mb-3 rounded text-[14px] px-4" >
-      <div className="text-left " >
+      <div ></div>
+      <div className="text-center " >
+        <b>Your Wallet Balance is:</b> N{stats.balance}
+     </div>
+     <hr className="text-gray-300 my-4"/>
+     <div className="text-black text-[18px] mb-3">Recepient Account</div>
+      <div className="text-center " >
         <b>Bank Name:</b> {bankName}
      </div>
-      <div className="text-left " >
+      <div className="text-center " >
         <b>Account Number:</b> {account_number}
      </div> 
      </div>
      <div className="text-center mb-3" >Enter your tranasction PIN</div>
-     <div className="w-[75%] flex item-center justify-center m-auto mb-5">
+     <div className="max-w-[55%] flex item-center justify-center m-auto mb-5">
        <OTPBaseInput 
        onChange={(otp: string)=>{
          setPIN(otp)

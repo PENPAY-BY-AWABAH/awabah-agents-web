@@ -21,7 +21,7 @@ interface TabSectionProp {
     value?:CommissionStatsType;
     selected?:boolean;
 }
-interface CommissionStatsProps {
+export interface CommissionStatsProps {
   commissionEarn: number;
   withdrawals: number;
   balance: number;

@@ -40,7 +40,7 @@ setSelected(props.value)
 return <div className="relative">
   <input
 required={props.required }
-value={props.value}
+value={props?.value}
 className="absolute top-[70px] opacity-0 "
 onChange={()=>{
   return
