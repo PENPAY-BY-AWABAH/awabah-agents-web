@@ -15,6 +15,7 @@ import { PaymentVericationModal } from "./components/payment_verification_modal"
 import { Split } from "lucide-react";
 import { CONSTANT } from "@/app/includes/constants";
 import { BaseLoader } from "@/app/components/baseLoader";
+import { PaymentOptionsModal } from "./components/payment_option_modal";
 interface PaymentProp {
     rsaPin?: string;
     pfaName?: string;
@@ -23,6 +24,7 @@ interface PaymentProp {
     isValid?: boolean;
     fullName?: string;
     phoneNumber?: string;
+    refNo?:string;
 }
 interface ListOfPfa {
     id: string;
@@ -43,12 +45,14 @@ export interface PaymentResponseProp {
     paymentRef?: string;
     phoneNumber?: string;
     fullName?:string;
+    refNo?:string;
 }
 const Page = () => {
     const [listOfPfa, setListOfPfa] = useState<ListOfPfa[]>([])
     const navigate = useRouter();
     const { getProviders, validateRSA,ShowMessage, remitMicroPension, verifyTransaction } = useHttpHook();
     const [loading, setLoading] = useState<boolean>(false);
+    const [showPaymentOption, setShowPaymentOption] = useState<boolean>(false);
     const [formData, setFormData] = useState<PaymentProp>(
         {
             rsaPin: "",
@@ -103,8 +107,8 @@ const Page = () => {
     }, [])
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
-        setLoading(true)
         if (!formData.isValid) {
+            setLoading(true)
             localStorage.setItem(CONSTANT.LocalStore.remit,JSON.stringify(formData))
             validateRSA({
                 rsaPin: formData.rsaPin,
@@ -125,16 +129,7 @@ const Page = () => {
             {
                 return ShowMessage({status:false,message:"Oops! the minimum amount is N3,000",data:null,position:"center"})
             }
-            const webhook = String(window.location.href).split("?").filter((a,i)=>i == 0).join("");
-            remitMicroPension({
-                ...formData,
-                callback_url:webhook
-            }).then((res) => {
-                setLoading(false)
-                if (res.status && res.data?.paymentUrl) {
-                    window.open(res.data.paymentUrl,"_self")
-                }
-            })
+            setShowPaymentOption(true)
         }
     }
     useEffect(()=>{
@@ -144,6 +139,21 @@ const Page = () => {
         setFormData(JSON.parse(data))
      }
     },[])
+    const handlePayNow = (value:string)=>{
+            setLoading(true)
+            const webhook = String(window.location.href).split("?").filter((a,i)=>i == 0).join("");
+            remitMicroPension({
+                ...formData,
+                callback_url:webhook,
+                paymentOption:value
+            }).then((res) => {
+                setLoading(false)
+                if (res.status && res.data?.paymentUrl) {
+                    setShowPaymentOption(false)
+                    window.open(res.data.paymentUrl,"_self")
+                }
+            })
+    }
     return <div className="bg-white h-screen lg:p-4">
         <div className="mb-6">
             <button
@@ -268,6 +278,11 @@ const Page = () => {
                 </div>
             </div>
         </form>
+        {showPaymentOption &&<PaymentOptionsModal
+        details={formData}
+        onClose={()=>{}}
+        onPayment={(value)=>handlePayNow(value)}
+        />}
         {paymentDetails && <PaymentVericationModal
         onClose={()=>setPaymentDetails(null)}
         details={paymentDetails}
