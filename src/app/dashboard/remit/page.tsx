@@ -145,7 +145,8 @@ const Page = () => {
             remitMicroPension({
                 ...formData,
                 callback_url:webhook,
-                paymentOption:value
+                paymentOption:value,
+                providerId:String(formData.providerId).includes("AWA")?"awabah":formData.providerId
             }).then((res) => {
                 setLoading(false)
                 if (res.status && res.data?.paymentUrl) {
