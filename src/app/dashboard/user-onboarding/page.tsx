@@ -364,6 +364,7 @@ const Page = () => {
             }))
             navigate.push(ROUTES.remit)
             }}
+            email={formData.email!}
             tempPIN={formData.tempPIN!}
         />}
     </div>

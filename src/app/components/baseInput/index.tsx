@@ -26,6 +26,7 @@ interface BaseInputProps {
     pattern?:string;
     onValueChange:(payload: FieldChangePayload) => void | null;
     options?:{value:string;name:string;}[];
+    onBlur?:(value:string)=>void;
 }
 export default function BaseInput(props:BaseInputProps) {
  const [toggleEye,setToggleEye] = useState(false);
@@ -83,6 +84,7 @@ if(typeof props.value === "string")
       value: target.value,
     });
   }}
+ 
   >
     
   </textarea>:<input 
@@ -100,6 +102,12 @@ if(typeof props.value === "string")
    pattern={props.pattern}
    onInvalid={e => (e.target as HTMLInputElement).setCustomValidity(`${props.name} is required.`)}
    onInput={e => (e.target as HTMLInputElement).setCustomValidity('')}
+   onBlur={()=>{
+    if(props?.onBlur)
+    {
+      props.onBlur(props.value)
+    }
+  }}
   />}
    {props.disabled?<span className='input-icon pt-2 bg-white'>
     <Ban color="red" size={15} />

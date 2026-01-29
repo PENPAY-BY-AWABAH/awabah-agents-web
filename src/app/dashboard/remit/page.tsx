@@ -9,7 +9,7 @@ import BaseInput from "@/app/components/baseInput";
 import BaseSelect from "@/app/components/baseSelect";
 import useHttpHook from "@/app/includes/useHttpHook";
 import { ItemProps } from "@/app/includes/types";
-import { ReturnAllNumbers, ReturnComma } from "@/app/includes/functions";
+import { ReturnAllFloatNumbers, ReturnAllNumbers, ReturnComma } from "@/app/includes/functions";
 import BaseButton from "@/app/components/baseButton";
 import { PaymentVericationModal } from "./components/payment_verification_modal";
 import { Split } from "lucide-react";
@@ -176,7 +176,7 @@ const Page = () => {
                         setFormData({
                             ...formData,
                             isValid: false,
-                            rsaPin: value
+                            rsaPin: String(value).toUpperCase()
                         });
                     }}
                     max={15}
@@ -208,11 +208,20 @@ const Page = () => {
                     onValueChange={({ value }) => {
                         setFormData({
                             ...formData,
-                            amount: ReturnAllNumbers(String(parseInt(value)))
+                            amount: ReturnAllFloatNumbers(value)
                         });
                     }}
+                    onBlur={()=>{
+                        if(String(formData.amount).includes("."))
+                        {
+                        setFormData({
+                            ...formData,
+                            amount: parseFloat(String(formData.amount)).toFixed(2)
+                        });
+                        }
+                    }}
                 />
-                <div className="text-left">
+                {!String(formData?.rsaPin).toUpperCase().includes("AWA") && <div className="text-left">
                     <BaseSelect
                         custom
                         list={listOfPfa.map((a: any) => {
@@ -237,7 +246,7 @@ const Page = () => {
                         placeholder="Select a provider"
                         label="Provider"
                     />
-                </div>
+                </div>}
                 {formData.isValid && <div className="mt-5">
                     <BaseInput
                         label="Full name"
@@ -252,6 +261,7 @@ const Page = () => {
                     /></div>}
                 <div className="mt-5">
                     <BaseButton
+                    disabled={formData.rsaPin?.length !== 15 || formData.phoneNumber?.length !== 11 || parseFloat(String(formData.amount)) < 3000}
                         text={formData?.isValid ? "Continue" : "Validate RSA PIN"}
                         type="submit"
                     />

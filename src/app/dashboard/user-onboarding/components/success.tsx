@@ -1,16 +1,18 @@
 import BaseButton from "@/app/components/baseButton";
 import { BaseLoader } from "@/app/components/baseLoader";
-import { ROUTES } from "@/app/includes/constants";
-import { useRouter } from "next/navigation";
+import useHttpHook from "@/app/includes/useHttpHook";
 import { useEffect, useState } from "react"
 type ReviewStateProps = "starting"|"done"| null
-export const SuccessComponent = ({onPay,tempPIN}:{onPay:()=>void;tempPIN:string})=>{
+export const SuccessComponent = ({onPay,tempPIN,email}:{onPay:()=>void;tempPIN:string;email:string})=>{
     const [reviewState,setReviewState] = useState<ReviewStateProps>(null);
+    const {RequestForRSAPIN} = useHttpHook()
     useEffect(()=>{
         setTimeout(()=>{
             setReviewState("starting")
             setTimeout(()=>{
                 setReviewState("done")
+                // send request to agent-request-rsa-pin
+                RequestForRSAPIN(email)
             },2000)
         },2000)
     },[])

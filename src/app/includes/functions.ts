@@ -303,3 +303,8 @@ export const MaskBalance = (balance:string, isVisible = false, options = {}) => 
   // Example output: "₦ ••••"
   return `${currencySymbol} ${maskChar.repeat(maskLength)}`;
 };
+
+export function ReturnAllFloatNumbers(d: string) {
+  d = String(d).trim();
+  return d.replace(/[-+,&\/\\#()$~%;'":*?<>{}A-Z a-z]/g, '');
+}

@@ -818,11 +818,29 @@ const handleRSAPINRequest =(data:any)=>{
             })
         })
     }
-    const ResetTestData   =(email:string)=>{
+    const ResetTestData =(email:string)=>{
         return new Promise<ApiResponse>((resolve) => {
          setLoading(true);
            call({
                 path:`agent-reset`,
+                body:{email},
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                ShowMessage({
+                    position:"center",
+                    ...res
+                })
+                resolve(res);
+            })
+        })
+    }
+    const RequestForRSAPIN = (email:string)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-request-rsa-pin`,
                 body:{email},
                 method:"POST",
                 requestType:"json"
@@ -885,7 +903,8 @@ const handleRSAPINRequest =(data:any)=>{
         getAllWithdrawals,
         getUserByEmail,
         ShowMessage,
-        ResetTestData
+        ResetTestData,
+        RequestForRSAPIN
     }
 }
 export default useHttpHook;
