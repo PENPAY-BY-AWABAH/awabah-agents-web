@@ -183,7 +183,8 @@ export const UsersSection = ({page}:{page?:boolean})=>{
             phoneNumber:String(item.phoneNumber).replace("+234","0"),
             amount: 3000,
             fullName: item.firstName+" "+item.lastName,
-            isValid: false
+            isValid: false,
+            blockFields:true
             }))
             navigate.push(ROUTES.remit)
         }

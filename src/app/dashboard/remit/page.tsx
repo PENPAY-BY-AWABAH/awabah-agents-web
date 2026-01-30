@@ -9,10 +9,9 @@ import BaseInput from "@/app/components/baseInput";
 import BaseSelect from "@/app/components/baseSelect";
 import useHttpHook from "@/app/includes/useHttpHook";
 import { ItemProps } from "@/app/includes/types";
-import { ReturnAllFloatNumbers, ReturnAllNumbers, ReturnComma } from "@/app/includes/functions";
+import { ReturnAllFloatNumbers, ReturnAllNumbers } from "@/app/includes/functions";
 import BaseButton from "@/app/components/baseButton";
 import { PaymentVericationModal } from "./components/payment_verification_modal";
-import { Split } from "lucide-react";
 import { CONSTANT } from "@/app/includes/constants";
 import { BaseLoader } from "@/app/components/baseLoader";
 import { PaymentOptionsModal } from "./components/payment_option_modal";
@@ -25,6 +24,7 @@ interface PaymentProp {
     fullName?: string;
     phoneNumber?: string;
     refNo?:string;
+    blockFields?:boolean;
 }
 interface ListOfPfa {
     id: string;
@@ -90,8 +90,8 @@ const Page = () => {
                 status: false,
                 loading: true
             })
-
-            verifyTransaction({ reference: urlParams.reference }).then((res) => {
+        const reference = String(urlParams.reference).split("?").filter((a,i)=>i === 0).join("")
+            verifyTransaction({ reference }).then((res) => {
                 setPaymentDetails({
                     ...res.data,
                     status: res.status,
@@ -112,7 +112,7 @@ const Page = () => {
             localStorage.setItem(CONSTANT.LocalStore.remit,JSON.stringify(formData))
             validateRSA({
                 rsaPin: formData.rsaPin,
-                providerId: formData.providerId
+                providerId:String(formData.rsaPin).includes("AWA")?"awabah":formData.providerId
             }).then((res) => {
                 setLoading(false)
                 if (res.status) {
@@ -145,8 +145,7 @@ const Page = () => {
             remitMicroPension({
                 ...formData,
                 callback_url:webhook,
-                paymentOption:value,
-                providerId:String(formData.providerId).includes("AWA")?"awabah":formData.providerId
+                paymentOption:value
             }).then((res) => {
                 setLoading(false)
                 if (res.status && res.data?.paymentUrl) {
@@ -178,6 +177,7 @@ const Page = () => {
                 <div className="text-black text-[24px] text-center mb-5">Fill in the details to pay</div>
                 <BaseInput
                     required
+                    disabled={formData?.blockFields}
                     label="RSA PIN"
                     placeholder="Enter RSA PIN"
                     type="text"

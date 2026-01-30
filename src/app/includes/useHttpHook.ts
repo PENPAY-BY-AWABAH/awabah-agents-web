@@ -549,7 +549,7 @@ const updatePIN = (data:any)=>{
                 path:`agent-get-transaction-history?page=${page}`,
                 body:{},
                 method:"GET",
-                requestType:"form-data"
+                requestType:"json"
             }).then((res) => {
                 setLoading(false);
                 resolve(res);
@@ -854,6 +854,8 @@ const handleRSAPINRequest =(data:any)=>{
             })
         })
     }
+    
+    
     return {
         loading,
         handleGetTransactions,

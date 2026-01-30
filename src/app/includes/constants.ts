@@ -33,7 +33,8 @@ export const CONSTANT = {
         baseUrl:"baseurl", 
         resetPassword:"resetPassword",
         remit:"remit",
-        userFormFields:"userFormFields"
+        userFormFields:"userFormFields",
+        historySection:"historySection"
     }
 }
 export const Currency = {
