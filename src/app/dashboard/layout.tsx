@@ -39,7 +39,7 @@ const [remaining, setRemaining] = useState(0);
 const { getRemainingTime, activate } = useIdleTimer({
     onIdle,
     onActive,
-    timeout: 5 * 60 * 1000, // 5 minutes
+    timeout: 3 * 60 * 1000, // 3 minutes
     throttle: 500,
     events: [
       'mousemove',
