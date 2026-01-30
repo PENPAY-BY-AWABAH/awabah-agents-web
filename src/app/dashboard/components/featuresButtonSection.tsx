@@ -46,6 +46,10 @@ export const FeaturesBtnSection =()=>{
                     return b
                    })) 
                    localStorage.removeItem(CONSTANT.LocalStore.remit);
+                   if(btn.route === ROUTES.history)
+                   {
+                   localStorage.setItem(CONSTANT.LocalStore.historySection,"withdrawal")
+                   }
                    navigation.push(btn.route!)
                 }}
                 className={`flex m-auto cursor-pointer shadow items-center gap-1 justify-center  p-2 lg:px-4 text-[20px] ${btn.selected?`bg-${COLOURS.green}`:`bg-${COLOURS.white}`}  ${!btn.selected?`text-${COLOURS.green}`:`text-${COLOURS.white}`} w-[65px] h-[65px] lg:w-30 lg:h-30 rounded-[65px] lg:rounded-[100px]`}
