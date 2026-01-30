@@ -23,8 +23,7 @@ export const OtpSection = ()=>{
     })
     const [counter,setCounter] = useState<number>(0);
     const [otp,setOtp] = useState<string>("");
-    const {loading} = useHttpHook();
-    const {handleOtp,handleNewPassword,handleSendOtp} = useHttpHook();
+    const {handleOtp,handleNewPassword,handleSendOtp,loading} = useHttpHook();
     const handleOTPSubmit = ()=>{
          setSending(true)
         handleOtp({otp}).then((res)=>{
@@ -126,7 +125,6 @@ export const OtpSection = ()=>{
          <div 
         className="mt-10" />
         <BaseButton
-        loading={loading}
         text="Save Password"
         type="submit"
         />
