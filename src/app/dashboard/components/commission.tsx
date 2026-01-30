@@ -40,7 +40,7 @@ export const CommissionSection = ({page}:{page?:boolean})=>{
 
    
     return <div>
-        <div className="flex mt-[16px] " >
+        <div className="flex mt-[16px]  " >
         <div className="text-[18px] font-medium lg:text-[24px] ">Commission History</div>
         {!page &&<Link href={ROUTES.history} className={`text-[22px] text-${COLOURS.green}`} >View All</Link>}
         </div>
@@ -56,7 +56,7 @@ export const CommissionSection = ({page}:{page?:boolean})=>{
         </div>
         <div className="m-auto text-center text-[#44444] text-[12px] lg:text-[14px]">No record found!</div>
         </div>}
-        <div className="lg:mb-8 mt-6">
+        <div className="mb-[120px] lg:mb-8 mt-6 ">
         {list.map((item,i)=><div key={i} className="mb-5 pb-5 flex gap-3 items-center border-b-[0.5px] border-b-gray-200">
         <div
             className="h-[59px] w-[59px] relative cursor-pointer bg-[#C4C4C459] border-[0.5px] rounded-[59px] overflow-hidden" >

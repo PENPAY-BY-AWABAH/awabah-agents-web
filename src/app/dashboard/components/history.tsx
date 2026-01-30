@@ -104,8 +104,8 @@ const GetRemittance  = (page: number) => {
                 className="bg-[#C4C4C426] h-[100px]"
             />
         </div>}
-        <div className="grid grid-cols-5 font-medium item-center mt-4 text-[14px] lg:text-[24px] gap-5" >
-            <div className="col-span-1" ><button 
+        <div className="flex lg:grid lg:grid-cols-5 font-medium item-center mt-4 text-[14px] lg:text-[24px] gap-5" >
+            <div className="flex-grow lg:col-span-1 " ><button 
             onClick={()=>{
                 setSelectedItem("withdrawal")
                 setSearchText("")
@@ -113,7 +113,7 @@ const GetRemittance  = (page: number) => {
             }}
             className={`cursor-pointer ${selectedItem === "withdrawal"?"text-black":"text-gray-400"}`}
             >Withdrawal History</button></div>
-            <div className="col-span-3" ><button 
+            <div className="flex-grow lg:col-span-3" ><button 
             onClick={()=>{
                 setSelectedItem("remittance");
                 setSearchText("")
@@ -130,6 +130,7 @@ const GetRemittance  = (page: number) => {
             </div>
             <div className="m-auto text-center">Fetching Withdrawals...</div>
         </div>}
+        <div className="mb-[120px]" >
         {filteredList.length === 0 &&<div className="m-auto my-5 mt-[50px] mb-[150px] text-center">
         <div className="m-auto flex justify-center item-center text-center">
         <DatabaseIcon className="text-[#999]" size={50}/>
@@ -137,7 +138,7 @@ const GetRemittance  = (page: number) => {
         <div className="m-auto text-center text-[#44444]">No record found!</div>
         </div>}
         <div className="my-8 mt-6 grid gap-3">
-            {filteredList.map((item, i) => <div key={i} className="h-[80px] flex gap-3 items-center border-b-[0.5px] border-b-gray-200">
+            {filteredList.map((item, i) => <div key={i} className="lg:h-[80px] pb-2 flex gap-3 items-center border-b-[0.5px] border-b-gray-200">
                 <OutflowIcon />
                 <div className="flex-1">
                     <div className="text-[#000000] text-[18px]">{String(item.memo).replace("initialized .",".").replace("Naira ","")} <span className="text-gray-400">{selectedItem === "remittance"?" ~ "+item.fullName:""}</span></div>
@@ -145,6 +146,7 @@ const GetRemittance  = (page: number) => {
                     <div className="text-[#000000A6] text-[12px]" >{moment(item.createdAt).format("Do MMM YYYY, hh:mm A")}</div>
                 </div>
             </div>)}
+        </div>
         </div>
     </div>
 }
