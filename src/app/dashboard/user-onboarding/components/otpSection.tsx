@@ -74,6 +74,7 @@ export const OtpSection = ({email,onClose,trackingId}:{email:string;onClose:()=>
         }}
         isInputNum
         count={4}
+        value={otp!}
         />
         </div>
       <div className="text-[#B8860B] text-[14px] font-normal text-center mb-4 mt-4 w-[80%] m-auto">0.{counter.toPrecision(2).replace("0.","")}</div>

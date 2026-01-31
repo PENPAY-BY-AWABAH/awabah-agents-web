@@ -148,6 +148,7 @@ export const OtpSection = ()=>{
         }}
         isInputNum={true}
         count={4}
+        value={otp}
         />
         </div>
       <div className="text-[#B8860B] text-[14px] font-normal text-center mb-[16px] mt-4 w-[80%] m-auto">{counter.toPrecision(2)}</div>

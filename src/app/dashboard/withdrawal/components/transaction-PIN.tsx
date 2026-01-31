@@ -53,7 +53,8 @@ export const TransactionPINModal = ({onClose,account_number,bankName}:{onClose:(
          setPIN(otp)
         } } 
         isInputNum
-        count={4}       
+        count={4} 
+        value={pin}      
         />
      </div>
      <BaseButton

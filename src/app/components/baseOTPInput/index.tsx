@@ -7,7 +7,7 @@ interface OTPBaseInputProps {
     count?: number;
     onChange:(otp:string)=>void;
     isInputNum?:boolean;
-    value?:string;
+    value:string;
 }
 export const OTPBaseInput = (props: OTPBaseInputProps) => {
     const [otp, setOtp] = useState<string>("")
