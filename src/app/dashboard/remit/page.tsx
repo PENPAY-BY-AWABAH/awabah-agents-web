@@ -140,6 +140,14 @@ const Page = () => {
      }
     },[])
     const handlePayNow = (value:string)=>{
+        if(String(formData.phoneNumber).length !== 11)
+          {
+           return ShowMessage({status:false,message:"Phone number must be 11 digits",data:null,position:"center"})
+           }
+        if(parseFloat(String(formData.amount)) < 3000)
+          {
+           return ShowMessage({status:false,message:"Minimum amount is N3,000",data:null,position:"center"})
+           }
             setLoading(true)
             const webhook = String(window.location.href).split("?").filter((a,i)=>i == 0).join("");
             remitMicroPension({
@@ -191,6 +199,18 @@ const Page = () => {
                         });
                     }}
                     max={15}
+                    onBlur={()=>{
+                        if(formData.rsaPin?.length !== 15 && formData.rsaPin !== "")
+                        {
+                            setFormData({
+                            ...formData,
+                            isValid: false,
+                            rsaPin: ""
+                        });
+                        return ShowMessage({status:false,message:"RSA PIN must be 15 digits",data:null,position:"center"})
+          
+                        }
+                    }}
                 />
                 <BaseInput
                     required
@@ -206,6 +226,17 @@ const Page = () => {
                             isValid: false,
                             phoneNumber: ReturnAllNumbers(value)
                         });
+                    }}
+                    onBlur={()=>{
+                        if(formData.phoneNumber?.length !== 11  && formData.phoneNumber !== "")
+                        {
+                             setFormData({
+                            ...formData,
+                            isValid: false,
+                            phoneNumber: ""
+                        });
+                        return ShowMessage({status:false,message:"Phone number must be 11 digits",data:null,position:"center"})
+                        }
                     }}
                 />
                 <BaseInput
@@ -228,6 +259,14 @@ const Page = () => {
                         setFormData({
                             ...formData,
                             amount: parseFloat(String(formData.amount)).toFixed(2)
+                        });
+                        }
+                        if(parseFloat(String(formData.amount)) < 3000   && formData.amount !== "")
+                        {
+                            ShowMessage({status:false,message:"Minimum amount is N3,000",data:null,position:"center"})
+                            setFormData({
+                            ...formData,
+                            amount: ""
                         });
                         }
                     }}
@@ -272,7 +311,6 @@ const Page = () => {
                     /></div>}
                 <div className="mt-5">
                     <BaseButton
-                    disabled={formData.rsaPin?.length !== 15 || formData.phoneNumber?.length !== 11 || parseFloat(String(formData.amount)) < 3000}
                         text={formData?.isValid ? "Continue" : "Validate RSA PIN"}
                         type="submit"
                     />
