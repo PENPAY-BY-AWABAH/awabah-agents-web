@@ -198,7 +198,7 @@ const Page = () => {
                         setFormData({
                             ...formData,
                             isValid: false,
-                            rsaPin: String(value).toUpperCase()
+                            rsaPin: String(value).toUpperCase().trim()
                         });
                     }}
                     max={15}
@@ -227,11 +227,11 @@ const Page = () => {
                         setFormData({
                             ...formData,
                             isValid: false,
-                            phoneNumber: ReturnAllNumbers(value)
+                            phoneNumber: ReturnAllNumbers(value).trim()
                         });
                     }}
                     onBlur={()=>{
-                        if(formData.phoneNumber?.length !== 11  && formData.phoneNumber !== "")
+                        if(formData.phoneNumber && formData.phoneNumber?.length !== 11)
                         {
                              setFormData({
                             ...formData,
@@ -253,7 +253,7 @@ const Page = () => {
                     onValueChange={({ value }) => {
                         setFormData({
                             ...formData,
-                            amount: ReturnAllFloatNumbers(value)
+                            amount: ReturnAllFloatNumbers(value).trim()
                         });
                     }}
                     onBlur={()=>{
@@ -264,7 +264,7 @@ const Page = () => {
                             amount: parseFloat(String(formData.amount)).toFixed(2)
                         });
                         }
-                        if(parseFloat(String(formData.amount)) < 3000   && formData.amount !== "")
+                        if(formData.amount && parseFloat(String(formData.amount)) < 3000)
                         {
                             ShowMessage({status:false,message:"Minimum amount is N3,000",data:null,position:"center"})
                             setFormData({
