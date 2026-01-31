@@ -3,6 +3,7 @@ import { BackIcon } from "@/app/assets/back-icon";
 import { BankIcon } from "@/app/assets/bank-icon";
 import BaseButton from "@/app/components/baseButton"
 import BaseInput from "@/app/components/baseInput";
+import { BaseLoader } from "@/app/components/baseLoader";
 import { ROUTES } from "@/app/includes/constants";
 import { BankItemProps } from "@/app/includes/types";
 import useHttpHook from "@/app/includes/useHttpHook";
@@ -10,13 +11,12 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 
 const Page = () => {
-    const { loading, saveBankAccount } = useHttpHook();
     const [showAddAccountNumber, setShowAddAccountNumber] = useState<boolean>(false);
     const [searchText, setSearchText] = useState<string>("");
     const [listOfBanks, setListOfBanks] = useState<BankItemProps[]>([]);
     const [selectedOption, setSelectedOption] = useState<BankItemProps | null>(null)
     const [accountNumber, setAccountNumber] = useState<string>("");
-    const { getListOfBanks } = useHttpHook()
+    const { getListOfBanks,saveBankAccount,loading } = useHttpHook()
     const ListOfBanks = () => {
         getListOfBanks().then((res) => {
             if (res.status) {
@@ -41,7 +41,7 @@ const Page = () => {
         })
     }
     const list = searchText === "" ? listOfBanks : listOfBanks.filter((bnk) => bnk.name?.toLowerCase().includes(searchText.toLowerCase()));
-    return <div className="fixed top-0 left-0 w-full h-full bg-white p-6 z-10">
+    return <div className="fixed top-0 left-0 w-full h-full bg-white p-[16px] lg:p-6 z-10">
         <div className="mb-6">
             <button
                 onClick={() => {
@@ -51,15 +51,20 @@ const Page = () => {
                     navigate.back();
                 }}
                 className="flex items-center gap-2 cursor-pointer">
-                <BackIcon />
+                <span className="hidden lg:block" >
+                    <BackIcon />
+                </span>
+                <span className="lg:hidden">
+                    <BackIcon size={30} />
+                </span>
                 <div className="">Back</div>
             </button>
         </div>
         <div className="m-auto items-center text-center   ">
-            <div className="m-auto items-center text-center  rounded-[30px] min-h-[400px] shadow w-[500px] p-[30px] pb-[60px]">
+            <div className="m-auto items-center text-center  rounded-[30px] lg:min-h-[400px] shadow lg:w-[500px]  px-[16px] lg:p-[30px] lg:pb-[60px]">
                 <div className="m-auto items-center text-center   ">
                     <div className="w-full justify-center items-center gap-6">
-                        <div className="text-black text-[24px] font-bold text-center mb-6">Add Account</div>
+                        <div className="text-black text-[18px] lg:text-[24px] font-bold text-center mb-3 lg:mb-6">Add Account</div>
                         {!showAddAccountNumber ? <div className="w-full">
                             <BaseInput
                                 label="Search Bank"
@@ -71,7 +76,7 @@ const Page = () => {
                                     setSearchText(value);
                                 }}
                             />
-                            <div className="gap-4 mb-12 h-[300px] overflow-scroll ">
+                            <div className="gap-4 mb-3 lg:mb-12 h-[250px] lg:h-[300px] overflow-scroll ">
                                 {list.length === 0 && <div className="justify-center pt-[100px] items-center text-center">
                                     <svg className="m-auto" width="80" height="56" viewBox="0 0 80 56" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M10.5391 38.2727L10.5391 21.8827C10.5391 20.6266 11.5308 19.6084 12.7541 19.6084L40.4731 19.6084C41.6965 19.6084 42.6882 20.6266 42.6882 21.8827V38.2727C42.6882 39.5288 41.6965 40.5471 40.4731 40.5471H12.7541C11.5308 40.5471 10.5391 39.5288 10.5391 38.2727Z" fill="#C4C4C4" />
@@ -106,7 +111,7 @@ const Page = () => {
                                     <div className="text-left flex-1">{bnk?.name}</div>
                                 </button>)}
                             </div>
-                            {selectedOption && <div className="flex justify-center items-center mb-2">Selected Bank : <b className="ms-1">{selectedOption?.name}</b></div>}
+                            {selectedOption && <div className="flex justify-center items-center lg:mb-2">Selected Bank : <b className="ms-1">{selectedOption?.name}</b></div>}
                         <div>
                             <BaseButton
                                 disabled={selectedOption === null}
@@ -119,7 +124,7 @@ const Page = () => {
                         </div>
                         </div> : <form 
                         onSubmit={handleSaveAccountNumber}
-                        className="w-full">
+                        className="w-full pb-[16px]">
                             <BaseInput
                             required
                                 label="Bank Name"
@@ -146,18 +151,17 @@ const Page = () => {
                             />
                             <div>
                             <BaseButton
-                            loading={loading}
                             disabled={accountNumber === "" || accountNumber.length < 10 || selectedOption === null}
                             text={"Add Account"}
                             type={"submit"}
                             />
                         </div>
                         </form>}
-                        
                     </div>
                 </div>
             </div>
         </div>
+    {loading && <BaseLoader modal color="green" size="lg" />}
     </div>
 }
 export default Page; 

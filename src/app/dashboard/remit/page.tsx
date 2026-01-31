@@ -9,11 +9,12 @@ import BaseInput from "@/app/components/baseInput";
 import BaseSelect from "@/app/components/baseSelect";
 import useHttpHook from "@/app/includes/useHttpHook";
 import { ItemProps } from "@/app/includes/types";
-import { ReturnAllNumbers, ReturnComma } from "@/app/includes/functions";
+import { ReturnAllFloatNumbers, ReturnAllNumbers } from "@/app/includes/functions";
 import BaseButton from "@/app/components/baseButton";
 import { PaymentVericationModal } from "./components/payment_verification_modal";
-import { Split } from "lucide-react";
 import { CONSTANT } from "@/app/includes/constants";
+import { BaseLoader } from "@/app/components/baseLoader";
+import { PaymentOptionsModal } from "./components/payment_option_modal";
 interface PaymentProp {
     rsaPin?: string;
     pfaName?: string;
@@ -22,6 +23,8 @@ interface PaymentProp {
     isValid?: boolean;
     fullName?: string;
     phoneNumber?: string;
+    refNo?:string;
+    blockFields?:boolean;
 }
 interface ListOfPfa {
     id: string;
@@ -42,12 +45,15 @@ export interface PaymentResponseProp {
     paymentRef?: string;
     phoneNumber?: string;
     fullName?:string;
+    refNo?:string;
 }
 const Page = () => {
     const [listOfPfa, setListOfPfa] = useState<ListOfPfa[]>([])
     const navigate = useRouter();
-    const { getProviders, validateRSA, remitMicroPension, verifyTransaction } = useHttpHook();
+    const { getProviders, validateRSA,ShowMessage, remitMicroPension, verifyTransaction } = useHttpHook();
     const [loading, setLoading] = useState<boolean>(false);
+    const [message, setMessage] = useState<string>("");
+    const [showPaymentOption, setShowPaymentOption] = useState<boolean>(false);
     const [formData, setFormData] = useState<PaymentProp>(
         {
             rsaPin: "",
@@ -85,8 +91,8 @@ const Page = () => {
                 status: false,
                 loading: true
             })
-
-            verifyTransaction({ reference: urlParams.reference }).then((res) => {
+        const reference = String(urlParams.reference).split("?").filter((a,i)=>i === 0).join("")
+            verifyTransaction({ reference }).then((res) => {
                 setPaymentDetails({
                     ...res.data,
                     status: res.status,
@@ -95,6 +101,8 @@ const Page = () => {
                 if(res.status)
                 {
                     localStorage.removeIteme(CONSTANT.LocalStore.remit);
+                }else{
+                    setMessage(res.message)
                 }
             })
 
@@ -102,12 +110,12 @@ const Page = () => {
     }, [])
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
-        setLoading(true)
         if (!formData.isValid) {
+            setLoading(true)
             localStorage.setItem(CONSTANT.LocalStore.remit,JSON.stringify(formData))
             validateRSA({
                 rsaPin: formData.rsaPin,
-                providerId: formData.providerId
+                providerId:String(formData.rsaPin).includes("AWA")?"awabah":formData.providerId
             }).then((res) => {
                 setLoading(false)
                 if (res.status) {
@@ -120,17 +128,11 @@ const Page = () => {
                 }
             })
         } else {
-            const webhook = String(window.location.href).split("?").filter((a,i)=>i == 0).join("");
-            
-            remitMicroPension({
-                ...formData,
-                callback_url:webhook
-            }).then((res) => {
-                setLoading(false)
-                if (res.status && res.data?.paymentUrl) {
-                    window.open(res.data.paymentUrl,"_self")
-                }
-            })
+            if(parseFloat(String(formData.amount)) < 3000)
+            {
+                return ShowMessage({status:false,message:"Oops! the minimum amount is N3,000",data:null,position:"center"})
+            }
+            setShowPaymentOption(true)
         }
     }
     useEffect(()=>{
@@ -140,24 +142,53 @@ const Page = () => {
         setFormData(JSON.parse(data))
      }
     },[])
-    return <div className="bg-white h-screen p-4">
+    const handlePayNow = (value:string)=>{
+        if(String(formData.phoneNumber).length !== 11)
+          {
+           return ShowMessage({status:false,message:"Phone number must be 11 digits",data:null,position:"center"})
+           }
+        if(parseFloat(String(formData.amount)) < 3000)
+          {
+           return ShowMessage({status:false,message:"Minimum amount is N3,000",data:null,position:"center"})
+           }
+            setLoading(true)
+            const webhook = String(window.location.href).split("?").filter((a,i)=>i == 0).join("");
+            remitMicroPension({
+                ...formData,
+                callback_url:webhook,
+                paymentOption:value
+            }).then((res) => {
+                setLoading(false)
+                if (res.status && res.data?.paymentUrl) {
+                    setShowPaymentOption(false)
+                    window.open(res.data.paymentUrl,"_self")
+                }
+            })
+    }
+    return <div className="bg-white h-screen lg:p-4">
         <div className="mb-6">
             <button
                 onClick={() => {
                     navigate.back();
                 }}
                 className="flex items-center gap-2 cursor-pointer">
-                <BackIcon />
+                 <span className="hidden lg:block" >
+                 <BackIcon  />
+                 </span>
+                 <span className="lg:hidden">
+                 <BackIcon size={30}  />
+                 </span>
                 <div className="">Back</div>
             </button>
         </div>
         <form
             onSubmit={handleSubmit}
         >
-            <div className="m-auto items-center text-center  rounded-[30px] min-h-[400px] shadow w-[500px] p-[30px] pb-[60px]">
+            <div className="m-auto items-center text-center  rounded-[30px] min-h-[400px] shadow lg:w-[500px] p-[16px] lg:p-[30px] pb-[180px] lg:pb-[60px]">
                 <div className="text-black text-[24px] text-center mb-5">Fill in the details to pay</div>
                 <BaseInput
                     required
+                    disabled={formData?.blockFields}
                     label="RSA PIN"
                     placeholder="Enter RSA PIN"
                     type="text"
@@ -167,8 +198,21 @@ const Page = () => {
                         setFormData({
                             ...formData,
                             isValid: false,
-                            rsaPin: value
+                            rsaPin: String(value).toUpperCase().trim()
                         });
+                    }}
+                    max={15}
+                    onBlur={()=>{
+                        if(formData.rsaPin?.length !== 15 && formData.rsaPin !== "")
+                        {
+                            setFormData({
+                            ...formData,
+                            isValid: false,
+                            rsaPin: ""
+                        });
+                        return ShowMessage({status:false,message:"RSA PIN must be 15 digits",data:null,position:"center"})
+          
+                        }
                     }}
                 />
                 <BaseInput
@@ -183,8 +227,19 @@ const Page = () => {
                         setFormData({
                             ...formData,
                             isValid: false,
-                            phoneNumber: ReturnAllNumbers(value)
+                            phoneNumber: ReturnAllNumbers(value).trim()
                         });
+                    }}
+                    onBlur={()=>{
+                        if(formData.phoneNumber && formData.phoneNumber?.length !== 11)
+                        {
+                             setFormData({
+                            ...formData,
+                            isValid: false,
+                            phoneNumber: ""
+                        });
+                        return ShowMessage({status:false,message:"Phone number must be 11 digits",data:null,position:"center"})
+                        }
                     }}
                 />
                 <BaseInput
@@ -198,11 +253,28 @@ const Page = () => {
                     onValueChange={({ value }) => {
                         setFormData({
                             ...formData,
-                            amount: ReturnAllNumbers(String(parseInt(value)))
+                            amount: ReturnAllFloatNumbers(value).trim()
                         });
                     }}
+                    onBlur={()=>{
+                        if(String(formData.amount).includes("."))
+                        {
+                        setFormData({
+                            ...formData,
+                            amount: parseFloat(String(formData.amount)).toFixed(2)
+                        });
+                        }
+                        if(formData.amount && parseFloat(String(formData.amount)) < 3000)
+                        {
+                            ShowMessage({status:false,message:"Minimum amount is N3,000",data:null,position:"center"})
+                            setFormData({
+                            ...formData,
+                            amount: ""
+                        });
+                        }
+                    }}
                 />
-                <div className="text-left">
+                {!String(formData?.rsaPin).toUpperCase().includes("AWA") && <div className="text-left">
                     <BaseSelect
                         custom
                         list={listOfPfa.map((a: any) => {
@@ -227,7 +299,7 @@ const Page = () => {
                         placeholder="Select a provider"
                         label="Provider"
                     />
-                </div>
+                </div>}
                 {formData.isValid && <div className="mt-5">
                     <BaseInput
                         label="Full name"
@@ -244,15 +316,21 @@ const Page = () => {
                     <BaseButton
                         text={formData?.isValid ? "Continue" : "Validate RSA PIN"}
                         type="submit"
-                        loading={loading}
                     />
                 </div>
             </div>
         </form>
+        {showPaymentOption &&<PaymentOptionsModal
+        details={formData}
+        onClose={()=>{}}
+        onPayment={(value)=>handlePayNow(value)}
+        />}
         {paymentDetails && <PaymentVericationModal
         onClose={()=>setPaymentDetails(null)}
         details={paymentDetails}
+        message={message}
         />}
+        {loading && <BaseLoader modal color="green" size="lg" />}
     </div>
 }
 export default Page;

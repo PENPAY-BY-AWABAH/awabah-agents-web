@@ -30,10 +30,11 @@ export const CONSTANT = {
     BaseURL:process.env.NODE_ENV === "development"?"http://localhost/awabah-api/v1/":"https://staging.awabah.com/v1/",
     LocalStore:{
         token:"token",
-        baseUrl:"baseurl",
+        baseUrl:"baseurl", 
         resetPassword:"resetPassword",
         remit:"remit",
-        userFormFields:"userFormFields"
+        userFormFields:"userFormFields",
+        historySection:"historySection"
     }
 }
 export const Currency = {

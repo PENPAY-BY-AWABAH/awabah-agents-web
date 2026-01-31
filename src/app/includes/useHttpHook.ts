@@ -280,13 +280,10 @@ const useHttpHook = () => {
                 requestType:"json"
             }).then((res) => {
                 setLoading(false);
-                if(!res.status)
-                {
                     ShowMessage({
                     position:"center",
                     ...res
                 })
-                }
                 resolve(res);
             })
         })
@@ -310,6 +307,10 @@ const useHttpHook = () => {
                     position:"center",
                     ...res
                 })
+                if(res.status && res.data?.accessToken)
+                {
+                    window.localStorage.setItem(name,res.data.accessToken);
+                } 
                 }
                 resolve(res);
             })
@@ -548,7 +549,7 @@ const updatePIN = (data:any)=>{
                 path:`agent-get-transaction-history?page=${page}`,
                 body:{},
                 method:"GET",
-                requestType:"form-data"
+                requestType:"json"
             }).then((res) => {
                 setLoading(false);
                 resolve(res);
@@ -611,10 +612,13 @@ const updatePIN = (data:any)=>{
                 requestType:"json"
             }).then((res) => {
                 setLoading(false);
+                if(!res.status)
+                {
                     ShowMessage({
                     position:"center",
                     ...res
                 })
+            }
                 resolve(res);
             })
         })
@@ -684,6 +688,174 @@ const handleEmploymentDetails =(data:any)=>{
             })
         })
     }
+    const handleCreatePassword  = (data:any)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-save-parent-information`,
+                body:data,
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                ShowMessage({
+                    position:"center",
+                    ...res
+                })
+                resolve(res);
+            })
+        })
+    }
+const handleRSAPINRequest =(data:any)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-request-rsa-pin`,
+                body:data,
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                if(!res.status)
+                {
+                ShowMessage({
+                    position:"center",
+                    ...res
+                })
+            }
+                resolve(res);
+            })
+        })
+    }
+    const handleOtherDetails =(data:any)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-save-other-info`,
+                body:data,
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                if(!res.status)
+                {
+                ShowMessage({
+                    position:"center",
+                    ...res
+                })
+            }
+                resolve(res);
+            })
+        })
+    }
+    const handleUpdateWalletPIN  =(data:any)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-update-wallet-pin`,
+                body:data,
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                
+                if(!res.status)
+                {
+                
+                ShowMessage({
+                    position:"center",
+                    ...res
+                })
+                }
+                resolve(res);
+            })
+        })
+    }
+    const handleWithdrawalToAccount  =(data:any)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-withdraw-commission`,
+                body:data,
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                ShowMessage({
+                    position:"center",
+                    ...res
+                })
+                resolve(res);
+            })
+        })
+    }
+    const getAllWithdrawals  =(page:number)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-get-withdrawal-history?page=${page}`,
+                body:{},
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                resolve(res);
+            })
+        })
+    }
+
+    const getUserByEmail  =(email:string)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-get-user-by-email`,
+                body:{email},
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                resolve(res);
+            })
+        })
+    }
+    const ResetTestData =(email:string)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-reset`,
+                body:{email},
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                ShowMessage({
+                    position:"center",
+                    ...res
+                })
+                resolve(res);
+            })
+        })
+    }
+    const RequestForRSAPIN = (email:string)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-request-rsa-pin`,
+                body:{email},
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                ShowMessage({
+                    position:"center",
+                    ...res
+                })
+                resolve(res);
+            })
+        })
+    }
+    
+    
     return {
         loading,
         handleGetTransactions,
@@ -724,7 +896,17 @@ const handleEmploymentDetails =(data:any)=>{
         verifyTransaction,
         getAllCommisionStats,
         handleEmploymentDetails,
-        handleParentDetails
+        handleParentDetails,
+        handleCreatePassword,
+        handleRSAPINRequest,
+        handleOtherDetails,
+        handleUpdateWalletPIN,
+        handleWithdrawalToAccount,
+        getAllWithdrawals,
+        getUserByEmail,
+        ShowMessage,
+        ResetTestData,
+        RequestForRSAPIN
     }
 }
 export default useHttpHook;

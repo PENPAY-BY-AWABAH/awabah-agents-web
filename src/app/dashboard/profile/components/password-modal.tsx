@@ -66,7 +66,8 @@ export const PasswordModal = ({onClose,details}:{onClose:()=>void;details:UserDe
                 }
                 )
                }}
-                count={4}   
+                count={4}  
+                value={changePassword.otp!}
                 />
                 </div>
                  <BaseInput

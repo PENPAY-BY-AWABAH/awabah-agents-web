@@ -41,6 +41,7 @@ interface BaseInputProps {
   format?: string;
   direction?: "left" | "right",
   className?:string;
+  past?:boolean;
 }
 export default function BaseInputDate(props: BaseInputProps) {
   const [showDate, setShowDate] = useState<boolean>(false);
@@ -224,14 +225,14 @@ relative
         </div>
       </div>}
       {showDate && <div
-        className={`hidden z-[20] lg:block  absolute w-full ${props.direction === "left" ? "left-auto right-0 " : "left-0 right-auto "} bottom-auto top-[50px]  bg-white shadow-md  min-w-[320px] origin-top-right rounded-md ring-1 ring-black ring-opacity-5 focus:outline-none`}
+        className={`hidden z-[20] text-black lg:block  absolute w-full ${props.direction === "left" ? "left-auto right-0 " : "left-0 right-auto "} bottom-auto top-[50px]  bg-white shadow-md  min-w-[320px] origin-top-right rounded-md ring-1 ring-black ring-opacity-5 focus:outline-none`}
       >
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DateCalendar
             defaultValue={dayjs()}
             value={selectedDate}
             onChange={handleDateChange}
-            minDate={dayjs().add(1, "d")}
+            maxDate={dayjs().subtract(1, "d")}
           />
         </LocalizationProvider>
       </div>}

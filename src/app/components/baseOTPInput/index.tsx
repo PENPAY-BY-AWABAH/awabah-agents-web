@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useEffect, useState } from "react"
 import './style.css';
@@ -5,12 +6,19 @@ import OTPInput from 'react18-input-otp';
 interface OTPBaseInputProps {
     count?: number;
     onChange:(otp:string)=>void;
+    isInputNum?:boolean;
+    value:string;
 }
 export const OTPBaseInput = (props: OTPBaseInputProps) => {
     const [otp, setOtp] = useState<string>("")
     useEffect(() => {
         props.onChange(otp);
     }, [otp])
+    
+    useEffect(() => {
+        setOtp(props.value!)
+    }, [props.value])
+
     return <div >
         <OTPInput
             value={otp}
@@ -35,6 +43,7 @@ export const OTPBaseInput = (props: OTPBaseInputProps) => {
                 transition: "border-color .15s ease-in-out",
                 boxShadow: ".15s ease-in-out"
             }}
+            isInputNum={props?.isInputNum}
             separator={<span style={{ width: 10 }}></span>}
         />
     </div>

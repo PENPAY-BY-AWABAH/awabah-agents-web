@@ -117,7 +117,7 @@ const uploadFile = (selectedFile:any)=>{
       fileUploadInputRef.current?.click();
     }
   };
-    return <div className="mb-6">
+    return <div className="">
         <input 
         ref={fileUploadInputRef}
         type="file"
@@ -127,16 +127,14 @@ const uploadFile = (selectedFile:any)=>{
         />
         <div className="flex items-center gap-3">
             <UserIcon />
-            <div className="text-[32px]">Profile</div>
+            <div className="text-[20px] font-medium lg:text-[32px]">Profile</div>
         </div>
-        <div className="bg-[#C4C4C426] p-[30px] rounded-[15px] my-[20px]">
-            <div className="flex item-center">
-                <div  >
-                    <div className="flex items-center gap-5">
-                        <div className="items-center text-center " >
+        <div className="bg-[#C4C4C426] p-[16px] lg:p-[30px] rounded-[15px] my-[16px] lg:my-[20px]">
+                <div className="flex items-center gap-3 lg:gap-5">
+                        <div className="items-center text-center justify-center " >
                             <div
                             onClick={triggerClick}
-                            className="h-[150px] w-[150px] relative cursor-pointer bg-[#C4C4C459] border-[0.5px] rounded-[150px] overflow-hidden" >
+                            className="lh-[65px] w-[65px] lg:h-[150px] lg:w-[150px] relative cursor-pointer bg-[#C4C4C459] border-[0.5px] rounded-[150px] overflow-hidden" >
                                 <img src={details?.avatar ? details?.avatar : placeHolderAvatar.src}
                                     alt={details.id}
                                     className="h-full w-full" />
@@ -148,21 +146,21 @@ const uploadFile = (selectedFile:any)=>{
                             </div>
                             <button
                             onClick={triggerClick}
-                                className="underline cursor-pointer text-[16px] text-[#1455E0] mt-3 "
+                            className="underline cursor-pointer m-auto text-[14px] lg:text-[16px] text-[#1455E0] mt-3 "
                             >
                             Change Image
                             </button>
                         </div>
-                        <div className="flex-1" >
-                            <div className="text-[#000000] text-[16px] ">Agent Name: <span className="font-bold">{details.firstName} {details.lastName}</span></div>
-                            <div className="text-[#000000] mt-[5px] text-[16px] flex item-center gap-[2px]">Agent ID: <span className="font-bold flex item-center gap-[2px]">{details.agentId} <button
+                        <div className="flex-glow text-[14px] lg:text-[16px]" >
+                            <div className="text-[#000000]  ">Agent Name: <span className="font-bold">{details.firstName} {details.lastName}</span></div>
+                            <div className="text-[#000000] mt-[5px] flex item-center gap-[2px]">Agent ID: <span className="font-bold flex item-center gap-[2px]">{details.agentId} <button
                                 onClick={() => {
                                     CopyToClipboard(String(details?.agentId));
                                 }}
                                 className="cursor-pointer">
                                 <CopyIcon />
                             </button></span></div>
-                            <div className="flex mt-[5px] text-[#000000] text-[16px] gap-[4px] " >
+                            <div className="flex mt-[5px] text-[#000000] gap-[4px] " >
                                 <span>Status Badge: </span>
                                 {String(details?.activated) === "1" ? <div className="flex text-[10px] gap-1 items-center bg-[#00A55826] text-[#00A558] rounded-[30px] px-2 py-1" >
                                     <ApprovedIcon />
@@ -173,19 +171,14 @@ const uploadFile = (selectedFile:any)=>{
                                 </div>}
                             </div>
                         </div>
-                    </div>
                 </div>
-                <div >
-
-                </div>
-            </div>
         </div>
         <div className="bg-[#C4C4C426] p-[15px] rounded-[15px] my-[20px]">
-            <div className="text-[24px]">Performance Overview</div>
+            <div className="text-[18px] font-medium lg:text-[24px]">Performance Overview</div>
             <TabSection />
         </div>
         <div className="bg-[#C4C4C426] p-[15px] rounded-[15px] my-[20px]">
-            <div className="text-[24px]">Personal Information</div>
+            <div className="text-[18px] font-medium lg:text-[24px]">Personal Information</div>
             <form
                 onSubmit={handleUpdateProfile}
             >

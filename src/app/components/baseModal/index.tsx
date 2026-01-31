@@ -7,7 +7,7 @@ interface BaseModalProps {
     type?:"md"|"lg"|"sm"
 }
 const BaseModal = (props:BaseModalProps)=>{
-    return <div className="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50" style={{zIndex:10}}>
+    return <div className="fixed inset-0 p-[16px] flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50" style={{zIndex:10}}>
     <div className={`bg-white p-4 rounded-lg shadow-lg ${props.type === "lg"?"max-w-[95vw]":props.type === "md"?"max-w-[50vw]":"max-w-lg"} w-full`}>
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-2xl font-semibold text-gray-800">{props.title}</h3>

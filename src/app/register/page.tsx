@@ -10,38 +10,52 @@ import useHttpHook from "../includes/useHttpHook";
 import BaseToggleBtn from "../components/baseCheckBox";
 import { toast } from "react-toastify";
 import { OtpSection } from "./components/otpSection";
-type RegisterProps = "Create Account" | "Verify Email" ;
+import { RSAPinSection } from "./components/rsaPINRequest";
+import { CreatAccounContinue } from "./components/create_account_continue";
+import { SuccessComponent } from "../dashboard/user-onboarding/components/success";
+import { SuccessSection } from "./components/success";
+import { WalletPINSection } from "./components/walletPINSection";
+type RegisterProps = "Create Account" | "Verify Email" | "RSA PIN Request" | "Account" | "Wallet Pin" | "Confirm Pin" ;
 export interface SignUpProps {
 email?:string;
 firstName?:string;
 fullName?:string;
 lastName?:string;
+middleName?:string;
 password?:string;
 phoneNumber?:string;
+nin?:string;
 businessName?:string;
+state?:string;
+howDoYouFindUs?:string;
 address?:string;
+agentId?:string;
 }
 const Page = () => {
     const [section, setSection] = useState<RegisterProps>("Create Account")
+    const [success, setSuccess] = useState<boolean>(false)
     const navigate = useRouter();
-    const { handleRegister, loading, } = useHttpHook();
+    const { handleRegister, loading,ShowMessage } = useHttpHook();
     const [formData, setFormData] = useState<SignUpProps>({
         email: "",
-        password: ""
+        password: "",
+        agentId:""
     })
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault()
         const data = {...formData}
         if(formData.fullName){
             const nameParts = formData.fullName.split(" ");
+            if(nameParts.length !== 3)
+            {
+                return ShowMessage({message:`full name must contain (first name,middle name & surname)`,position:"center",data:null,status:false,statusCode:0});
+            }
             data.firstName = nameParts[0];
-            data.lastName = nameParts.slice(1).join(" ");
+            data.middleName = nameParts[1];
+            data.lastName = nameParts[2];
         }
         delete data.fullName;
-        if(!data.lastName){
-           toast.error("Please provide a valid full name")
-           return; 
-        }
+        
         handleRegister(data).then((res) => {
             if (res.status) {
               setSection("Verify Email")
@@ -51,11 +65,11 @@ const Page = () => {
                 }
             }
         })
-        
     }
-    return <div className="bg-white h-full px-[100px] py-[60px]">
-        <div className="mb-6">
-            <button
+
+    return <div className="bg-white h-full p-[16px] lg:px-[100px] lg:py-[60px] overflow-hidden">
+        <div className="lg:mb-6 ">
+        {!success &&<button
                 onClick={() => {
                     if(section === "Verify Email")
                     {
@@ -64,15 +78,20 @@ const Page = () => {
                     navigate.back();
                 }}
                 className="flex items-center gap-2 cursor-pointer">
-                <BackIcon />
+                <span className="hidden lg:block" >
+                 <BackIcon  />
+                 </span>
+                 <span className="lg:hidden">
+                 <BackIcon size={30}  />
+                 </span>
                 <div className="text-black text-[18px]">Back</div>
-            </button>
+        </button>}
         </div>
-        <div className="m-auto items-center text-center h-full overflow-x-scroll   ">
-            <div className="m-auto items-center text-center  rounded-[30px] min-h-[400px] shadow w-[500px] p-[30px] pb-[60px]">
+        <div className="m-auto items-center text-center h-full overflow-x-scroll p-[8px]  ">
+            <div className="m-auto items-center text-center  rounded-[30px] lg:min-h-[400px] shadow lg:w-[500px] p-[16px] lg:p-[30px] lg:mb-[190px] mb-[120px] ">
                 <div className="text-black text-[24px] font-bold text-center">{section}</div>
                 <div >
-                    {section === "Create Account" &&<form onSubmit={handleSubmit}>
+                    {section === "Create Account" && !success &&<form onSubmit={handleSubmit}>
                     <div className="text-[#909090] text-[12px] text-left">Fill in your details to register as an Awabah Agent.</div>
                         <BaseInput
                             type="text"
@@ -80,13 +99,18 @@ const Page = () => {
                             value={formData.fullName}
                             required
                             onValueChange={({ value }) => {
+                                const splitName = String(value).split(" ")
+                                if(splitName.length > 3)
+                                {
+                                    return
+                                }
                                 setFormData({
                                     ...formData,
                                     fullName: value
                                 })
                             }}
                             max={80}
-                            label="Full Name"
+                            label="Full Name (first name, middle name & surname)"
                             placeholder="Enter full name."
                         />
                         <BaseInput
@@ -97,7 +121,7 @@ const Page = () => {
                             onValueChange={({ value }) => {
                                 setFormData({
                                     ...formData,
-                                    email: value
+                                    email: String(value).toLowerCase().trim()
                                 })
                             }}
                             max={140}
@@ -134,8 +158,24 @@ const Page = () => {
                             label="Password"
                             placeholder="Enter Password."
                         />
-                    <div className="text-[#009668] text-[14px] text-left mt-4">Minimum of 8 letters and a special character ( *#&)</div>
+                    <BaseInput
+                            required
+                            type="password"
+                            name="nin"
+                            value={formData.nin}
+                            onValueChange={({ value }) => {
+                                setFormData({
+                                    ...formData,
+                                    nin: value
+                                })
+                            }}
+                            max={11}
+                            label="NIN"
+                            placeholder="Enter NIN."
+                        />
+            <div className="text-[#009668] text-[14px] text-left mt-4">Minimum of 8 letters and a special character ( *#&)</div>
              <div className="flex items-center gap-3 text-black mb-[30px]">
+             <div className="w-[30px] h-[30px]">
             <BaseToggleBtn
             onChange={()=>{
 
@@ -145,6 +185,7 @@ const Page = () => {
             value={true}
 
             />
+            </div>
           <span className="text-[14px] text-black text-left ">By Signing in you agree to our <span className="text-[14px] text-[#B8860B]">terms</span> and <span className="text-[14px] text-[#B8860B]">conditions.</span> Privacy Policy</span>
         </div>
                         <BaseButton
@@ -165,7 +206,47 @@ const Page = () => {
                     </form>}
                     {section === "Verify Email" && <OtpSection 
                     email={formData?.email || ""}
+                    onSuccess={()=>{
+                       setSuccess(true)
+                       setTimeout(()=>{
+                       setSection("Create Account") 
+                       },3000)
+                    }}
                     />}
+                    {section === "RSA PIN Request" && <RSAPinSection
+                    onClose={()=>{
+
+                    }}
+                    email={formData.email!}
+                    onRSAPINRequest={()=>{
+
+                    }}
+                    />}
+                {section === "Create Account" && success && <CreatAccounContinue
+                signUpform={formData}
+                onSuccess={(agentId)=>{
+                    setFormData({
+                                 ...formData,
+                                 agentId
+                                })
+                    setSection("Account")
+                }}
+                />}
+                {section === "Account" && <SuccessSection 
+                signUpForm={formData}
+                onClose={()=>{
+
+                }}
+                onContinue={()=>{
+                   setSection("Wallet Pin") 
+                }}
+                />}
+                {section === "Wallet Pin" && <WalletPINSection 
+                signUpForm={formData}
+                onSuccess={()=>{
+                   setSection("Confirm Pin") 
+                }}
+                />}
                 </div>
             </div>
         </div>

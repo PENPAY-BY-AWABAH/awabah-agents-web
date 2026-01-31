@@ -5,8 +5,8 @@ import React, { ChangeEvent, useState } from 'react'
 import './style.css';
 import { FieldChangePayload } from '@/app/includes/types';
 import { ValidateEmail } from '@/app/includes/functions';
-import { Ban, BlocksIcon } from 'lucide-react';
-import { EyeClose, EyeOpen } from '@/app/assets/eyes';
+import { Ban, BlocksIcon, EyeClosed, EyeIcon } from 'lucide-react';
+import { EyeOpen } from '@/app/assets/eyes';
 
 interface BaseInputProps {
     arrayList?:boolean;
@@ -26,6 +26,7 @@ interface BaseInputProps {
     pattern?:string;
     onValueChange:(payload: FieldChangePayload) => void | null;
     options?:{value:string;name:string;}[];
+    onBlur?:(value:string)=>void;
 }
 export default function BaseInput(props:BaseInputProps) {
  const [toggleEye,setToggleEye] = useState(false);
@@ -83,6 +84,7 @@ if(typeof props.value === "string")
       value: target.value,
     });
   }}
+ 
   >
     
   </textarea>:<input 
@@ -100,12 +102,18 @@ if(typeof props.value === "string")
    pattern={props.pattern}
    onInvalid={e => (e.target as HTMLInputElement).setCustomValidity(`${props.name} is required.`)}
    onInput={e => (e.target as HTMLInputElement).setCustomValidity('')}
+   onBlur={()=>{
+    if(props?.onBlur)
+    {
+      props.onBlur(props.value)
+    }
+  }}
   />}
-   {props.disabled?<span className='input-icon pt-2'>
+   {props.disabled?<span className='input-icon pt-2 bg-white'>
     <Ban color="red" size={15} />
    </span>:props.type === "password" && <span
    onClick={()=>setToggleEye(!toggleEye)} className='input-icon pt-[5px]'>
-    {!toggleEye?<EyeOpen />:<EyeClose />} 
+    {toggleEye?<EyeOpen />:<EyeIcon />} 
    </span>}
 </div>
 {props?.error?<div className='text-red-600' >{props.error}</div>:null}

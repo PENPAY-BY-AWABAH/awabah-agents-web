@@ -9,10 +9,10 @@ const Page = ()=>{
     return <div className="mb-6">
         <div className="flex items-center gap-3">
             <CommissionIcon />
-            <div className="text-[32px] text-black">Commission</div>
+            <div className="text-[20px] font-medium lg:text-[32px] text-black">Commission</div>
         </div>
         <CommissionWalletBalance />
-         <div className="text-[24px] mt-5">Commission History</div>
+         <div className="text-[18px] font-medium lg:text-[24px] mt-[16px] lg:mt-[40px]">Commission Overview</div>
         <TabSection />
         <CommissionSection page={true} />
     </div>

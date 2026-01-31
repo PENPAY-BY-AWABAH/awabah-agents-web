@@ -29,19 +29,24 @@ const Page = ()=>{
             }
         })
     }
-    return <div className="bg-white min-h-full px-[100px] py-[60px]">
+    return <div className="bg-white min-h-full p-[16px] lg:px-[100px] lg:py-[60px]">
      <div className="mb-6">
              <button 
              onClick={()=>{
              navigate.back();
              }}
              className="flex items-center gap-2 cursor-pointer">
-                 <BackIcon />
+               <span className="hidden lg:block" >
+                 <BackIcon  />
+                 </span>
+                 <span className="lg:hidden">
+                 <BackIcon size={30}  />
+                 </span>
                  <div className="text-black text-[18px]">Back</div>
              </button>
     </div>
     <div className="m-auto items-center text-center   ">
-      {!showPasswordSection?<div  className="m-auto items-center text-center  rounded-[30px] min-h-[400px] shadow w-[500px] p-[30px] pb-[60px] ">
+      {!showPasswordSection?<div  className="m-auto items-center text-center  rounded-[30px] min-h-[400px] shadow lg:w-[500px] p-[16px] lg:p-[30px] pb-[60px] ">
       <div className="text-black text-[24px] text-center ">Forgot Password</div>
       <div className="text-[#000000A6] text-[12px] font-normal text-center mb-4 mt-4 w-[80%] m-auto">Please enter your email to get an OTP code to change your password</div>
       <form onSubmit={handleSubmit}>
@@ -67,7 +72,7 @@ const Page = ()=>{
         type="submit"
         />
       </form>
-     </div>:<div  className="m-auto items-center text-center  rounded-[30px] min-h-[400px] shadow w-[500px] p-[30px] pb-[60px] ">
+     </div>:<div  className="m-auto items-center text-center  rounded-[30px] lg:min-h-[400px] shadow lg:w-[500px] lg:p-[30px] pb-[60px] ">
     <OtpSection />
     </div>}
      </div>

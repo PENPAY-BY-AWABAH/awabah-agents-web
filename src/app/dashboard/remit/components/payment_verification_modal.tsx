@@ -8,7 +8,7 @@ import BaseButton from "@/app/components/baseButton"
 import html2canvas from 'html2canvas';
 import { ReturnComma } from "@/app/includes/functions"
 import { NairaSymbol } from "@/app/includes/constants"
-export const PaymentVericationModal = ({onClose,details}:{onClose:()=>void;details:PaymentResponseProp})=>{
+export const PaymentVericationModal = ({onClose,details,message}:{onClose:()=>void;details:PaymentResponseProp,message:string})=>{
     const navigate = useRouter();
     const [downloading,setDownloading] = useState<boolean>(false)
     const divRef = useRef<HTMLDivElement>(null);
@@ -101,8 +101,8 @@ export const PaymentVericationModal = ({onClose,details}:{onClose:()=>void;detai
                 <div className="absolute inset-0 bg-indigo-100 rounded-full scale-150 opacity-20 animate-pulse"></div>
                 <div className="bg-white p-6 rounded-3xl shadow-lg relative z-10">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" className="text-amber-500" />
+                        <path strokeLinecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        <path strokeLinecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" className="text-amber-500" />
                     </svg>
                 </div>
             </div>
@@ -110,10 +110,10 @@ export const PaymentVericationModal = ({onClose,details}:{onClose:()=>void;detai
 
         <div className="p-10 text-center">
             <h3 className="text-md font-extrabold text-slate-900 mb-3 tracking-tight">
-                Transaction Not Found
+            {message}
             </h3>
             <p className="text-slate-500 text-md leading-relaxed mb-8">
-                {"We couldn't find the transaction details you're looking for. It might have been canceled, or the reference link has expired."}
+                {String(message).toUpperCase().includes("PENDING")?"":"We couldn't find the transaction details you're looking for. It might have been canceled, or the reference link has expired."}
             </p>
             </div>
         </div>}

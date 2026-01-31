@@ -21,7 +21,7 @@ const navigate = useRouter();
 useEffect(() => {
   const token = localStorage.getItem(CONSTANT.LocalStore.token);
   if(!token) {
-    navigate.replace(ROUTES.login);
+    // navigate.replace(ROUTES.login);
   }
 }, []);
 

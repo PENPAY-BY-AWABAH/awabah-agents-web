@@ -28,8 +28,8 @@ export const Navbar = ()=>{
             route:ROUTES.profile
         }
     ]
-    return <header className="fixed w-full top-0 left-0 bg-[#f0f0f0] z-10 ">
-       <div className="flex items-center  w-full  ">
+    return <header className="fixed w-full bottom-0 lg:bottom-auto lg:top-0  left-0 bg-[#f0f0f0] z-10 ">
+       <div className="hidden lg:flex items-center  w-full  ">
         <Link className="flex-1 gap-1 flex py-5 text-center items-center justify-center" href={ROUTES.dashboard} >
          <LogoIcon />
          </Link>
@@ -38,10 +38,17 @@ export const Navbar = ()=>{
         <span >{item.title}</span>
         </Link>)}
         <div className="flex-1 gap-1 flex text-center items-center justify-center">
-        <Link href={ROUTES.notification} className="flex-1 gap-1 flex py-5 text-center items-center justify-center"  >
+        <Link href={"#"} className="flex-1 gap-1 flex py-5 text-center items-center justify-center"  >
         <BellIcon />
         </Link>
         </div>
+        </div>
+        {/* mobile view */}
+         <div className="lg:hidden flex items-center w-full shadow-md  ">
+        {RouteList.map((item,i)=><Link key={i} className="flex-grow py-4 gap-1 grid  text-center items-center justify-center active:text-[#009668] hover:text-[#009668] focus:text-[#009668] text-[#909090E5]" href={item.route!} >
+        <div className="flex justify-center text-center" >{item.icon}</div>
+        <span className="text-center text-[12px]" >{item.title}</span>
+        </Link>)}
         </div>
     </header>
 }

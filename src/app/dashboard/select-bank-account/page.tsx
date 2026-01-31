@@ -18,7 +18,12 @@ const Page = ()=>{
         navigate.back();
         }}
         className="flex items-center gap-2 cursor-pointer">
-            <BackIcon />
+         <span className="hidden lg:block" >
+                    <BackIcon />
+                </span>
+                <span className="lg:hidden">
+                    <BackIcon size={30} />
+                </span>
             <div className="">Back</div>
         </button>
         </div>

@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { CONSTANT } from "./constants";
+import { CONSTANT, ROUTES } from "./constants";
 import {name} from "../../../package.json"
+import { useRouter } from "next/navigation";
 interface ApiResponse {
     status:boolean;
     message:string;
@@ -20,6 +21,7 @@ export interface UnknownKeyPair {
     [key: string]: any; 
   }
 export const useApiRequest = ()=>{
+  const navigate = useRouter()
     const [loading,setLoading] = useState<boolean>(false);
     const call = async(props:PayloadProps,showMessage?:boolean)=>{
     return new Promise<ApiResponse>(async (resolve)=>{
@@ -64,8 +66,8 @@ export const useApiRequest = ()=>{
             }
             if(String(response.message).toLowerCase().includes("invalid access"))
             {
-              // localStorage.clear();
-              // navigate.replace(ROUTES.login)
+              localStorage.clear();
+              navigate.replace(ROUTES.login)
             }
             resolve(response)
         }).catch((error)=>{
@@ -301,3 +303,8 @@ export const MaskBalance = (balance:string, isVisible = false, options = {}) => 
   // Example output: "₦ ••••"
   return `${currencySymbol} ${maskChar.repeat(maskLength)}`;
 };
+
+export function ReturnAllFloatNumbers(d: string) {
+  d = String(d).trim();
+  return d.replace(/[-+,&\/\\#()$~%;'":*?<>{}A-Z a-z]/g, '');
+}

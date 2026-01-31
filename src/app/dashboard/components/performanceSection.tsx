@@ -63,13 +63,13 @@ export const PerformanceSection = ()=>{
             }
         })
     },[])
-    return <div>
-        <div className="text-[24px]" >Performance Overview</div>
-        <div className="flex items-center gap-9 my-8 mt-3">
-            {btns.map((a,i)=><div key={i} className="bg-[#C4C4C426] grid grid-cols-1 text-center items-center flex-1 rounded-[40px] p-8 min-h-[163px]" >
+    return <div className="mt-[16px]">
+        <div className="text-[14px] font-medium lg:text-[24px]" >Performance Overview</div>
+        <div className="grid grid-cols-2 lg:flex items-center gap-[16px] lg:gap-9 lg:my-8 mt-3">
+            {btns.map((a,i)=><div key={i} className="bg-[#C4C4C426] min-h-[200px] grid grid-cols-1 text-center items-center flex-1 rounded-[20px] lg:rounded-[40px] p-8 min-h-[163px]" >
             <div className={`text-center m-auto ${a.route} `}>{a.icon}</div>
-            <div className="text-center text-black text-[28.3px] mt-3">{(stats[a.value!] || 0)}</div>
-            <div className="text-center text-black text-[18.8px] mt-3">{a.title}</div>
+            <div className="text-center text-black font-bold lg:font-medium text-[20px] lg:text-[28.3px] mt-3">{(stats[a.value!] || 0)}</div>
+            <div className="text-center text-black text-[12px] lg:text-[18.8px] mt-3">{a.title}</div>
             </div>)}
         </div>
     </div>

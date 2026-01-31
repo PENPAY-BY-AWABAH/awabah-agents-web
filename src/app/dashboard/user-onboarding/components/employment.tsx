@@ -28,7 +28,7 @@ export interface EmploymentProps {
   employerStreetName?: string;
 }
 
-export const EmploymentPage = ({onClose,onSuccess,trackingId}:{onClose:()=>void;onSuccess:()=>void;trackingId:string}) => {
+export const EmploymentPage = ({onClose,onSuccess,trackingId}:{onClose:()=>void;onSuccess:(tempPIN:string)=>void;trackingId:string}) => {
     const [index,setIndex] =  useState<number>(0)
     const navigate = useRouter();
     const { handleEmploymentDetails, loading } = useHttpHook();
@@ -52,7 +52,7 @@ export const EmploymentPage = ({onClose,onSuccess,trackingId}:{onClose:()=>void;
         dateOfAppointment:dayjs(formData.dateOfAppointment!).format("YYYY-MM-DD")
     }).then((res) => {
     if (res.status) {
-        onSuccess()
+        onSuccess(res.data?.tempPIN)
     }
     })
     }
@@ -138,6 +138,7 @@ export const EmploymentPage = ({onClose,onSuccess,trackingId}:{onClose:()=>void;
                                     dateOfAppointment: dayjs(value).toISOString()
                                 })
                             }}
+                            
                             required
                             onValueChange={({ value }) => {
                                 setFormData({

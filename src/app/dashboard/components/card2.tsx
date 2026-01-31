@@ -1,6 +1,6 @@
-export const CardTwo = ()=>{
+export const CardTwo = ({size}:{size?:number})=>{
 return  <div className="m-auto">
- <svg width="323" height="322" viewBox="0 0 323 322" fill="none" xmlns="http://www.w3.org/2000/svg">
+ <svg width={size?size:"323"} height={size?size:"323"} viewBox="0 0 323 322" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M47.301 160.865C-15.767 197.72 -15.767 257.396 47.301 294.215C110.369 331.035 212.631 331.07 275.699 294.215C338.767 257.361 338.767 197.692 275.699 160.865C212.631 124.039 110.369 124.046 47.301 160.865Z" fill="#FAFAFA"/>
 <path d="M1.57812 159.767L3.0565 159.864L58.5057 127.46L57.7631 126.918L1.57812 159.767Z" fill="#FAFAFA"/>
 <path d="M57.7691 126.918L3.0625 158.905V73.8476L57.7691 41.8608V126.918Z" fill="white"/>

@@ -30,6 +30,7 @@ export interface UserItemProp {
   rsaNumber?: null;
   nextOfKinRegistered?: boolean;
   employerDetailsRegistered?: boolean;
+  parentDetailRegistered?:boolean;
   commission?:string;
 }
 
@@ -76,7 +77,7 @@ export const UsersSection = ({page}:{page?:boolean})=>{
     }
     return <div>
         <div className="flex" >
-        <div className="text-[24px] flex-1" >All Users</div>
+        <div className="text-[18px] font-medium lg:text-[24px] flex-1" >All Users</div>
         {!page &&<Link href={ROUTES.history} className={`text-[22px] text-${COLOURS.green}`} >View All</Link>}
         </div>
         <div className="relative">
@@ -119,15 +120,15 @@ export const UsersSection = ({page}:{page?:boolean})=>{
             <div className="m-auto flex justify-center item-center text-center">
             <BaseLoader color="green" size="lg" />
             </div>
-            <div className="m-auto text-center">Fetching users...</div>
+            <div className="m-auto text-center text-[12px] lg:text-[14px]">Fetching users...</div>
         </div>}
         {filteredlist.length === 0 &&<div className="m-auto my-5 mt-[50px] text-center">
         <div className="m-auto flex justify-center item-center text-center">
         <DatabaseIcon className="text-[#999]" size={50}/>
         </div>
-        <div className="m-auto text-center text-[#44444]">No record found!</div>
+        <div className="m-auto text-center text-[#44444] text-[12px] lg:text-[14px]">No record found!</div>
         </div>}
-        <div className="my-8 mt-6 grid grid-cols-4 gap-3 ">
+        <div className="mt-[16px] lg:mb-8 grid lg:grid-cols-4 gap-[16px] mb-[150px] ">
         {filteredlist.map((item,i)=><div key={i} className="items-center  border-[#C4C4C459] border-[0.5px] rounded-[30px] p-5 shadow">
         <div className="flex items-center gap-3">
             <div className="" >
@@ -165,12 +166,16 @@ export const UsersSection = ({page}:{page?:boolean})=>{
         </div>
          <div className="flex items-center gap-[2px] h-[20px]">
             <div className="font-normal text-[12px] text-[#000000A6]">User status:</div>
-            <div className={`font-normal text-[12px] ${item.approved?"text-[#00A558]":"text-[#F4900C]"}`}> Active</div>
+            <div className={`font-normal text-[12px] ${item.approved?"text-[#00A558]":"text-[#F4900C]"}`}>{item.approved?"Active":"Pending"}</div>
         </div>
         </div>
         <BaseButton 
-        text="Pay Now"
+        text={item.nextOfKinRegistered === false || item.employerDetailsRegistered === false || item.parentDetailRegistered === false?"Complete Registration":"Pay Now"}
         onClick={()=>{
+        if(item.nextOfKinRegistered === false || item.employerDetailsRegistered === false || item.parentDetailRegistered === false)
+        {
+           navigate.push(`${ROUTES.userOnboarding}?email=${item.email}`) 
+        }else{
             localStorage.setItem(CONSTANT.LocalStore.remit,JSON.stringify({
             rsaPin: item.rsaNumber,
             pfaName: "",
@@ -178,9 +183,11 @@ export const UsersSection = ({page}:{page?:boolean})=>{
             phoneNumber:String(item.phoneNumber).replace("+234","0"),
             amount: 3000,
             fullName: item.firstName+" "+item.lastName,
-            isValid: false
+            isValid: false,
+            blockFields:true
             }))
             navigate.push(ROUTES.remit)
+        }
         }}
         white
         type="button"
@@ -193,8 +200,8 @@ export const UsersSection = ({page}:{page?:boolean})=>{
 export const ApprovedIcon = ()=>{
     return <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g clip-path="url(#clip0_1251_9836)">
-<path d="M2.24961 5.0288C2.16447 4.64527 2.17754 4.24646 2.28762 3.86933C2.39769 3.4922 2.60121 3.14897 2.8793 2.87147C3.15738 2.59396 3.50104 2.39116 3.8784 2.28188C4.25575 2.17259 4.65459 2.16035 5.03794 2.2463C5.24894 1.91631 5.53961 1.64474 5.88316 1.45663C6.22672 1.26852 6.61209 1.16992 7.00377 1.16992C7.39545 1.16992 7.78083 1.26852 8.12439 1.45663C8.46794 1.64474 8.75861 1.91631 8.96961 2.2463C9.35354 2.15998 9.75306 2.17216 10.131 2.28171C10.509 2.39127 10.8531 2.59463 11.1314 2.87289C11.4096 3.15114 11.613 3.49526 11.7225 3.87321C11.8321 4.25117 11.8443 4.6507 11.7579 5.03463C12.0879 5.24563 12.3595 5.5363 12.5476 5.87985C12.7357 6.2234 12.8343 6.60878 12.8343 7.00046C12.8343 7.39214 12.7357 7.77752 12.5476 8.12108C12.3595 8.46463 12.0879 8.7553 11.7579 8.9663C11.8439 9.34964 11.8316 9.74849 11.7224 10.1258C11.6131 10.5032 11.4103 10.8469 11.1328 11.1249C10.8553 11.403 10.512 11.6065 10.1349 11.7166C9.75778 11.8267 9.35897 11.8398 8.97544 11.7546C8.76472 12.0859 8.47382 12.3586 8.12968 12.5476C7.78554 12.7365 7.39929 12.8356 7.00669 12.8356C6.61409 12.8356 6.22784 12.7365 5.8837 12.5476C5.53956 12.3586 5.24866 12.0859 5.03794 11.7546C4.65459 11.8406 4.25575 11.8283 3.8784 11.7191C3.50104 11.6098 3.15738 11.407 2.8793 11.1295C2.60121 10.852 2.39769 10.5087 2.28762 10.1316C2.17754 9.75447 2.16447 9.35566 2.24961 8.97213C1.91708 8.76169 1.64318 8.47057 1.45339 8.12584C1.26359 7.78111 1.16406 7.39398 1.16406 7.00046C1.16406 6.60694 1.26359 6.21981 1.45339 5.87509C1.64318 5.53036 1.91708 5.23924 2.24961 5.0288Z" stroke="#00A558" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M5.25 7.00065L6.41667 8.16732L8.75 5.83398" stroke="#00A558" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M2.24961 5.0288C2.16447 4.64527 2.17754 4.24646 2.28762 3.86933C2.39769 3.4922 2.60121 3.14897 2.8793 2.87147C3.15738 2.59396 3.50104 2.39116 3.8784 2.28188C4.25575 2.17259 4.65459 2.16035 5.03794 2.2463C5.24894 1.91631 5.53961 1.64474 5.88316 1.45663C6.22672 1.26852 6.61209 1.16992 7.00377 1.16992C7.39545 1.16992 7.78083 1.26852 8.12439 1.45663C8.46794 1.64474 8.75861 1.91631 8.96961 2.2463C9.35354 2.15998 9.75306 2.17216 10.131 2.28171C10.509 2.39127 10.8531 2.59463 11.1314 2.87289C11.4096 3.15114 11.613 3.49526 11.7225 3.87321C11.8321 4.25117 11.8443 4.6507 11.7579 5.03463C12.0879 5.24563 12.3595 5.5363 12.5476 5.87985C12.7357 6.2234 12.8343 6.60878 12.8343 7.00046C12.8343 7.39214 12.7357 7.77752 12.5476 8.12108C12.3595 8.46463 12.0879 8.7553 11.7579 8.9663C11.8439 9.34964 11.8316 9.74849 11.7224 10.1258C11.6131 10.5032 11.4103 10.8469 11.1328 11.1249C10.8553 11.403 10.512 11.6065 10.1349 11.7166C9.75778 11.8267 9.35897 11.8398 8.97544 11.7546C8.76472 12.0859 8.47382 12.3586 8.12968 12.5476C7.78554 12.7365 7.39929 12.8356 7.00669 12.8356C6.61409 12.8356 6.22784 12.7365 5.8837 12.5476C5.53956 12.3586 5.24866 12.0859 5.03794 11.7546C4.65459 11.8406 4.25575 11.8283 3.8784 11.7191C3.50104 11.6098 3.15738 11.407 2.8793 11.1295C2.60121 10.852 2.39769 10.5087 2.28762 10.1316C2.17754 9.75447 2.16447 9.35566 2.24961 8.97213C1.91708 8.76169 1.64318 8.47057 1.45339 8.12584C1.26359 7.78111 1.16406 7.39398 1.16406 7.00046C1.16406 6.60694 1.26359 6.21981 1.45339 5.87509C1.64318 5.53036 1.91708 5.23924 2.24961 5.0288Z" stroke="#00A558" strokeLinecap="round" stroke-linejoin="round"/>
+<path d="M5.25 7.00065L6.41667 8.16732L8.75 5.83398" stroke="#00A558" strokeLinecap="round" stroke-linejoin="round"/>
 </g>
 <defs>
 <clipPath id="clip0_1251_9836">

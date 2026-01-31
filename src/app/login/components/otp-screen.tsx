@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable react/no-unescaped-entities */
 import BaseButton from "@/app/components/baseButton"
@@ -6,17 +7,10 @@ import BaseModal from "@/app/components/baseModal"
 import { OTPBaseInput } from "@/app/components/baseOTPInput"
 import { LoginProps } from "@/app/includes/types"
 import useHttpHook from "@/app/includes/useHttpHook"
-import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
-export const OtpSection = ({email,onClose,trackingId}:{email:string;onClose:()=>void;trackingId?:string})=>{
-    const navigate = useRouter();
+export const OtpSection = ({email,onClose}:{email:string;onClose:()=>void;})=>{
     const [success,setSuccess] = useState<boolean>(false)
-    const [formData,setFormData] = useState<LoginProps>({
-        email:"",
-        password:"",
-        confirmPassword:""
-    })
     const [startTimer,setStartTimer] = useState<boolean>(true);
     const [counter,setCounter] = useState<number>(30);
     const [otp,setOtp] = useState<string>("");
@@ -31,15 +25,9 @@ export const OtpSection = ({email,onClose,trackingId}:{email:string;onClose:()=>
     }
    
     const handleResend = ()=>{
-        handleSendOtp(email).then((res)=>{
-        })
+        setOtp("")
+        handleSendOtp(email)
     }
-    useEffect(()=>{
-        setFormData({
-            ...formData,
-            email
-        })
-    },[email])
 
      useEffect(()=>{
         if(startTimer)
@@ -59,8 +47,11 @@ export const OtpSection = ({email,onClose,trackingId}:{email:string;onClose:()=>
     }
     },[startTimer])
     
-    
-    return <div >
+    return <BaseModal 
+    onClose={onClose}
+    title=""
+    >
+    <div >
         <div className="text-black text-[16px] font-semibold text-center mt-4 ">OTP Code</div>
       <div className="text-[#000000A6] text-[12px] font-normal text-center mb-4 mt-4 w-[80%] m-auto">Please enter the code sent to your email to verify your identity and continue.</div>
       <div 
@@ -74,7 +65,7 @@ export const OtpSection = ({email,onClose,trackingId}:{email:string;onClose:()=>
         }}
         isInputNum
         count={4}
-        value={otp!}
+        value={otp}
         />
         </div>
       <div className="text-[#B8860B] text-[14px] font-normal text-center mb-4 mt-4 w-[80%] m-auto">0.{counter.toPrecision(2).replace("0.","")}</div>
@@ -95,4 +86,5 @@ export const OtpSection = ({email,onClose,trackingId}:{email:string;onClose:()=>
         </div>
         {loading &&<BaseLoader color="green" size="lg" modal text="Sending..." />}
     </div>
+    </BaseModal>
 }

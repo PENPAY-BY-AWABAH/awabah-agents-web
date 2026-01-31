@@ -81,11 +81,11 @@ export const TabSection = ()=>{
         })
     },[])
     return <div>
-        <div className="flex items-center gap-9 my-8 mt-3">
-            {btns.map((a,i)=><div key={i} className={`bg-white shadow grid grid-cols-1 text-center items-center flex-1 rounded-[40px] p-8 min-h-[163px]`} >
+        <div className="grid grid-cols-2 lg:flex items-center gap-[12px] lg:gap-9 my-8 mt-3">
+            {btns.map((a,i)=><div key={i} className={`bg-white shadow grid grid-cols-1 text-center items-center flex-grow rounded-[20px] lg:rounded-[40px] p-[16px] lg:p-8 min-h-[163px]`} >
             <div className={`text-center m-auto ${a.route} ${String(a.borderColour).replace("border","text")} `}>{a.icon}</div>
-            <div className="text-center text-black text-[28.3px] mt-3">{(stats[a.value!] || 0)}</div>
-            <div className="text-center text-black text-[18.8px] mt-3">{a.title}</div>
+            <div className="text-center text-black text-[18px] font-medium lg:text-[28.3px] mt-3">{(stats[a.value!] || 0)}</div>
+            <div className="text-center text-black text-[12px] lg:text-[14px] mt-3">{a.title}</div>
             </div>)}
         </div>
     </div>

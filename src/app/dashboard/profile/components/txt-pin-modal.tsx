@@ -63,7 +63,9 @@ setLoading(true)
                     ...changePIN,
                     otp})
                }}
-                count={4}   
+                count={4} 
+                isInputNum  
+                value={changePIN.otp!}
                 />
                 </div>
                  <BaseInput

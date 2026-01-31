@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 "use client"
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import useHttpHook from "@/app/includes/useHttpHook";
@@ -15,6 +15,9 @@ import { SuccessComponent } from "./components/success";
 import { PaymentComponent } from "./components/payment";
 import { EmploymentPage } from "./components/employment";
 import { ParentDetailPage } from "./components/parentDetails";
+import { ReturnAllNumbers } from "@/app/includes/functions";
+import { BaseLoader } from "@/app/components/baseLoader";
+import useCommissionStore from "@/app/includes/store";
 type RegisterProps = "User Details" | "Verify Email" | "Next Of Kin" | "Success" | "Pay" | "Employment Details" | "Parent Details - (Father)" | "Parent Details - (Mother)";
 export interface SignUpProps {
     email?: string;
@@ -26,12 +29,14 @@ export interface SignUpProps {
     bvn?: string;
     rsaPin?: string;
     trackingId?:string;
+    tempPIN?:string;
 }
 const Page = () => {
+    const {update} = useCommissionStore()
     const [index, setIndex] = useState<number>(0)
     const [section, setSection] = useState<RegisterProps>("User Details")
     const navigate = useRouter();
-    const { handleRegisterUser, loading } = useHttpHook();
+    const { handleRegisterUser,getUserByEmail, loading } = useHttpHook();
     const [formData, setFormData] = useState<SignUpProps>({
         email: "",
         firstName: "",
@@ -41,7 +46,8 @@ const Page = () => {
         nin: "",
         bvn: "",
         rsaPin: "",
-        trackingId:""
+        trackingId:"",
+        tempPIN:""
     })
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault()
@@ -76,7 +82,8 @@ const Page = () => {
             }
         })
     }
-
+    const searchParams = useSearchParams()
+    const email = searchParams.get('email')
     useEffect(() => {
         if (section === "User Details") {
             setIndex(0)
@@ -98,13 +105,35 @@ const Page = () => {
         }
     }, [section])
     useEffect(()=>{
+         if(email)
+        {
+         getUserByEmail(email).then((res)=>{
+            if(res.data?.nextOfKinRegistered === false)
+            {
+                setSection("Next Of Kin")
+            }else if(res.data?.parentDetailRegistered === false)
+            {
+                setSection("Parent Details - (Father)")
+            }else if(res.data?.employerDetailsRegistered === false)
+            {
+                setSection("Employment Details")
+            }
+            setFormData({
+                ...res.data,
+                phoneNumber:String(res.data?.phoneNumber).replace("+234","0"),
+                trackingId:res.data?.trackingId
+            })
+         })   
+        }else{
       const formFields = localStorage.getItem(CONSTANT.LocalStore.userFormFields);
       if(formFields)
       {
         setFormData(JSON.parse(formFields));
       }
-    },[])
-    return <div className="bg-white h-full px-[100px] py-[60px]">
+    }
+    },[email])
+    
+    return <div className="bg-white h-full lg:px-[100px] lg:py-[60px] overflow-none">
         {section !== "Success" && <div className="mb-6">
             <button
                 onClick={() => {
@@ -117,12 +146,17 @@ const Page = () => {
                     navigate.back();
                 }}
                 className="flex items-center gap-2 cursor-pointer">
-                <BackIcon />
+                <span className="hidden lg:block" >
+                    <BackIcon />
+                </span>
+                <span className="lg:hidden">
+                    <BackIcon size={30} />
+                </span>
                 <div className="text-black text-[18px]">Back</div>
             </button>
         </div>}
-        {section !== "Success" ? <div className="m-auto items-center text-center h-full overflow-x-scroll   ">
-            <div className="m-auto items-center text-center  rounded-[30px] min-h-[400px] shadow w-[500px] p-[30px] pb-[60px]">
+        {section !== "Success" ? <div className="m-auto items-center text-center h-full overflow-x-scroll">
+            <div className="m-auto items-center text-center  rounded-[30px] min-h-[400px] p-[16px] shadow lg:w-[500px] lg:p-[30px] pb-[180px] lg:pb-[60px]">
                 <div className="text-black text-[24px] font-bold text-center mb-[20px] ">{section}</div>
                 <div className="w-[200px]">
                     <BaseHorizontalIndicator
@@ -219,7 +253,7 @@ const Page = () => {
                             onValueChange={({ value }) => {
                                 setFormData({
                                     ...formData,
-                                    nin: value
+                                    nin:ReturnAllNumbers(value)
                                 })
                             }}
                             label="NIN (National Identity Number)"
@@ -234,19 +268,19 @@ const Page = () => {
                             onValueChange={({ value }) => {
                                 setFormData({
                                     ...formData,
-                                    bvn: value
+                                    bvn: ReturnAllNumbers(value)
                                 })
                             }}
                             label="BVN (BANK Verification Number)"
                             placeholder="Enter BVN."
                         />
                         <BaseButton
-                            loading={loading}
                             text="Next"
                             type="submit"
                         />
 
                     </form>
+                {loading && <BaseLoader modal color="green" size="lg" />}
                 </div>}
                 {section === "Verify Email" && <div >
                     <OtpSection
@@ -278,7 +312,12 @@ const Page = () => {
                 </div>}
                 {section === "Employment Details" && <div >
                     <EmploymentPage
-                        onSuccess={() => {
+                        onSuccess={(tempPIN) => {
+                        update({showCommissionBalance:true});
+                        setFormData({
+                            ...formData,
+                            tempPIN
+                        })
                         setSection("Success")
                         }}
                         onClose={() => {
@@ -314,8 +353,19 @@ const Page = () => {
             </div>
         </div> : <SuccessComponent
             onPay={() => {
-                navigate.push(ROUTES.users)
+            localStorage.setItem(CONSTANT.LocalStore.remit,JSON.stringify({
+            rsaPin: formData.tempPIN,
+            pfaName: "",
+            providerId: "",
+            phoneNumber:String(formData.phoneNumber).replace("+234","0"),
+            amount: 3000,
+            fullName: formData.firstName+" "+formData.lastName,
+            isValid: false
+            }))
+            navigate.push(ROUTES.remit)
             }}
+            email={formData.email!}
+            tempPIN={formData.tempPIN!}
         />}
     </div>
 }
