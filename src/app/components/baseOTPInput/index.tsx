@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useEffect, useState } from "react"
 import './style.css';
@@ -6,12 +7,18 @@ interface OTPBaseInputProps {
     count?: number;
     onChange:(otp:string)=>void;
     isInputNum?:boolean;
+    value?:string;
 }
 export const OTPBaseInput = (props: OTPBaseInputProps) => {
     const [otp, setOtp] = useState<string>("")
     useEffect(() => {
         props.onChange(otp);
     }, [otp])
+    
+    useEffect(() => {
+        setOtp(props.value!)
+    }, [props.value])
+
     return <div >
         <OTPInput
             value={otp}

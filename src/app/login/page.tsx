@@ -14,129 +14,139 @@ import { SwitchAccount } from "./components/switch-account";
 import { HandleResetData } from "./components/handleReset";
 import BaseInputDate from "../components/baseInputDate";
 import dayjs from "dayjs";
+import { OtpSection } from "./components/otp-screen";
 
-const Page = ()=>{
-    
-    const [showAccountSwitch,setShowAccountSwitch] = useState<boolean>(false)
+const Page = () => {
+
+    const [showAccountSwitch, setShowAccountSwitch] = useState<boolean>(false)
     const navigate = useRouter();
-    const {handleLogin,loading} = useHttpHook();
-    const [formData,setFormData] = useState<LoginProps>({
-        email:"",
-        password:""
+    const { handleLogin, loading } = useHttpHook();
+    const [formData, setFormData] = useState<LoginProps>({
+        email: "",
+        password: ""
     })
-    const handleSubmit = (e:FormEvent)=>{
+    const [showOTP, setShowOTP] = useState<boolean>(false);
+    const handleSubmit = (e: FormEvent) => {
         e.preventDefault()
-        handleLogin(formData).then((res)=>{
-            if(res.status)
-            {
-              navigate.replace(ROUTES.dashboard) 
-            }else{
-                if(res.data?.switch_account)
-                {
-                  setShowAccountSwitch(true)
+        handleLogin(formData).then((res) => {
+            if (res.message.includes("OTP")) {
+                return setShowOTP(true)
+            }
+            if (res.status) {
+                navigate.replace(ROUTES.dashboard)
+            } else {
+
+                if (res.data?.switch_account) {
+                    setShowAccountSwitch(true)
                 }
+
             }
         })
     }
-    useEffect(()=>{
-     const token =localStorage.getItem(CONSTANT.LocalStore.token);
-     if(token)
-     {
-        // navigate.replace(ROUTES.dashboard) 
-     }
-    },[])
+    useEffect(() => {
+        const token = localStorage.getItem(CONSTANT.LocalStore.token);
+        if (token) {
+            // navigate.replace(ROUTES.dashboard) 
+        }
+    }, [])
     return <div className="bg-white min-h-full lg:px-[100px] p-[16px] lg:py-[60px] overflow-hidden">
-     <div className="mb-6">
-             <button 
-             onClick={()=>{
-             navigate.back();
-             }}
-             className="flex items-center gap-2 cursor-pointer ">
+        <div className="mb-6">
+            <button
+                onClick={() => {
+                    navigate.back();
+                }}
+                className="flex items-center gap-2 cursor-pointer ">
                 <span className="hidden lg:block" >
-                 <BackIcon  />
-                 </span>
-                 <span className="lg:hidden">
-                 <BackIcon size={30}  />
-                 </span>
-                 <div className="text-black text-[18px]">Back</div>
-             </button>
-             </div>
-       <div className="m-auto items-center text-center overflow-scroll px-[8px] pb-[8px] ">
-      <div  className="m-auto items-center text-center rounded-[30px] lg:min-h-[400px] shadow lg:w-[500px] px-[16px]  lg:p-[30px] pb-[20px]  lg:pb-[60px]">
-      <div className="text-black text-[24px] font-bold text-center">Login</div>
-      <form onSubmit={handleSubmit}>
-        <BaseInput 
-        type="text"
-        name="email"
-        value={formData.email}
-        required
-        onValueChange={({value})=>{
-            setFormData({
-                ...formData,
-                email:String(value).trim().toLowerCase()
-            })
-        }}
-        label="Email"
-        placeholder="Enter Email."
-        />
-        <BaseInput 
-        required
-        type="password"
-        name="password"
-        value={formData.password}
-        onValueChange={({value})=>{
-            setFormData({
-                ...formData,
-                password:String(value).trim()
-            })
-        }}
-        label="Password"
-        placeholder="Enter Password."
-        />
-        <div className="flex items-center gap-3 text-black mb-[30px]">
-            <BaseToggleBtn
-            onChange={()=>{
+                    <BackIcon />
+                </span>
+                <span className="lg:hidden">
+                    <BackIcon size={30} />
+                </span>
+                <div className="text-black text-[18px]">Back</div>
+            </button>
+        </div>
+        <div className="m-auto items-center text-center overflow-scroll px-[8px] pb-[8px] ">
+            <div className="m-auto items-center text-center rounded-[30px] lg:min-h-[400px] shadow lg:w-[500px] px-[16px]  lg:p-[30px] pb-[20px]  lg:pb-[60px]">
+                <div className="text-black text-[24px] font-bold text-center">Login</div>
+                <form onSubmit={handleSubmit}>
+                    <BaseInput
+                        type="text"
+                        name="email"
+                        value={formData.email}
+                        required
+                        onValueChange={({ value }) => {
+                            setFormData({
+                                ...formData,
+                                email: String(value).trim().toLowerCase()
+                            })
+                        }}
+                        label="Email"
+                        placeholder="Enter Email."
+                    />
+                    <BaseInput
+                        required
+                        type="password"
+                        name="password"
+                        value={formData.password}
+                        onValueChange={({ value }) => {
+                            setFormData({
+                                ...formData,
+                                password: String(value).trim()
+                            })
+                        }}
+                        label="Password"
+                        placeholder="Enter Password."
+                    />
+                    <div className="flex items-center gap-3 text-black mb-[30px]">
+                        <BaseToggleBtn
+                            onChange={() => {
 
-            }}
-            type="checkbox"
-            value={true}
+                            }}
+                            type="checkbox"
+                            value={true}
 
-            />
-            <span className="text-[14px">Remember me</span>
-            <div className="flex items-center justify-end flex-1">
-             <Link 
-            href={ROUTES.forgotPassword}
-                className="text-emerald-600 text-[14px] cursor-pointer"
-                >
-                Forgot Password
-                </Link>
+                        />
+                        <span className="text-[14px">Remember me</span>
+                        <div className="flex items-center justify-end flex-1">
+                            <Link
+                                href={ROUTES.forgotPassword}
+                                className="text-emerald-600 text-[14px] cursor-pointer"
+                            >
+                                Forgot Password
+                            </Link>
+                        </div>
+                    </div>
+                    <BaseButton
+                        loading={loading}
+                        text="Log in"
+                        type="submit"
+                    />
+                    <div className="flex items-center justify-center mt-[30px] gap-1">
+                        <span className="text-[14px] text-black">Don`t have an account?</span>
+                        <Link
+                            href={ROUTES.register}
+                            className="text-[14px] text-[#009668]"
+                        >
+                            Create Account
+                        </Link>
+                    </div>
+                </form>
+                <HandleResetData
+                />
+
             </div>
         </div>
-        <BaseButton
-        loading={loading}
-        text="Log in"
-        type="submit"
-        />
-        <div className="flex items-center justify-center mt-[30px] gap-1">
-            <span className="text-[14px] text-black">Don`t have an account?</span>
-            <Link 
-            href={ROUTES.register}
-            className="text-[14px] text-[#009668]"
-            >
-            Create Account
-            </Link>
-        </div>
-      </form>
-      <HandleResetData 
-      />
-       
-     </div>
-     </div>
-    {showAccountSwitch &&<SwitchAccount 
-    email={formData.email!}
-    password={formData.password!}
-    onClose={()=>setShowAccountSwitch(false)}
-    />}
+        {showOTP && <OtpSection
+            onClose={() => {
+                setShowOTP(false);
+            }}
+            email={formData.email!}
+        />}
+        {showAccountSwitch && <SwitchAccount
+            email={formData.email!}
+            password={formData.password!}
+            onClose={() => setShowAccountSwitch(false)}
+        />}
     </div>
 }
 export default Page;
