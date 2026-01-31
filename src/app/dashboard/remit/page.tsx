@@ -52,6 +52,7 @@ const Page = () => {
     const navigate = useRouter();
     const { getProviders, validateRSA,ShowMessage, remitMicroPension, verifyTransaction } = useHttpHook();
     const [loading, setLoading] = useState<boolean>(false);
+    const [message, setMessage] = useState<string>("");
     const [showPaymentOption, setShowPaymentOption] = useState<boolean>(false);
     const [formData, setFormData] = useState<PaymentProp>(
         {
@@ -100,6 +101,8 @@ const Page = () => {
                 if(res.status)
                 {
                     localStorage.removeIteme(CONSTANT.LocalStore.remit);
+                }else{
+                    setMessage(res.message)
                 }
             })
 
@@ -325,6 +328,7 @@ const Page = () => {
         {paymentDetails && <PaymentVericationModal
         onClose={()=>setPaymentDetails(null)}
         details={paymentDetails}
+        message={message}
         />}
         {loading && <BaseLoader modal color="green" size="lg" />}
     </div>

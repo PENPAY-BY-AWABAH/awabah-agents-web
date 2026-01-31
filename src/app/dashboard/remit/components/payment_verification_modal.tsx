@@ -8,7 +8,7 @@ import BaseButton from "@/app/components/baseButton"
 import html2canvas from 'html2canvas';
 import { ReturnComma } from "@/app/includes/functions"
 import { NairaSymbol } from "@/app/includes/constants"
-export const PaymentVericationModal = ({onClose,details}:{onClose:()=>void;details:PaymentResponseProp})=>{
+export const PaymentVericationModal = ({onClose,details,message}:{onClose:()=>void;details:PaymentResponseProp,message:string})=>{
     const navigate = useRouter();
     const [downloading,setDownloading] = useState<boolean>(false)
     const divRef = useRef<HTMLDivElement>(null);
@@ -110,10 +110,10 @@ export const PaymentVericationModal = ({onClose,details}:{onClose:()=>void;detai
 
         <div className="p-10 text-center">
             <h3 className="text-md font-extrabold text-slate-900 mb-3 tracking-tight">
-                Transaction Not Found
+            {message}
             </h3>
             <p className="text-slate-500 text-md leading-relaxed mb-8">
-                {"We couldn't find the transaction details you're looking for. It might have been canceled, or the reference link has expired."}
+                {String(message).toUpperCase().includes("PENDING")?"":"We couldn't find the transaction details you're looking for. It might have been canceled, or the reference link has expired."}
             </p>
             </div>
         </div>}
