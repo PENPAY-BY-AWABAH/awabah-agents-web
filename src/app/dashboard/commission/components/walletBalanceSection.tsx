@@ -6,22 +6,24 @@ import useHttpHook from "@/app/includes/useHttpHook";
 import { EyeClosed } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react"
+import { CommissionStatsProps } from "./Tabs";
 export interface WalletBalanceProps {
 balance:string;
 earnings?:string;
 }
 export const CommissionWalletBalance =()=>{
-    const {GetBalance} = useHttpHook()
-    const [balance,setBalance] = useState<WalletBalanceProps>({
-        balance:"0.00",
-        earnings:"0.00"
-    })
+  const {getAllCommisionStats} = useHttpHook()
+    const [stats,setStats] = useState<CommissionStatsProps>({
+        commissionEarn:0,
+        withdrawals:0,
+        balance:0,
+    });
     const [showBalance,setShowBalance] = useState<boolean>(false)
     const GetWalletInfo = ()=>{
-        GetBalance().then((res)=>{
+        getAllCommisionStats().then((res)=>{
             if(res.status)
             {
-              setBalance(res.data as WalletBalanceProps)
+              setStats(res.data as CommissionStatsProps)
             }
         })
     }
@@ -38,8 +40,8 @@ export const CommissionWalletBalance =()=>{
                 >
                 {showBalance?<EyeOpen />:<EyeClosed />}
                 </button></div>
-                <div className="text-white lg:font-normal font-bold text-[20px] lg:text-[38px] ">{MaskBalance(balance.earnings!,!showBalance)}</div>
-                <div className="text-[#FFD983] text-[12px] lg:text-[14px]">Current balance: {MaskBalance((balance?.earnings || "0.00"),!showBalance)}<span></span></div>
+                <div className="text-white lg:font-normal font-bold text-[20px] lg:text-[38px] ">{MaskBalance(String(stats["commissionEarn"]) || "0.00",!showBalance)}</div>
+                <div className="text-[#FFD983] text-[12px] lg:text-[14px]">Current balance: {MaskBalance((String(stats["balance"]) || "0.00"),!showBalance)}<span></span></div>
             </div>
             <div className="lg:me-20 flex items-center">
                 <Link 

@@ -185,7 +185,7 @@ const Page = () => {
             onSubmit={handleSubmit}
         >
             <div className="m-auto items-center text-center  rounded-[30px] min-h-[400px] shadow lg:w-[500px] p-[16px] lg:p-[30px] pb-[180px] lg:pb-[60px]">
-                <div className="text-black text-[24px] text-center mb-5">Fill in the details to pay</div>
+                <div className="text-black text-[24px] text-center mb-5">{formData.isValid?"Review Details":"Fill in the details to pay"}</div>
                 <BaseInput
                     required
                     disabled={formData?.blockFields}

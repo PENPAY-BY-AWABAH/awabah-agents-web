@@ -129,7 +129,9 @@ export const UsersSection = ({page}:{page?:boolean})=>{
         <div className="m-auto text-center text-[#44444] text-[12px] lg:text-[14px]">No record found!</div>
         </div>}
         <div className="mt-[16px] lg:mb-8 grid lg:grid-cols-4 gap-[16px] mb-[150px] ">
-        {filteredlist.map((item,i)=><div key={i} className="items-center  border-[#C4C4C459] border-[0.5px] rounded-[30px] p-5 shadow">
+        {filteredlist.map((item,i)=>{
+        const inCompleteregistration = item.nextOfKinRegistered === false || item.employerDetailsRegistered === false || item.parentDetailRegistered === false;
+            return <div key={i} className="items-center  border-[#C4C4C459] border-[0.5px] rounded-[30px] p-5 shadow">
         <div className="flex items-center gap-3">
             <div className="" >
             <div className="h-[55px] w-[55px] bg-[#C4C4C459] border-[0.5px] rounded-[55px] overflow-hidden" >
@@ -169,8 +171,9 @@ export const UsersSection = ({page}:{page?:boolean})=>{
             <div className={`font-normal text-[12px] ${item.approved?"text-[#00A558]":"text-[#F4900C]"}`}>{item.approved?"Active":"Pending"}</div>
         </div>
         </div>
+        {inCompleteregistration &&<div className="my-3 text-[12px] bg-red-100 p-3 rounded-md font-light text-red-700 border-[0.5px] border-red-700">Earn a {NairaSymbol}300 commission by completing this user registration.</div>}
         <BaseButton 
-        text={item.nextOfKinRegistered === false || item.employerDetailsRegistered === false || item.parentDetailRegistered === false?"Complete Registration":"Pay Now"}
+        text={inCompleteregistration?"Complete Registration":"Pay Now"}
         onClick={()=>{
         if(item.nextOfKinRegistered === false || item.employerDetailsRegistered === false || item.parentDetailRegistered === false)
         {
@@ -192,7 +195,7 @@ export const UsersSection = ({page}:{page?:boolean})=>{
         white
         type="button"
         />
-        </div>)}
+        </div>})}
         </div>
         
         </div>
