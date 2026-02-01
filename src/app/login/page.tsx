@@ -131,9 +131,6 @@ const Page = () => {
                         </Link>
                     </div>
                 </form>
-                <HandleResetData
-                />
-
             </div>
         </div>
         {showOTP && <OtpSection
