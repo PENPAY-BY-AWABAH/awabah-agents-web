@@ -27,6 +27,31 @@ useEffect(() => {
 
   return (
     <html lang="en">
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Awabah Agent | User Onboarding and commission</title>
+        <meta name="description" content="Pension Agent Platform for registering new users, facilitating RSA PIN issuance, and earning performance-based commissions." />
+        <meta name="keywords" content="Pension, Agent, Pension Agent, RSA PIN, commission, earn commission,RSA PIN issuance" />
+        <meta name="author" content="Awabah" />
+        <meta name="robots" content="index, follow" />
+        <link rel="preconnect" href="https://agent.awabah.com" />
+        <link rel="canonical" href="https://agent.awabah.com" />
+        <link rel="shortcut icon" href="/favicon/favicon.ico" />
+        <link rel="apple-touch-icon" href="/favicon/favicon.ico" />
+        <link rel="icon" href="/favicon/favicon.ico" />
+        <meta property="og:title" content="Awabah Agent | User onboarding and commission" />
+        <meta property="og:description" content="Pension Sales Agent responsible for registering new users, facilitating RSA PIN issuance, and earning performance-based commissions." />
+        <meta property="og:image" name="og:image" content="https://awabah.com/static/media/image101.8bc5d691.jpg" />
+        <meta name="og:url" content="https://agent.awabah.com/" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta name="twitter:site" content="@awabah" />
+        <meta name="twitter:image" itemProp="image" content="https://awabah.com/static/media/image101.8bc5d691.jpg" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Awabah Agent | User onboarding and commission" />
+        <meta name="twitter:description" content="Pension Sales Agent responsible for registering new users, facilitating RSA PIN issuance, and earning performance-based commissions." />
+      </head>
       <body
         className={`h-screen`}
       >
