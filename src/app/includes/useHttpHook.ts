@@ -781,10 +781,13 @@ const handleRSAPINRequest =(data:any)=>{
                 requestType:"json"
             }).then((res) => {
                 setLoading(false);
+                if(!res.status)
+                {
                 ShowMessage({
                     position:"center",
                     ...res
                 })
+            }
                 resolve(res);
             })
         })
@@ -846,10 +849,6 @@ const handleRSAPINRequest =(data:any)=>{
                 requestType:"json"
             }).then((res) => {
                 setLoading(false);
-                ShowMessage({
-                    position:"center",
-                    ...res
-                })
                 resolve(res);
             })
         })

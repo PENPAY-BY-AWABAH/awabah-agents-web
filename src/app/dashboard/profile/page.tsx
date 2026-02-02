@@ -24,11 +24,10 @@ import { LogoutModal } from "./components/logout-modal";
 import { SaveProfileModal } from "./components/save-profile-modal";
 import BaseSelect from "@/app/components/baseSelect";
 import { ItemProps } from "@/app/includes/types";
-import { BaseLoader } from "@/app/components/baseLoader";
+import { AvatarSection } from "./components/avatar-section";
 
 const Page = () => {
-    const navigate = useRouter();
-    const { getAgentProfile,updateAvatar } = useHttpHook();
+    const { getAgentProfile } = useHttpHook();
     const [formData, setFormData] = useState<UserDetails>({
         firstName: "",
         lastName: "",
@@ -43,7 +42,6 @@ const Page = () => {
         state: ""
     })
     const [showPasswordChange, setShowPasswordChange] = useState<boolean>(false);
-    const [uploading, setUploading] = useState<boolean>(false);
     const [showLogin, setShowLogin] = useState<boolean>(false);
     const [showSaveProfile, setShowSaveProfile] = useState<boolean>(false);
     const [showTransactionPINChange, setShowTransactionPINChange] = useState<boolean>(false);
@@ -87,77 +85,36 @@ const Page = () => {
         e.preventDefault()
         setShowSaveProfile(ifChanges)
     }
-const fileUploadInputRef = useRef<HTMLInputElement>(null)
 
-const handleFileChange = (e:any) => {
-    const files = e.target.files;
-    if (files && files.length > 0) {
-      const selectedFile = files[0];
-      console.log("Selected file:", selectedFile.name);
-      uploadFile(selectedFile);
-    }
-  };
-const uploadFile = (selectedFile:any)=>{
-    if(uploading)
-    {
-        return;
-    }
-    setUploading(true)
-    updateAvatar(selectedFile).then((res)=>{
-     setUploading(false) 
-     if(res.status) 
-     {
-       GetProfile(); 
-     }
-    })
-}
-  const triggerClick = () => {
-    // Safely trigger the hidden input
-    if (fileUploadInputRef.current) {
-      fileUploadInputRef.current?.click();
-    }
-  };
+
     return <div className="">
-        <input 
-        ref={fileUploadInputRef}
-        type="file"
-        onChange={handleFileChange}
-        className="absolute top-[0px] opacity-0"
-        accept="image/*"
-        />
         <div className="flex items-center gap-3">
             <UserIcon />
             <div className="text-[20px] font-medium lg:text-[32px]">Profile</div>
         </div>
         <div className="bg-[#C4C4C426] p-[16px] lg:p-[30px] rounded-[15px] my-[16px] lg:my-[20px]">
                 <div className="flex items-center gap-3 lg:gap-5">
-                        <div className="items-center text-center justify-center " >
-                            <div
-                            onClick={triggerClick}
-                            className="lh-[65px] w-[65px] lg:h-[150px] lg:w-[150px] relative cursor-pointer bg-[#C4C4C459] border-[0.5px] rounded-[150px] overflow-hidden" >
-                                <img src={details?.avatar ? details?.avatar : placeHolderAvatar.src}
-                                    alt={details.id}
-                                    className="h-full w-full" />
-                            {uploading &&<div className="h-full flex item-center text-center justify-center w-full absolute top-0 left-0 bg-[#00000061] " >
-                            <div className="m-auto">
-                            <BaseLoader color="green" size="lg" />
-                            </div>
-                            </div>}
-                            </div>
-                            <button
-                            onClick={triggerClick}
-                            className="underline cursor-pointer m-auto text-[14px] lg:text-[16px] text-[#1455E0] mt-3 "
-                            >
-                            Change Image
-                            </button>
-                        </div>
+                       <AvatarSection
+                        details={details}
+                        onReloadProfile={()=>{
+                            GetProfile()
+                        }}
+                        />
                         <div className="flex-glow text-[14px] lg:text-[16px]" >
-                            <div className="text-[#000000]  ">Agent Name: <span className="font-bold">{details.firstName} {details.lastName}</span></div>
-                            <div className="text-[#000000] mt-[5px] flex item-center gap-[2px]">Agent ID: <span className="font-bold flex item-center gap-[2px]">{details.agentId} <button
+                            <div className="text-[#000000]  ">Agent Name: <span className="font-bold hidden lg:block">{details.firstName} {details.lastName}</span></div>
+                            <div className="text-[#000000] font-bold lg:hidden ">{details.firstName} {details.lastName}</div>
+                            <div className="text-[#000000] mt-[5px] flex item-center gap-[2px]">Agent ID: <span className="font-bold flex item-center gap-[2px] hidden lg:block">{details.agentId} <button
                                 onClick={() => {
                                     CopyToClipboard(String(details?.agentId));
                                 }}
-                                className="cursor-pointer">
+                                className="cursor-pointer mt-[-10px]">
+                                <CopyIcon />
+                            </button></span></div>
+                            <div className="text-[#000000] mt-[0px] flex item-center gap-[2px] lg:hidden "><span className="font-bold flex item-center gap-[2px]">{details.agentId} <button
+                                onClick={() => {
+                                    CopyToClipboard(String(details?.agentId));
+                                }}
+                                className="cursor-pointer mt-[-5px] ms-[10px]">
                                 <CopyIcon />
                             </button></span></div>
                             <div className="flex mt-[5px] text-[#000000] gap-[4px] " >

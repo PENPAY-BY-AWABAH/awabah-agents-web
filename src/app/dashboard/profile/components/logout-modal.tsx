@@ -39,12 +39,12 @@ export const LogoutModal = ({onClose,details}:{onClose:()=>void;details:UserDeta
             <div className="p-3 flex gap-3 justify-center ">
                 <button 
                 onClick={onClose}
-                type="button" className="flex-1 flex item-center justify-center cursor-pointer py-3 px-4 rounded-[15px] font-medium text-gray-600 bg-white border border-gray-200 hover:bg-gray-100 transition-colors" >
+                type="button" className="flex-1 whitespace-nowrap flex item-center justify-center cursor-pointer py-3 px-4 rounded-[15px] font-medium text-gray-600 bg-white border border-gray-200 hover:bg-gray-100 transition-colors" >
                     <span>No, Stay</span>
                 </button>
                 <button 
                 onClick={handleLogout} 
-                 className="flex-1 flex cursor-pointer item-center gap-1 justify-center py-3 px-4 rounded-xl font-medium text-white bg-red-500 hover:bg-red-600 text-center no-underline transition-colors shadow-md shadow-red-200">
+                 className="flex-1 flex cursor-pointer whitespace-nowrap item-center gap-1 justify-center py-3 px-4 rounded-xl font-medium text-white bg-red-500 hover:bg-red-600 text-center no-underline transition-colors shadow-md shadow-red-200">
                    {loading &&<BaseLoader color="white" size="md" />}
                     <span>Yes, Logout</span>
                 </button>

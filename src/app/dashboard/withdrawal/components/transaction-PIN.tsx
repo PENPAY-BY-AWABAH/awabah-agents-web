@@ -5,6 +5,7 @@ import { OTPBaseInput } from "@/app/components/baseOTPInput"
 import useHttpHook from "@/app/includes/useHttpHook"
 import { useEffect, useState } from "react"
 import { CommissionStatsProps } from "../../commission/components/Tabs"
+import { WithdrawalSuccessScreen } from "./success"
 
 export const TransactionPINModal = ({onClose,account_number,bankName}:{onClose:()=>void;account_number:string;bankName:string})=>{
     const [pin,setPIN] = useState<string>("");
@@ -14,6 +15,7 @@ export const TransactionPINModal = ({onClose,account_number,bankName}:{onClose:(
         withdrawals:0,
         balance:0,
     });
+    const [success,setSuccess] = useState<string | null>(null);
     useEffect(()=>{
       getAllCommisionStats().then((res)=>{
         if(res.status)
@@ -31,7 +33,9 @@ export const TransactionPINModal = ({onClose,account_number,bankName}:{onClose:(
     }}
     title={loading?"":"Transaction PIN"}
     >
-     {!loading?<div>
+     {!loading?success?<WithdrawalSuccessScreen
+     onClose={()=>onClose()}
+     />:<div>
      <div className="text-center p-2 bg-green-100 mb-3 rounded text-[14px] px-4" >
       <div ></div>
       <div className="text-center " >
@@ -68,7 +72,7 @@ export const TransactionPINModal = ({onClose,account_number,bankName}:{onClose:(
         }).then((res)=>{
             if(res.status)
             {
-                onClose();
+              setSuccess(res.message!)
             }
         })
      }}

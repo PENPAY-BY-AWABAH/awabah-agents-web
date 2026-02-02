@@ -9,10 +9,10 @@ export const SuccessComponent = ({onPay,tempPIN,email}:{onPay:()=>void;tempPIN:s
     useEffect(()=>{
         setTimeout(()=>{
             setReviewState("starting")
+            RequestForRSAPIN(email)
             setTimeout(()=>{
                 setReviewState("done")
                 // send request to agent-request-rsa-pin
-                RequestForRSAPIN(email)
             },2000)
         },2000)
     },[])
