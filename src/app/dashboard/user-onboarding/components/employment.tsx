@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/set-state-in-effect */
 "use client"
 import { useRouter } from "next/navigation";
@@ -15,6 +16,8 @@ import { ReturnAllNumbers, ReturnComma } from "@/app/includes/functions";
 import BaseInputDate from "@/app/components/baseInputDate";
 import { Calendar } from "lucide-react";
 import dayjs from "dayjs";
+import { ConsentPage } from "./consent";
+import { BaseLoader } from "@/app/components/baseLoader";
 
 export interface EmploymentProps {
   email?: string;
@@ -29,9 +32,29 @@ export interface EmploymentProps {
 }
 
 export const EmploymentPage = ({onClose,onSuccess,trackingId}:{onClose:()=>void;onSuccess:(tempPIN:string)=>void;trackingId:string}) => {
-    const [index,setIndex] =  useState<number>(0)
-    const navigate = useRouter();
-    const { handleEmploymentDetails, loading } = useHttpHook();
+  const [listOfConsent, setListOfConsent] = useState<ItemProps[]>([]);
+    const [selectedOption, setSelectedOption] = useState<ItemProps | null>(null)
+    const [showConsent, setConsent] = useState<boolean>(false);
+    const { GetListOfConsent,handleEmploymentDetails,loading } = useHttpHook()
+    const ListOfConsent = () => {
+        GetListOfConsent().then((res) => {
+            if (res.status) {
+                //set list of banks
+                const data = res.data.map((a: any) => {
+                    return {
+                        title: a.Sector,
+                        name: a.Sector,
+                        value: a.EmployerCode
+                    }
+                })
+                setListOfConsent(data);
+            }
+        })
+    }
+    useEffect(() => {
+        ListOfConsent();
+    }, []);
+    
     const [formData, setFormData] = useState<EmploymentProps>({
         email:"",
         employerStateCode:"",
@@ -44,8 +67,11 @@ export const EmploymentPage = ({onClose,onSuccess,trackingId}:{onClose:()=>void;
         employerStreetName:""
     })
     const handleSubmit = (e: FormEvent) => {
-        e.preventDefault()
-        handleEmploymentDetails({
+        e.preventDefault();
+        setConsent(true);
+    }
+const SubmitForm = () => {
+      handleEmploymentDetails({
         ...formData,
         trackingId:trackingId,
         dateOfCurrentEmployment:dayjs(formData.dateOfCurrentEmployment!).format("YYYY-MM-DD"),
@@ -53,10 +79,22 @@ export const EmploymentPage = ({onClose,onSuccess,trackingId}:{onClose:()=>void;
     }).then((res) => {
     if (res.status) {
         onSuccess(res.data?.tempPIN)
+        setConsent(false);
     }
     })
-    }
-   
+}
+   if(showConsent) {
+    return <div className="mt-[20px]">
+    <ConsentPage
+    onClose={()=>setConsent(false)}
+    onSuccess={()=>{
+        SubmitForm();
+    }}
+    trackingId={trackingId}
+    />
+    {loading && <BaseLoader size={"sm"} color={"green"} />}
+    </div>
+   }
     return <div className="mt-[20px]">
     <div >
             <div className="text-[#009668] text-[14px] text-left mt-4">Employment details</div>
@@ -171,10 +209,11 @@ export const EmploymentPage = ({onClose,onSuccess,trackingId}:{onClose:()=>void;
                             placeholder="Enter date Of Current Appointment."
                         />
                         
-                    <BaseInput
-                            type="text"
+                    <BaseSelect
+                            custom
+                            placeholder="Select Sector of Employment"
                             name="serviceNo"
-                            value={formData.serviceNo}
+                            value={formData.serviceNo!}
                             required
                             onValueChange={({ value }) => {
                                 setFormData({
@@ -182,9 +221,9 @@ export const EmploymentPage = ({onClose,onSuccess,trackingId}:{onClose:()=>void;
                                     serviceNo: value
                                 })
                             }}
-                            max={30}
-                            label="Service No"
-                            placeholder="Enter Service No."
+                            left
+                            list={listOfConsent}
+                            label="Select Sector of Employment"
                         />
                      <BaseInput
                             type="text"

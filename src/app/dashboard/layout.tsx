@@ -27,7 +27,7 @@ const [isIdle, setIsIdle] = useState(false);
 const [remaining, setRemaining] = useState(0);
 
   const onIdle = () => {
-    setIsIdle(true);
+    // setIsIdle(true);
   };
 
   const onActive = () => {

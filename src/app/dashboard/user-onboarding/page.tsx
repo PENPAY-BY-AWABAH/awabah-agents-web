@@ -18,7 +18,9 @@ import { ParentDetailPage } from "./components/parentDetails";
 import { ReturnAllNumbers, ValidateEmail } from "@/app/includes/functions";
 import { BaseLoader } from "@/app/components/baseLoader";
 import useCommissionStore from "@/app/includes/store";
-type RegisterProps = "User Details" | "Verify Email" | "Next Of Kin" | "Success" | "Pay" | "Employment Details" | "Parent Details - (Father)" | "Parent Details - (Mother)";
+import { BankDetailPage } from "./components/bankDetails";
+import { ConsentPage } from "./components/consent";
+type RegisterProps = "User Details" | "Verify Email" | "Next Of Kin" | "Success" | "Pay" | "Employment Details" | "Parent Details - (Father)" | "Parent Details - (Mother)" | "Bank Details" | "Consent Agreement";
 export interface SignUpProps {
     email?: string;
     firstName?: string;
@@ -38,7 +40,8 @@ export interface SignUpProps {
 const Page = () => {
     const {update} = useCommissionStore()
     const [index, setIndex] = useState<number>(0)
-    const [userIsAgent, setUserIsAgent] = useState<boolean>(false)
+    const [userIsAgent, setUserIsAgent] = useState<boolean>(false);
+    const [userIsMinor, setUserMinor] = useState<boolean>(false);
     const [section, setSection] = useState<RegisterProps>("User Details")
     const navigate = useRouter();
     const { handleRegisterUser,ShowMessage,getUserByEmail, loading,handleCheckUserEmailIsAgent,RequestForRSAPIN } = useHttpHook();
@@ -342,6 +345,16 @@ const handleRSAPIN = (e:FormEvent)=>{
                     </form>:<div>
                     <div className="text-[#909090] text-[12px] text-left">Please provide some information about the user, these information are used to protect users account and for compliance purpose.</div>
                     <div className="text-[#009668] text-[14px] text-left mt-4">Personal Details</div>
+                    <div className="flex items-center mt-5 border-[2px] border-green-700 rounded-md">
+                      <button 
+                        onClick={()=>{setUserMinor(false)}} 
+                      className={`cursor-pointer text-[12px] ${userIsMinor?"text-green-700":"bg-green-700 text-white"}  text-center px-5 py-2 flex-grow`}>Adult</button>          
+                      <button 
+                        onClick={()=>{
+                            setUserMinor(true)
+                        }} 
+                       className={`cursor-pointer text-[12px] ${userIsMinor?"bg-green-700 text-white":"text-green-700"} text-center px-5 py-2  flex-grow`}>Minor</button>          
+                    </div>
                     <form onSubmit={handleSubmit}
                     className="mt-5"
                     >
@@ -430,9 +443,13 @@ const handleRSAPIN = (e:FormEvent)=>{
                             label="Address"
                             placeholder="Enter address."
                         />
+
+                        <div className={`w-full ${userIsMinor ? "bg-green-50 p-3 rounded-[20px] mb-3" : ""}`} >
+                        {userIsMinor &&<div className="w-full text-left text-green-700 mb-2 font-bold">Parent / Guardian Details</div> }
                         {!formData.hasBVN &&<BaseInput
                             type="text"
                             name="nin"
+                            className="bg-white"
                             value={formData.nin}
                             required
                             max={11}
@@ -448,6 +465,7 @@ const handleRSAPIN = (e:FormEvent)=>{
                         {!formData.hasBVN &&<BaseInput
                             type="text"
                             name="bvn"
+                            className="bg-white"
                             value={formData.bvn}
                             required
                             max={11}
@@ -460,6 +478,7 @@ const handleRSAPIN = (e:FormEvent)=>{
                             label="BVN (BANK Verification Number)"
                             placeholder="Enter BVN."
                         />}
+                        </div>
                         <BaseButton
                             text="Next"
                             type="submit"
@@ -493,10 +512,21 @@ const handleRSAPIN = (e:FormEvent)=>{
                 {section === "Next Of Kin" && <div >
                     <NextOfKinPage
                         onClose={() => {
-                            setSection("Next Of Kin")
+                            setSection("Verify Email")
                         }}
                         onSuccess={() => {
-                            setSection("Parent Details - (Father)")
+                            setSection("Bank Details")
+                        }}
+                        trackingId={formData.trackingId!}
+                    />
+                </div>}
+                {section === "Bank Details" && <div >
+                    <BankDetailPage
+                        onSuccess={() => {
+                            setSection("Employment Details")
+                        }}
+                        onClose={() => {
+                            setSection("Next Of Kin")
                         }}
                         trackingId={formData.trackingId!}
                     />
@@ -525,7 +555,7 @@ const handleRSAPIN = (e:FormEvent)=>{
                         trackingId={formData.trackingId!}
                     />
                 </div>}
-                {section === "Parent Details - (Father)" && <div >
+                {/* {section === "Parent Details - (Father)" && <div >
                     <ParentDetailPage
                         onSuccess={() => {
                         setSection("Parent Details - (Mother)")
@@ -548,7 +578,7 @@ const handleRSAPIN = (e:FormEvent)=>{
                         }}
                         trackingId={formData.trackingId!}
                     />
-                </div>}
+                </div>} */}
             </div>
         </div> : <SuccessComponent
             onPay={() => {

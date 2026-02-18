@@ -217,12 +217,17 @@ const useHttpHook = () => {
         })
     }   
 
-    const saveBankAccount = (accountNumber: string,bankCode:string) => {
+    const saveBankAccount = (accountNumber: string,bankCode:string,trackingId?:string) => {
         return new Promise<ApiResponse>((resolve) => {
             setLoading(true);
             call({
                 path:"agent-save-bank-details",
-                body:{accountNumber,bankCode,monnify:true},
+                body:{
+                    accountNumber,
+                    bankCode,
+                    monnify:true,
+                    trackingId
+                },
                 method:"POST",
                 requestType:"json"
             }).then((res) => {
@@ -366,13 +371,10 @@ const getAgentProfile  = () => {
                 requestType:"json"
             }).then((res) => {
                 setLoading(false);
-                if(!res.status)
-                {
                     ShowMessage({
                     position:"center",
                     ...res
                 })
-                }
                 resolve(res);
             })
         })
@@ -886,6 +888,40 @@ const ResendOTP = (email:string)=>{
             })
         })
     }
+    
+const GetListOfConsent = ()=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-get-consent`,
+                body:{},
+                method:"GET",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                resolve(res);
+            })
+        })
+    }
+
+const SaveConsent = (data:any)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-save-consent`,
+                body:data,
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                ShowMessage({
+                    position:"center",
+                    ...res
+                })
+                resolve(res);
+            })
+        })
+    }
     return {
         loading,
         handleGetTransactions,
@@ -938,7 +974,9 @@ const ResendOTP = (email:string)=>{
         ResetTestData,
         RequestForRSAPIN,
         handleCheckUserEmailIsAgent,
-        ResendOTP
+        ResendOTP,
+        GetListOfConsent,
+        SaveConsent
     }
 }
 export default useHttpHook;
