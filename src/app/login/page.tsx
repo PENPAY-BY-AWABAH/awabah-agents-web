@@ -9,11 +9,8 @@ import { CONSTANT, ROUTES } from "../includes/constants";
 import Link from "next/link";
 import useHttpHook from "../includes/useHttpHook";
 import { LoginProps } from "../includes/types";
-import BaseModal from "../components/baseModal";
 import { SwitchAccount } from "./components/switch-account";
 import { HandleResetData } from "./components/handleReset";
-import BaseInputDate from "../components/baseInputDate";
-import dayjs from "dayjs";
 import { OtpSection } from "./components/otp-screen";
 
 const Page = () => {
@@ -21,6 +18,7 @@ const Page = () => {
     const [showAccountSwitch, setShowAccountSwitch] = useState<boolean>(false)
     const navigate = useRouter();
     const { handleLogin, loading } = useHttpHook();
+     
     const [formData, setFormData] = useState<LoginProps>({
         email: "",
         password: ""
@@ -30,8 +28,18 @@ const Page = () => {
         e.preventDefault()
         handleLogin(formData).then((res) => {
             if (res.message.includes("OTP")) {
-                return setShowOTP(true)
+               return setShowOTP(true)
             }
+             if (res?.data?.other_info_not_saved) {
+                localStorage.setItem(CONSTANT.LocalStore.registrationForm,JSON.stringify(res.data))
+                return navigate.replace(`${ROUTES.register}?step=2`)
+            }
+            
+             if (res.data?.transaction_pin_not_saved) {
+                 localStorage.setItem(CONSTANT.LocalStore.registrationForm,JSON.stringify(res.data))
+                return navigate.replace(`${ROUTES.register}?step=3`)
+            }
+          
             if (res.status) {
                 navigate.replace(ROUTES.dashboard)
             } else {
@@ -139,6 +147,19 @@ const Page = () => {
         {showOTP && <OtpSection
             onClose={() => {
                 setShowOTP(false);
+                const user =  localStorage.getItem(CONSTANT.LocalStore.registrationForm);
+                if(user)
+                {
+                  const userData = JSON.parse(user)
+                  if(userData?.other_info_not_saved)
+                  {
+                   return navigate.replace(`${ROUTES.register}?step=2`)
+                  }
+                  if(userData?.transaction_pin_not_saved)
+                  {
+                   return navigate.replace(`${ROUTES.register}?step=3`)
+                  }
+                }
             }}
             email={formData.email!}
         />}

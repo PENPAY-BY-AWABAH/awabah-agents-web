@@ -17,21 +17,13 @@ export const OtpSection = ()=>{
     const navigate = useRouter()
     const [showPasswordSection,setShowPasswordSection] = useState<boolean>(false)
     const [formData,setFormData] = useState<LoginProps>({
+        otp:"",
         email:"",
         password:"",
         confirmPassword:""
     })
     const [counter,setCounter] = useState<number>(0);
-    const [otp,setOtp] = useState<string>("");
-    const {handleOtp,handleNewPassword,handleSendOtp,loading} = useHttpHook();
-    const handleOTPSubmit = ()=>{
-         setSending(true)
-        handleOtp({otp}).then((res)=>{
-            setSending(false)
-            setShowPasswordSection(res.status)
-        })
-    }
-
+    const {handleNewPassword,handleSendOtp,loading} = useHttpHook();
     const handleNewPasswordSubmit = (e:FormEvent)=>{
         e.preventDefault()
         if(formData.password !== formData?.confirmPassword)
@@ -83,16 +75,30 @@ export const OtpSection = ()=>{
        },1000)
     }
     },[startTimer])
-    if(showPasswordSection)
-    {
-        return <div className="p-[16px]">
+    
+    return <div className="p-[16px]">
         <div className="text-black text-[24px]  text-center ">Create New Password</div>
       <form 
       onSubmit={handleNewPasswordSubmit}
-      className="text m-auto p-[16px]"
+      className="text m-auto p-[5px]"
       >
-        <div 
+         <div 
         className="text m-auto my-[30px] w-[220px] w-full " >
+        <div className="text-[#000000A6] text-[12px] font-normal text-center mb-4 mt-4 w-[80%] m-auto">Please enter the code sent to your email and your new password.</div>
+        <div 
+        className="text m-auto mb-3 w-[220px] " >
+        <OTPBaseInput
+        onChange={(otp)=>{
+        setFormData({
+            ...formData,
+            otp
+        })
+        }}
+        isInputNum={true}
+        count={4}
+        value={formData.otp!}
+        />
+        </div>
         <BaseInput 
         type="password"
         name="password"
@@ -125,39 +131,11 @@ export const OtpSection = ()=>{
          <div 
         className="mt-10" />
         <BaseButton
+        disabled={formData.otp?.length !== 4}
         text="Save Password"
         type="submit"
         />
-        </div>
-        </form>
-        {loading && <BaseLoader color="green" modal size="lg" />}
-    </div>
-    }
-    return <div className="p-[16px]">
-        <div className="text-black text-[24px] font-semibold text-center ">Forgot Password</div>
-        <div className="text-black text-[16px] font-semibold text-center mt-4 ">OTP Code</div>
-      <div className="text-[#000000A6] text-[12px] font-normal text-center mb-4 mt-4 w-[80%] m-auto">Please enter the code sent to your email to change your password.</div>
-      <div 
-      className="text m-auto "
-      >
-        <div 
-        className="text m-auto my-[30px] w-[220px] " >
-        <OTPBaseInput
-        onChange={(otp)=>{
-        setOtp(otp)
-        }}
-        isInputNum={true}
-        count={4}
-        value={otp}
-        />
-        </div>
-      <div className="text-[#B8860B] text-[14px] font-normal text-center mb-[16px] mt-4 w-[80%] m-auto">{counter.toPrecision(2)}</div>
-        <BaseButton
-        disabled={otp.length !== 4}
-        text="Verify"
-        type="button"
-        onClick={()=>handleOTPSubmit()}
-        />
+        <div className="text-[#B8860B] text-[14px] font-normal text-center mb-[16px] mt-4 w-[80%] m-auto">{counter.toPrecision(2)}</div>
          <div className="flex items-center justify-center mt-[30px] gap-1">
             <span className="text-[14px] text-black">Didn't get a code?</span>
             <button 
@@ -166,6 +144,8 @@ export const OtpSection = ()=>{
             >Resend</button>
         </div>
         </div>
-        {sending && <BaseLoader color="green" modal size="lg" />}
+        </form>
+        {loading && <BaseLoader color="green" modal size="lg" />}
     </div>
-}
+    }
+    

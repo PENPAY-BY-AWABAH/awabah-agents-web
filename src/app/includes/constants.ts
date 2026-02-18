@@ -27,14 +27,15 @@ selected?:boolean;
 value?:string;
 } 
 export const CONSTANT = {
-    BaseURL:process.env.NODE_ENV === "development"?"http://localhost/awabah-api/v1/":"https://staging.awabah.com/v1/",
+    BaseURL:process.env.NODE_ENV === "development"?"http://localhost/awabah-api/v1/":"https://api.awabah.com/v1/",
     LocalStore:{
         token:"token",
         baseUrl:"baseurl", 
         resetPassword:"resetPassword",
         remit:"remit",
         userFormFields:"userFormFields",
-        historySection:"historySection"
+        historySection:"historySection",
+        registrationForm:"registrationForm"
     }
 }
 export const Currency = {

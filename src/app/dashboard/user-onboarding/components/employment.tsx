@@ -56,9 +56,7 @@ export const EmploymentPage = ({onClose,onSuccess,trackingId}:{onClose:()=>void;
     }
     })
     }
-    useEffect(()=>{ 
-        
-    },[])
+   
     return <div className="mt-[20px]">
     <div >
             <div className="text-[#009668] text-[14px] text-left mt-4">Employment details</div>

@@ -19,10 +19,10 @@ export const OtpSection = ({email,onSuccess}:{email:string;onSuccess:()=>void})=
         password:"",
         confirmPassword:""
     })
-    const [counter,setCounter] = useState<number>(0);
+    const [counter,setCounter] = useState<number>(30);
     const [loading,setLoading] = useState<boolean>(false);
     const [otp,setOtp] = useState<string>("");
-    const {handleEmailOTPVerification,handleCreatePassword} = useHttpHook();
+    const {handleEmailOTPVerification,ResendOTP,ShowMessage} = useHttpHook();
     
     const handleOTPSubmit = ()=>{
         setLoading(true)
@@ -35,13 +35,14 @@ export const OtpSection = ({email,onSuccess}:{email:string;onSuccess:()=>void})=
             }
         })
     }
-   const handleResetPassword = ()=>{
-    handleCreatePassword(formData).then((res)=>{
-        
-    })
-   }
+   
     const handleResend = ()=>{
-        // handleOtp({otp});
+        setLoading(true)
+        ResendOTP(email).then((res)=>{
+          setLoading(false)
+          ShowMessage({...res,position:"center"}) 
+          setStartTimer(true)  
+        });
     }
     useEffect(()=>{
         setFormData({

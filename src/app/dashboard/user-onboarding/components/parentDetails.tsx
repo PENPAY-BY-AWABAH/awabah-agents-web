@@ -70,7 +70,7 @@ export const ParentDetailPage = ({onClose,onSuccess,trackingId,isFather}:{onClos
                                     lastName: value
                                 })
                             }}
-                            max={6}
+                            max={80}
                             label="Last Name"
                             placeholder="Enter last Name."
                         />

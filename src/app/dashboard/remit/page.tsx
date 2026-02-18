@@ -158,10 +158,11 @@ const Page = () => {
                 callback_url:webhook,
                 paymentOption:value
             }).then((res) => {
-                setLoading(false)
                 if (res.status && res.data?.paymentUrl) {
                     setShowPaymentOption(false)
                     window.open(res.data.paymentUrl,"_self")
+                }else{
+                setLoading(false)
                 }
             })
     }
@@ -322,7 +323,9 @@ const Page = () => {
         </form>
         {showPaymentOption &&<PaymentOptionsModal
         details={formData}
-        onClose={()=>{}}
+        onClose={()=>{
+            setShowPaymentOption(false)
+        }}
         onPayment={(value)=>handlePayNow(value)}
         />}
         {paymentDetails && <PaymentVericationModal

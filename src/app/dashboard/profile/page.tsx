@@ -2,13 +2,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
 "use client"
-import { useRouter } from "next/navigation";
-import { ApprovedIcon, PendingIcon, UsersSection } from "../components/users";
+import { ApprovedIcon, PendingIcon } from "../components/users";
 import { TabSection } from "./components/Tabs";
-import { ChangeEventHandler, FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import useHttpHook from "@/app/includes/useHttpHook";
 import { UserDetails } from "../page";
-import { placeHolderAvatar } from "@/app/includes/constants";
 import { CopyToClipboard } from "@/app/includes/functions";
 import { CopyIcon } from "@/app/assets/copy-icon";
 import BaseInput from "@/app/components/baseInput";
@@ -16,8 +14,6 @@ import BaseButton from "@/app/components/baseButton";
 import { ChangePasswordIcon } from "@/app/assets/change-password-icon";
 import { ChevronRightIcon } from "@/app/assets/chevron-right";
 import { ChangeTransactionPinIcon } from "@/app/assets/change-txt-pin";
-import BaseModal from "@/app/components/baseModal";
-import { OTPBaseInput } from "@/app/components/baseOTPInput";
 import { PasswordModal } from "./components/password-modal";
 import { TxtPINModal } from "./components/txt-pin-modal";
 import { LogoutModal } from "./components/logout-modal";
@@ -25,6 +21,7 @@ import { SaveProfileModal } from "./components/save-profile-modal";
 import BaseSelect from "@/app/components/baseSelect";
 import { ItemProps } from "@/app/includes/types";
 import { AvatarSection } from "./components/avatar-section";
+import { UserIcon } from "@/app/assets/user-p-icon";
 
 const Page = () => {
     const { getAgentProfile } = useHttpHook();
@@ -341,9 +338,3 @@ const Page = () => {
     </div>
 }
 export default Page;
-export const UserIcon = () => {
-    return <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M18 15C21.3137 15 24 12.3137 24 9C24 5.68629 21.3137 3 18 3C14.6863 3 12 5.68629 12 9C12 12.3137 14.6863 15 18 15Z" fill="#009668" />
-        <path d="M30 26.25C30 29.9775 30 33 18 33C6 33 6 29.9775 6 26.25C6 22.5225 11.373 19.5 18 19.5C24.627 19.5 30 22.5225 30 26.25Z" fill="#009668" />
-    </svg>
-}

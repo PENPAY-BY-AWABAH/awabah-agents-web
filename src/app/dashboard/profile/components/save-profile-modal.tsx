@@ -2,12 +2,11 @@ import BaseModal from "@/app/components/baseModal"
 import { UserDetails } from "../../page"
 import { BaseLoader } from "@/app/components/baseLoader"
 import { useRouter } from "next/navigation"
-import { UserIcon } from "../page"
 import useHttpHook from "@/app/includes/useHttpHook"
+import { UserIcon } from "@/app/assets/user-p-icon"
 
 export const SaveProfileModal = ({ onClose, details }: { onClose: () => void; details: UserDetails }) => {
     const {saveProfileDetails,loading} = useHttpHook()
-    const navigate = useRouter()
     const handleUpdate = () => {
         let firstName = "";
         let lastName = "";

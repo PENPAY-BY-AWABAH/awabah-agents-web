@@ -15,7 +15,7 @@ import { SuccessComponent } from "./components/success";
 import { PaymentComponent } from "./components/payment";
 import { EmploymentPage } from "./components/employment";
 import { ParentDetailPage } from "./components/parentDetails";
-import { ReturnAllNumbers } from "@/app/includes/functions";
+import { ReturnAllNumbers, ValidateEmail } from "@/app/includes/functions";
 import { BaseLoader } from "@/app/components/baseLoader";
 import useCommissionStore from "@/app/includes/store";
 type RegisterProps = "User Details" | "Verify Email" | "Next Of Kin" | "Success" | "Pay" | "Employment Details" | "Parent Details - (Father)" | "Parent Details - (Mother)";
@@ -30,13 +30,18 @@ export interface SignUpProps {
     rsaPin?: string;
     trackingId?:string;
     tempPIN?:string;
+    nextOfKinRegistered?:boolean;
+    employerDetailsRegistered?:boolean;
+    parentDetailRegistered?:boolean;
+    hasBVN?:boolean;
 }
 const Page = () => {
     const {update} = useCommissionStore()
     const [index, setIndex] = useState<number>(0)
+    const [userIsAgent, setUserIsAgent] = useState<boolean>(false)
     const [section, setSection] = useState<RegisterProps>("User Details")
     const navigate = useRouter();
-    const { handleRegisterUser,getUserByEmail, loading } = useHttpHook();
+    const { handleRegisterUser,ShowMessage,getUserByEmail, loading,handleCheckUserEmailIsAgent,RequestForRSAPIN } = useHttpHook();
     const [formData, setFormData] = useState<SignUpProps>({
         email: "",
         firstName: "",
@@ -47,7 +52,10 @@ const Page = () => {
         bvn: "",
         rsaPin: "",
         trackingId:"",
-        tempPIN:""
+        tempPIN:"",
+        nextOfKinRegistered:false,
+        employerDetailsRegistered:false,
+        parentDetailRegistered:false
     })
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault()
@@ -66,19 +74,29 @@ const Page = () => {
                     ...formData,
                     ...res.data
                 }
+                if(res.message.includes("user already registered."))
+                {
+                    return setSection("Success")
+                }
                 setFormData(data);
                 setSection("Verify Email")
             } else {
-                if (res.data?.nextOfKinRegistered === false) {
-                    setSection("Next Of Kin")
+                if(res.data?.nextOfKinRegistered === false)
+                {
+                    return setSection("Next Of Kin")
                 }
-                if (res.data?.employerDetailsRegistered === false) {
-                    setSection("Employment Details")
+                if(res.data?.fatherRegistered === false)
+                {
+                    return setSection("Parent Details - (Father)")
                 }
-                if (res.data?.parentDetailsRegistered === false) {
-                    setSection("Parent Details - (Father)")
+                if(res.data?.motherRegistered === false)
+                {
+                    return setSection("Parent Details - (Mother)")
                 }
-                
+                if(res.data?.employerDetailsRegistered === false)
+                {
+                    return setSection("Employment Details")
+                }
             }
         })
     }
@@ -132,7 +150,70 @@ const Page = () => {
       }
     }
     },[email])
-    
+
+const handleRSAPIN = (e:FormEvent)=>{
+    e.preventDefault()
+    if(formData.rsaPin !== "")
+    {
+        return ShowMessage({status:false,message:String(formData.rsaPin).includes("AWA")?"User already registered for RSA PIN":"User already had RSA PIN",data:null,position:"center"})
+    }
+
+    RequestForRSAPIN({email:formData.email!,bvn:formData.bvn}).then((res)=>{
+      if(res.data?.nextOfKinRegistered === false)
+      {
+        return setSection("Next Of Kin")
+      }
+      if(res.data?.fatherRegistered === false)
+      {
+        return setSection("Parent Details - (Father)")
+      }
+      if(res.data?.motherRegistered === false)
+      {
+        return setSection("Parent Details - (Mother)")
+      }
+      if(res.data?.employerDetailsRegistered === false)
+      {
+        return setSection("Employment Details")
+      }
+      if(res.status)
+      {
+        setFormData({
+            ...formData,
+            tempPIN:res.data.temp_rsa_pin
+        })
+       return setSection("Success")
+      }
+      ShowMessage({...res,message:String(res.message).replace("NIN and ",""),position:"center"})
+    })
+}
+    const HandleCheckEmail = (email:string)=>{
+        if(ValidateEmail(email))
+        {
+           handleCheckUserEmailIsAgent(email).then((res)=>{
+            setUserIsAgent(res.status)
+            if(res.data)
+            {
+              setFormData({
+                ...formData,
+                ...res.data
+              })  
+            }
+            if(res.status)
+            {
+                setFormData(res.data)
+            }
+            if(res.data?.firstName)
+            {
+               setFormData(res.data) 
+            }
+            if(String(res.message).includes("not verified"))
+            {
+            return setSection("Verify Email");
+            }
+            
+           });
+        }
+    }
     return <div className="bg-white h-full lg:px-[100px] lg:py-[60px] overflow-none">
         {section !== "Success" && <div className="mb-6">
             <button
@@ -159,18 +240,55 @@ const Page = () => {
             <div className="m-auto items-center text-center  rounded-[30px] min-h-[400px] p-[16px] shadow lg:w-[500px] lg:p-[30px] pb-[180px] lg:pb-[60px]">
                 <div className="text-black text-[24px] font-bold text-center mb-[20px] ">{section}</div>
                 <div className="w-[200px]">
-                    <BaseHorizontalIndicator
+                <BaseHorizontalIndicator
                         count={5}
                         selectedIndex={index}
                     />
                 </div>
                 {section === "User Details" && <div className="mt-[20px]">
-                    <div className="text-[#909090] text-[12px] text-left">Please provide some information about the user, these information are used to protect users account and for compliance purpose.</div>
-                    <div className="text-[#009668] text-[14px] text-left mt-4">Personal Details</div>
-                    <form onSubmit={handleSubmit}>
-                        <BaseInput
+                    {userIsAgent?<form 
+                        className="mt-5"
+                        onSubmit={handleRSAPIN}
+                    >
+                    <div className="text-[#909090] text-[12px] text-left">{String(formData.rsaPin).includes("AWA")?"Agent already has a temporary PIN":String(formData.rsaPin).includes("PEN")?"Agent already has a RSA PIN":"Request RSA PIN for this Agent."}</div>
+                    <div className="text-[#009668] text-[14px] text-left mt-4">Details</div>
+                       <BaseInput
+                            type="text"
+                            name="email"
+                            value={formData.email}
+                            required
+                            onValueChange={({ value }) => {
+                                setFormData({
+                                    ...formData,
+                                    email: value
+                                })
+                            }}
+                            max={140}
+                            label="Email"
+                            placeholder="Enter Email."
+                            onBlur={()=>{
+                                HandleCheckEmail(String(formData.email).trim())
+                            }}
+                        />
+                      {!formData.hasBVN &&<BaseInput
+                            type="text"
+                            name="BVN"
+                            value={formData.bvn}
+                            required
+                            onValueChange={({ value }) => {
+                              setFormData({
+                                    ...formData,
+                                    bvn: value
+                                }) 
+                            }}
+                            max={11}
+                            label={`BVN`}
+                            placeholder="Enter BVN."
+                        />}
+                    <BaseInput
                             type="text"
                             name="firstName"
+                            disabled
                             value={formData.firstName}
                             required
                             onValueChange={({ value }) => {
@@ -188,6 +306,89 @@ const Page = () => {
                             name="lastName"
                             value={formData.lastName}
                             required
+                            disabled
+                            onValueChange={({ value }) => {
+                                setFormData({
+                                    ...formData,
+                                    lastName: value
+                                })
+                            }}
+                            max={40}
+                            label="Last Name"
+                            placeholder="Enter last name."
+                        />
+                        
+                         {formData.rsaPin &&<BaseInput
+                            type="text"
+                            name="rsaPin"
+                            disabled
+                            value={formData.rsaPin}
+                            required
+                            onValueChange={({ value }) => {
+                               
+                            }}
+                            max={40}
+                            label={`${String(formData.rsaPin).includes("AWA")?"Temporary RSA PIN":"RSA PIN"}`}
+                            placeholder="Enter rsaPin."
+                        />}
+                      
+                    <div className="mt-5" >
+                    <BaseButton
+                    disabled={formData.rsaPin !== ""}
+                            text="Request RSA PIN"
+                            type="submit"
+                        />
+                        </div>
+                    </form>:<div>
+                    <div className="text-[#909090] text-[12px] text-left">Please provide some information about the user, these information are used to protect users account and for compliance purpose.</div>
+                    <div className="text-[#009668] text-[14px] text-left mt-4">Personal Details</div>
+                    <form onSubmit={handleSubmit}
+                    className="mt-5"
+                    >
+                       <BaseInput
+                            type="text"
+                            name="email"
+                            value={formData.email}
+                            required
+                            onValueChange={({ value }) => {
+                                setFormData({
+                                    ...formData,
+                                    email: value
+                                })
+                              
+                            }}
+                            max={140}
+                            label="Email"
+                            placeholder="Enter Email."
+                             onBlur={()=>{
+                                HandleCheckEmail(String(formData.email).trim())
+                            }}
+                        />
+                        <BaseInput
+                        disabled={formData.hasBVN}
+                            type="text"
+                            name="firstName"
+                            value={formData.firstName}
+                            required
+                            onValueChange={({ value }) => {
+                                setFormData({
+                                    ...formData,
+                                    firstName: value
+                                })
+                            }}
+                            max={40}
+                            label="First Name"
+                            placeholder="Enter First Name."
+                             onBlur={()=>{
+                                HandleCheckEmail(String(formData.email).trim())
+                            }}
+                        />
+                        <BaseInput
+                        disabled={formData.hasBVN}
+                            type="text"
+                            name="lastName"
+                            value={formData.lastName}
+                            required
                             onValueChange={({ value }) => {
                                 setFormData({
                                     ...formData,
@@ -199,22 +400,7 @@ const Page = () => {
                             placeholder="Enter last name."
                         />
                         <BaseInput
-                            type="text"
-                            name="email"
-                            value={formData.email}
-                            required
-                            onValueChange={({ value }) => {
-                                setFormData({
-                                    ...formData,
-                                    email: value
-                                })
-                            }}
-                            max={140}
-                            label="Email"
-                            placeholder="Enter Email."
-                        />
-
-                        <BaseInput
+                        disabled={formData.hasBVN}
                             type="text"
                             name="phoneNumber"
                             value={formData.phoneNumber}
@@ -244,7 +430,7 @@ const Page = () => {
                             label="Address"
                             placeholder="Enter address."
                         />
-                        <BaseInput
+                        {!formData.hasBVN &&<BaseInput
                             type="text"
                             name="nin"
                             value={formData.nin}
@@ -258,8 +444,8 @@ const Page = () => {
                             }}
                             label="NIN (National Identity Number)"
                             placeholder="Enter NIN."
-                        />
-                        <BaseInput
+                        />}
+                        {!formData.hasBVN &&<BaseInput
                             type="text"
                             name="bvn"
                             value={formData.bvn}
@@ -273,13 +459,14 @@ const Page = () => {
                             }}
                             label="BVN (BANK Verification Number)"
                             placeholder="Enter BVN."
-                        />
+                        />}
                         <BaseButton
                             text="Next"
                             type="submit"
                         />
 
                     </form>
+                    </div>}
                 {loading && <BaseLoader modal color="green" size="lg" />}
                 </div>}
                 {section === "Verify Email" && <div >
@@ -287,6 +474,18 @@ const Page = () => {
                         email={formData.email!}
                         trackingId={formData.trackingId!}
                         onClose={() => {
+                            if(formData.nextOfKinRegistered === false)
+                            {
+                            return setSection("Next Of Kin")
+                            }
+                            if(formData.parentDetailRegistered === false)
+                            {
+                            return setSection("Parent Details - (Father)")
+                            }
+                             if(formData.employerDetailsRegistered === false)
+                            {
+                            return setSection("Employment Details")
+                            }
                             setSection("Next Of Kin")
                         }}
                     />
@@ -357,7 +556,7 @@ const Page = () => {
             rsaPin: formData.tempPIN,
             pfaName: "",
             providerId: "",
-            phoneNumber:String(formData.phoneNumber).replace("+234","0"),
+            phoneNumber:String(formData.phoneNumber).replace("undefined","").replace("+234","0"),
             amount: 3000,
             fullName: formData.firstName+" "+formData.lastName,
             isValid: false
@@ -365,7 +564,8 @@ const Page = () => {
             navigate.push(ROUTES.remit)
             }}
             email={formData.email!}
-            tempPIN={formData.tempPIN!}
+            userIsAgent={userIsAgent}
+            tempPIN={formData.tempPIN! || formData.rsaPin!}
         />}
     </div>
 }

@@ -66,6 +66,7 @@ export const useApiRequest = ()=>{
             }
             if(String(response.message).toLowerCase().includes("invalid access"))
             {
+              console.log("logout:"+props.path);
               localStorage.clear();
               navigate.replace(ROUTES.login)
             }

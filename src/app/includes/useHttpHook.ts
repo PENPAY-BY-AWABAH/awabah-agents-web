@@ -4,7 +4,7 @@ import { useState } from "react";
 import { LoginProps } from "./types";
 import { toast } from "react-toastify";
 import { useApiRequest } from "./functions";
-import {name}  from "../../../package.json"
+import {name}  from "../../../package.json";
 export interface ApiResponse {
     status:boolean;
     message:string;
@@ -159,6 +159,10 @@ const useHttpHook = () => {
                 requestType:"json"
             }).then((res) => {
                 setLoading(false);
+                ShowMessage({
+                    ...res,
+                    position:"center"
+                })
                 resolve(res);
             })
         })
@@ -187,7 +191,7 @@ const useHttpHook = () => {
         return new Promise<ApiResponse>((resolve) => {
             setLoading(true);
             call({ 
-               path:"agent-get-nigerian-banks",
+               path:"agent-get-nigerian-banks?monnify=true",
                 body:{},
                 method:"GET",
                 requestType:"json"  
@@ -212,12 +216,13 @@ const useHttpHook = () => {
             })
         })
     }   
+
     const saveBankAccount = (accountNumber: string,bankCode:string) => {
         return new Promise<ApiResponse>((resolve) => {
             setLoading(true);
             call({
                 path:"agent-save-bank-details",
-                body:{accountNumber,bankCode},
+                body:{accountNumber,bankCode,monnify:true},
                 method:"POST",
                 requestType:"json"
             }).then((res) => {
@@ -839,11 +844,25 @@ const handleRSAPINRequest =(data:any)=>{
             })
         })
     }
-    const RequestForRSAPIN = (email:string)=>{
+    const RequestForRSAPIN = (data:any)=>{
         return new Promise<ApiResponse>((resolve) => {
          setLoading(true);
            call({
                 path:`agent-request-rsa-pin`,
+                body:data,
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                resolve(res);
+            })
+        })
+    }
+   const handleCheckUserEmailIsAgent = (email:string)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-check-if-user-is-agent`,
                 body:{email},
                 method:"POST",
                 requestType:"json"
@@ -853,8 +872,20 @@ const handleRSAPINRequest =(data:any)=>{
             })
         })
     }
-    
-    
+const ResendOTP = (email:string)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-resend-otp`,
+                body:{email},
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                resolve(res);
+            })
+        })
+    }
     return {
         loading,
         handleGetTransactions,
@@ -905,7 +936,9 @@ const handleRSAPINRequest =(data:any)=>{
         getUserByEmail,
         ShowMessage,
         ResetTestData,
-        RequestForRSAPIN
+        RequestForRSAPIN,
+        handleCheckUserEmailIsAgent,
+        ResendOTP
     }
 }
 export default useHttpHook;

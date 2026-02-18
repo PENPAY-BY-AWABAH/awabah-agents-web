@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import BaseButton from "@/app/components/baseButton"
 import { BaseLoader } from "@/app/components/baseLoader"
 import BaseModal from "@/app/components/baseModal"
@@ -24,6 +25,18 @@ export const TransactionPINModal = ({onClose,account_number,bankName}:{onClose:(
         }
       })
     },[])
+    const HandleTransfer = ()=>{
+      handleWithdrawalToAccount({
+            pin,
+            account_number,
+            monnify:true
+        }).then((res)=>{
+            if(res.status)
+            {
+              setSuccess(res.message!)
+            }
+        })
+    }
     return <BaseModal 
     onClose={()=>{
         if(!loading)
@@ -31,10 +44,12 @@ export const TransactionPINModal = ({onClose,account_number,bankName}:{onClose:(
            onClose() 
         }
     }}
-    title={loading?"":"Transaction PIN"}
+    title={success?"":"Transaction PIN"}
     >
-     {!loading?success?<WithdrawalSuccessScreen
+    <div >
+     {success?<WithdrawalSuccessScreen
      onClose={()=>onClose()}
+     message={success}
      />:<div>
      <div className="text-center p-2 bg-green-100 mb-3 rounded text-[14px] px-4" >
       <div ></div>
@@ -62,24 +77,13 @@ export const TransactionPINModal = ({onClose,account_number,bankName}:{onClose:(
         />
      </div>
      <BaseButton
+     loading={loading}
      disabled={pin.length !== 4}
      text="Continue"
      type="button"
-     onClick={()=>{
-        handleWithdrawalToAccount({
-            pin,
-            account_number
-        }).then((res)=>{
-            if(res.status)
-            {
-              setSuccess(res.message!)
-            }
-        })
-     }}
+     onClick={HandleTransfer}
      />
-     </div>:<div className="flex item-center justify-center">
-    <BaseLoader color="green" size="lg" text="" />
-<div className="text-center ms-2 text-black text-[14px] ">Proccessing...</div>
-    </div>}
+     </div>}
+     </div>
     </BaseModal>
 }

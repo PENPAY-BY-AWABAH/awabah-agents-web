@@ -2,17 +2,15 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 "use client"
 import { BackIcon } from "@/app/assets/back-icon";
-import { useParams, useRouter } from "next/navigation";
 import { BankIcon } from "@/app/assets/bank-icon";
 import { useEffect, useState } from "react";
 import BaseButton from "@/app/components/baseButton";
-import BaseToggleBtn from "@/app/components/baseCheckBox";
 import { BankItemProps, SavedAccountProps } from "@/app/includes/types";
 import useHttpHook from "@/app/includes/useHttpHook";
 import { ROUTES } from "@/app/includes/constants";
 import { LinkBankModal } from "./components/link-modal";
-import BaseModal from "@/app/components/baseModal";
 import { TransactionPINModal } from "../withdrawal/components/transaction-PIN";
+import { useRouter } from "next/navigation";
 
 const Page = () => {
     const [loadingRemoveAccount, setLoadingRemoveAccount] = useState<boolean>(false);

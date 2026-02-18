@@ -1,18 +1,17 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client"
-import { useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { BackIcon } from "../assets/back-icon";
 import BaseInput from "../components/baseInput";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import BaseButton from "../components/baseButton";
-import { ROUTES } from "../includes/constants";
+import { CONSTANT, ROUTES } from "../includes/constants";
 import Link from "next/link";
 import useHttpHook from "../includes/useHttpHook";
 import BaseToggleBtn from "../components/baseCheckBox";
-import { toast } from "react-toastify";
 import { OtpSection } from "./components/otpSection";
 import { RSAPinSection } from "./components/rsaPINRequest";
 import { CreatAccounContinue } from "./components/create_account_continue";
-import { SuccessComponent } from "../dashboard/user-onboarding/components/success";
 import { SuccessSection } from "./components/success";
 import { WalletPINSection } from "./components/walletPINSection";
 type RegisterProps = "Create Account" | "Verify Email" | "RSA PIN Request" | "Account" | "Wallet Pin" | "Confirm Pin" ;
@@ -34,6 +33,7 @@ agentId?:string;
 const Page = () => {
     const [section, setSection] = useState<RegisterProps>("Create Account")
     const [success, setSuccess] = useState<boolean>(false)
+    const [formsStep, setFormStep] = useState<number | null>(null)
     const navigate = useRouter();
     const { handleRegister, loading,ShowMessage } = useHttpHook();
     const [formData, setFormData] = useState<SignUpProps>({
@@ -44,21 +44,38 @@ const Page = () => {
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault()
         const data = {...formData}
-        if(formData.fullName){
-            const nameParts = formData.fullName.split(" ");
-            if(nameParts.length !== 3)
+        if(formData?.fullName){
+            const nameParts = formData?.fullName.split(" ");
+            if(nameParts.length !== 2)
             {
-                return ShowMessage({message:`full name must contain (first name,middle name & surname)`,position:"center",data:null,status:false,statusCode:0});
+             return ShowMessage({message:`full name must contain (first name & surname)`,position:"center",data:null,status:false,statusCode:0});
             }
             data.firstName = nameParts[0];
-            data.middleName = nameParts[1];
-            data.lastName = nameParts[2];
+            data.middleName = "";
+            data.lastName = nameParts[1];
         }
-        delete data.fullName;
+        delete data?.fullName;
         
         handleRegister(data).then((res) => {
+            if(String(res.message).includes("Email not verified"))
+            {
+                setSection("Verify Email")
+                return ShowMessage({...res,status:false,position:"center"})
+            }
+            if(res?.data?.other_info_not_saved)
+            {
+               setSuccess(true);
+               return setSection("Create Account") 
+            }
+            
+            if(res?.data?.transaction_pin_not_saved)
+            {
+               setSuccess(false);
+               return setSection("Wallet Pin") 
+            }
             if (res.status) {
               setSection("Verify Email")
+              localStorage.setItem(CONSTANT.LocalStore.registrationForm,JSON.stringify(formData))
             }else{
                 if(res.data?.activated === "0"){
                   setSection("Verify Email")  
@@ -66,7 +83,32 @@ const Page = () => {
             }
         })
     }
-
+   const searchParams = useSearchParams();
+    useEffect(()=>{
+      const data = localStorage.getItem(CONSTANT.LocalStore.registrationForm);
+      if(data)
+      {
+        const iData = JSON.parse(data)  as SignUpProps;
+        setFormData(iData)
+        
+         if(searchParams.get("step"))
+        {
+            const step = searchParams.get("step")
+            setFormStep(parseInt(step!))
+            setFormData({...iData,password:"Qwerty@123",nin:"12345678900"});
+            if(String(step) === "2")
+            {
+                setSuccess(true)
+                return setSection("Create Account")
+            }
+            if(String(step) === "3")
+            {
+                return setSection("Wallet Pin")
+            }
+        }
+      }
+    },[])
+    
     return <div className="bg-white h-full p-[16px] lg:px-[100px] lg:py-[60px] overflow-hidden">
         <div className="lg:mb-6 ">
         {!success &&<button
@@ -96,11 +138,12 @@ const Page = () => {
                         <BaseInput
                             type="text"
                             name="fullName"
-                            value={formData.fullName}
+                            value={formData?.fullName}
                             required
+                            disabled={formsStep !== null}
                             onValueChange={({ value }) => {
                                 const splitName = String(value).split(" ")
-                                if(splitName.length > 3)
+                                if(splitName.length > 2)
                                 {
                                     return
                                 }
@@ -110,13 +153,14 @@ const Page = () => {
                                 })
                             }}
                             max={80}
-                            label="Full Name (first name, middle name & surname)"
+                            label="Full Name (first name & surname)"
                             placeholder="Enter full name."
                         />
                         <BaseInput
                             type="text"
                             name="email"
-                            value={formData.email}
+                            disabled={formsStep !== null}
+                            value={formData?.email}
                             required
                             onValueChange={({ value }) => {
                                 setFormData({
@@ -131,7 +175,8 @@ const Page = () => {
                         <BaseInput
                             type="text"
                             name="phoneNumber"
-                            value={formData.phoneNumber}
+                            disabled={formsStep !== null}
+                            value={formData?.phoneNumber}
                             required
                             onValueChange={({ value }) => {
                                 setFormData({
@@ -143,26 +188,11 @@ const Page = () => {
                             label="Phone Number"
                             placeholder="Enter phone number."
                         />
-                        <BaseInput
-                            required
-                            type="password"
-                            name="password"
-                            value={formData.password}
-                            onValueChange={({ value }) => {
-                                setFormData({
-                                    ...formData,
-                                    password: value
-                                })
-                            }}
-                            max={30}
-                            label="Password"
-                            placeholder="Enter Password."
-                        />
-                    <BaseInput
+                         {formsStep == null && <BaseInput
                             required
                             type="password"
                             name="nin"
-                            value={formData.nin}
+                            value={formData?.nin}
                             onValueChange={({ value }) => {
                                 setFormData({
                                     ...formData,
@@ -172,8 +202,24 @@ const Page = () => {
                             max={11}
                             label="NIN"
                             placeholder="Enter NIN."
-                        />
-            <div className="text-[#009668] text-[14px] text-left mt-4">Minimum of 8 letters and a special character ( *#&)</div>
+                        />}
+                        {formsStep == null && <BaseInput
+                            required
+                            type="password"
+                            name="password"
+                            value={formData?.password}
+                            onValueChange={({ value }) => {
+                                setFormData({
+                                    ...formData,
+                                    password: value
+                                })
+                            }}
+                            max={30}
+                            label="Password"
+                            placeholder="Enter Password."
+                        />}
+                   
+            <div className="text-[#009668] mb-5 text-[14px] text-left mt-4">Minimum of 8 letters and a special character ( *#&)</div>
              <div className="flex items-center gap-3 text-black mb-[30px]">
              <div className="w-[30px] h-[30px]">
             <BaseToggleBtn

@@ -96,6 +96,10 @@ export default function BaseInputDate(props: BaseInputProps) {
   const handleTimeChange = (date: Dayjs | null) => {
     setSelectedTime(date);
   };
+
+  const minSelectableDate = dayjs().subtract(100, 'years');
+  const maxSelectableDate = dayjs();
+  
   return (<div
     onMouseLeave={() => {
       setShowDate(false)
@@ -105,10 +109,19 @@ export default function BaseInputDate(props: BaseInputProps) {
         props.onValueChange({ value: savedValue, name: props.name })
       }
     }}
-    className="w-full relative">
+    className="w-full relative cursor-pointer"
+    onClick={()=>setShow(!show)}
+    >
+      <input
+ value={props.value}
+ required={props.required}
+ className='opacity-0 absolute bottom-0 left-0'
+ />
    <div className="grid grid-cols-1 mb-3 relative">
   {props?.label && <label htmlFor={props.name} className="flex items-center text-md font-medium text-gray-700" style={{position:"relative"}}><small ><b>{props?.label}</b></small>{props.required?<span className='text-red-600 text-[20px] ps-1'>*</span>:""}</label>}
- <div className={`mt-1 block w-full border-[0.5px] 
+ <div 
+ onClick={()=>setShow(!show)}
+ className={`mt-1 block w-full border-[0.5px] cursor-pointer
             border-gray-300 h-[40px] p-[8px] relative rounded-md shadow-sm sm:text-sm relative ${props.className?props.className:""}`}>
 <div className={`
 ${props.value ? "text-black" : "text-[#212529]"}
@@ -155,7 +168,8 @@ relative
         >
           {props.trailingIcon ? props.trailingIcon : <ChevronDown size={18} cursor={"pointer"} type='thin' />}
         </span>
-      </div>
+ </div>
+ 
       {showTime && <div
         className='fixed z-[12] lg:hidden top-0 left-0 right-0 bottom-0 w-full h-full bg-[#00000026] ' >
         <div className={`absolute bottom-0 bg-white p-[16px] pt-[20px] pb-[100px] w-full rounded-t-[32px] ${showTime ? 'animate-slideInUp' : 'animate-slideOutDown'}
@@ -232,7 +246,8 @@ relative
             defaultValue={dayjs()}
             value={selectedDate}
             onChange={handleDateChange}
-            maxDate={dayjs().subtract(1, "d")}
+            minDate={minSelectableDate}
+            maxDate={maxSelectableDate}
           />
         </LocalizationProvider>
       </div>}
@@ -320,7 +335,8 @@ relative
               defaultValue={dayjs()}
               value={selectedDate}
               onChange={handleDateChange}
-              minDate={dayjs().add(1, "d")}
+              minDate={minSelectableDate}
+              maxDate={maxSelectableDate}
             />
           </LocalizationProvider>
         </div>

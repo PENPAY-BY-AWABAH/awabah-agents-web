@@ -2,6 +2,7 @@
 import { ItemProps } from "@/app/includes/types";
 import {Ban, ChevronDown } from "lucide-react";
 import { useEffect, useState } from "react";
+import BaseInput from "../baseInput";
 interface BaseSelectProps {
     list:ItemProps[];
     onValueChange:(data:ItemProps)=>void;
@@ -16,6 +17,7 @@ interface BaseSelectProps {
     left?:boolean;
  }
  const BaseSelect = (props:BaseSelectProps)=>{
+const [searchTxt,setSearchText] = useState<string>("");
 const [selected,setSelected] = useState<string | null>("");
 const [list,setList] = useState<ItemProps[]>([]);
 const [show,setShow] = useState<boolean>(false);
@@ -92,9 +94,22 @@ value={a.value} >{a.name}</option>)}
 {props.custom && show && !props?.disabled &&<div 
  onMouseLeave={()=>setShow(false)}
 className={props?.left?`absolute z-40 left-0 min-w-48 mt-1 origin-top-left rounded-md shadow-sm bg-white ring-1 ring-gray-300 ring-opacity-5 group-hover:block overflow-hidden`:`absolute z-40 right-0 min-w-48 mt-1 origin-top-right rounded-md shadow-sm bg-white ring-1 ring-gray-300 ring-opacity-5 group-hover:block overflow-hidden`}>
+ <div 
+ className="p-3"
+ >
+ <BaseInput
+ name="inputsearch"
+ onValueChange={({value})=>{
+  setSearchText(value)
+ }}
+ placeholder="Search..."
+ type="text"
+ value={searchTxt}
+ />
+ </div>
  <div className="py-1 bg-white max-h-[200px] overflow-scroll "
  >
-{list.map((a,i)=><div 
+{list.filter((a)=>String(a.title).toLowerCase().includes(String(searchTxt))).map((a,i)=><div 
 onClick={()=>{
     setShow(false);
     setSelected(a.title!)

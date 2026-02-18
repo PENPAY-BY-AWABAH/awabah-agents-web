@@ -5,7 +5,7 @@ import BaseButton from "@/app/components/baseButton"
 import BaseInput from "@/app/components/baseInput"
 import { BaseLoader } from "@/app/components/baseLoader"
 import { OTPBaseInput } from "@/app/components/baseOTPInput"
-import { ROUTES } from "@/app/includes/constants"
+import { CONSTANT, ROUTES } from "@/app/includes/constants"
 import { LoginProps } from "@/app/includes/types"
 import useHttpHook from "@/app/includes/useHttpHook"
 import { useRouter } from "next/navigation"
@@ -31,6 +31,7 @@ export const WalletPINSection = ({signUpForm,onSuccess}:{signUpForm:SignUpProps;
             pin:confirmPin
         }).then((res)=>{
             setSuccess(res.status)
+            localStorage.removeItem(CONSTANT.LocalStore.registrationForm)
         })
     }
    
