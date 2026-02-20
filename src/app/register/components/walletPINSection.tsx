@@ -1,8 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-hooks/set-state-in-effect */
-/* eslint-disable react/no-unescaped-entities */
 import BaseButton from "@/app/components/baseButton"
-import BaseInput from "@/app/components/baseInput"
 import { BaseLoader } from "@/app/components/baseLoader"
 import { OTPBaseInput } from "@/app/components/baseOTPInput"
 import { CONSTANT, ROUTES } from "@/app/includes/constants"
@@ -12,7 +9,7 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { SignUpProps } from "../page"
 
-export const WalletPINSection = ({signUpForm,onSuccess}:{signUpForm:SignUpProps;onSuccess:()=>void})=>{
+export const WalletPINSection = ({signUpForm}:{signUpForm:SignUpProps;onSuccess:()=>void})=>{
     const navigate = useRouter()
     const [success,setSuccess] = useState<boolean>(false)
     const [formData,setFormData] = useState<LoginProps>({

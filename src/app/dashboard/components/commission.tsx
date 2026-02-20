@@ -5,7 +5,7 @@ import { COLOURS, NairaSymbol, placeHolderAvatar, ROUTES } from "@/app/includes/
 import moment from "moment";
 import Link from "next/link";
 import { useEffect, useState } from "react"
-import { ApprovedIcon, PendingIcon, UserItemProp } from "./users";
+import { ApprovedIcon, PendingIcon } from "./users";
 import useHttpHook from "@/app/includes/useHttpHook";
 import { DatabaseIcon } from "lucide-react";
 import { BaseLoader } from "@/app/components/baseLoader";

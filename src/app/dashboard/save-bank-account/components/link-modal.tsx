@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { BaseLoader } from "@/app/components/baseLoader"
 
 export const LinkBankModal = ({onClose,text}:{onClose: () => void,text:string}) => {    

@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import BaseButton from "@/app/components/baseButton"
-import { BaseLoader } from "@/app/components/baseLoader"
 import BaseModal from "@/app/components/baseModal"
 import { OTPBaseInput } from "@/app/components/baseOTPInput"
 import useHttpHook from "@/app/includes/useHttpHook"

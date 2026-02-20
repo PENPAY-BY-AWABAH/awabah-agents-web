@@ -1,17 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
-/* eslint-disable jsx-a11y/alt-text */
-/* eslint-disable react-hooks/set-state-in-effect */
 "use client"
-import { OutflowIcon } from "@/app/assets/outflow-icon";
 import { SliderIcon } from "@/app/assets/slider-filter";
-import { UserIcon } from "@/app/assets/user-icon";
 import BaseButton from "@/app/components/baseButton";
 import BaseCard from "@/app/components/baseCard";
 import BaseInputSearch from "@/app/components/baseInputSearch";
-import { BaseLoader } from "@/app/components/baseLoader";
+import {BaseLoader} from "@/app/components/baseLoader";
 import { COLOURS, CONSTANT, NairaSymbol, placeHolderAvatar, ROUTES } from "@/app/includes/constants"
 import useHttpHook from "@/app/includes/useHttpHook";
-import { DatabaseIcon, FilterIcon, SliceIcon } from "lucide-react";
+import { DatabaseIcon } from "lucide-react";
 import moment from "moment";
 import Link from "next/link";
 import { useRouter } from "next/navigation";

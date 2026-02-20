@@ -5,7 +5,7 @@ import { BaseLoader } from "@/app/components/baseLoader"
 import { ROUTES } from "@/app/includes/constants"
 import { useRouter } from "next/navigation"
 
-export const LogoutModal = ({onClose,details}:{onClose:()=>void;details:UserDetails})=>{
+export const LogoutModal = ({onClose}:{onClose:()=>void;details:UserDetails})=>{
     const [loading,setLoading] = useState<boolean>(false);
     const navigate = useRouter()
     const handleLogout = ()=>{

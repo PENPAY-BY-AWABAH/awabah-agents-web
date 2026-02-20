@@ -1,18 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/set-state-in-effect */
 "use client"
-import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
-import Link from "next/link";
 import useHttpHook from "@/app/includes/useHttpHook";
-import { ROUTES } from "@/app/includes/constants";
-import { BackIcon } from "@/app/assets/back-icon";
 import BaseInput from "@/app/components/baseInput";
 import BaseButton from "@/app/components/baseButton";
-import { BaseHorizontalIndicator } from "@/app/components/baseHorizontalIndicator";
 import BaseSelect from "@/app/components/baseSelect";
 import { ItemProps } from "@/app/includes/types";
-import { ReturnAllNumbers, ReturnComma } from "@/app/includes/functions";
+import { ReturnAllNumbers } from "@/app/includes/functions";
 import BaseInputDate from "@/app/components/baseInputDate";
 import { Calendar } from "lucide-react";
 import dayjs from "dayjs";
@@ -35,9 +30,9 @@ export const EmploymentPage = ({onClose,onSuccess,trackingId}:{onClose:()=>void;
   const [listOfConsent, setListOfConsent] = useState<ItemProps[]>([]);
     const [selectedOption, setSelectedOption] = useState<ItemProps | null>(null)
     const [showConsent, setConsent] = useState<boolean>(false);
-    const { GetListOfConsent,handleEmploymentDetails,loading } = useHttpHook()
+    const { GetListOfSectors,handleEmploymentDetails,loading } = useHttpHook()
     const ListOfConsent = () => {
-        GetListOfConsent().then((res) => {
+        GetListOfSectors().then((res) => {
             if (res.status) {
                 //set list of banks
                 const data = res.data.map((a: any) => {

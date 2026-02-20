@@ -1,7 +1,6 @@
 import BaseModal from "@/app/components/baseModal"
-import { RefObject, useRef, useState } from "react"
+import { useRef, useState } from "react"
 import { BaseLoader } from "@/app/components/baseLoader"
-import { useRouter } from "next/navigation"
 import { PaymentResponseProp } from "../page"
 import moment from "moment"
 import BaseButton from "@/app/components/baseButton"
@@ -9,7 +8,6 @@ import html2canvas from 'html2canvas';
 import { ReturnComma } from "@/app/includes/functions"
 import { NairaSymbol } from "@/app/includes/constants"
 export const PaymentVericationModal = ({onClose,details,message}:{onClose:()=>void;details:PaymentResponseProp,message:string})=>{
-    const navigate = useRouter();
     const [downloading,setDownloading] = useState<boolean>(false)
     const divRef = useRef<HTMLDivElement>(null);
     const HandleDownloadReceipt = async()=>{

@@ -1,10 +1,9 @@
 "use client";
-import type { Metadata } from "next";
 import { ToastContainer } from 'react-toastify';
 import "./globals.css";
 import { Suspense, useEffect } from "react";
 import { BaseLoader } from "./components/baseLoader";
-import { CONSTANT, ROUTES } from "./includes/constants";
+import { CONSTANT } from "./includes/constants";
 import { useRouter } from "next/navigation";
 
 // export const metadata: Metadata = {

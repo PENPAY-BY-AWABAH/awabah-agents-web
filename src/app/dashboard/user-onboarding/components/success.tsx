@@ -3,7 +3,7 @@ import { BaseLoader } from "@/app/components/baseLoader";
 import useHttpHook from "@/app/includes/useHttpHook";
 import { useEffect, useState } from "react"
 type ReviewStateProps = "starting"|"done"| null
-export const SuccessComponent = ({onPay,tempPIN,email,userIsAgent}:{onPay:()=>void;tempPIN:string;email:string;userIsAgent?:boolean})=>{
+export const SuccessComponent = ({onPay,rsaPin,email,userIsAgent}:{onPay:()=>void;rsaPin:string;email:string;userIsAgent?:boolean})=>{
     const [reviewState,setReviewState] = useState<ReviewStateProps>(null);
     const {RequestForRSAPIN} = useHttpHook()
     useEffect(()=>{
@@ -373,7 +373,7 @@ This usually takes a few minutes.</div>}
   </div>
  {!userIsAgent &&<div className="text-[#909090] text-[12px] text-left">Once the user is successfully onboarded, you’ll earn ₦300 Naira commission for this onboarding.</div>}
 </div>:<div >
-<div >Temporay RSA PIN - <b>{tempPIN}</b></div>
+<div >RSA PIN - <b>{rsaPin}</b></div>
 <div className="bg-[#C4C4C433] p-3 flex gap-3 items-center lg:w-[348px] m-auto mt-[5px] lg:mt-[30px] mb-[20px] lg:mb-[40px]" >
 <div>
  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

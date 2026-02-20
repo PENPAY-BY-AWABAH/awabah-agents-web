@@ -889,7 +889,7 @@ const ResendOTP = (email:string)=>{
         })
     }
     
-const GetListOfConsent = ()=>{
+const GetListOfSectors = ()=>{
         return new Promise<ApiResponse>((resolve) => {
          setLoading(true);
            call({
@@ -975,7 +975,7 @@ const SaveConsent = (data:any)=>{
         RequestForRSAPIN,
         handleCheckUserEmailIsAgent,
         ResendOTP,
-        GetListOfConsent,
+        GetListOfSectors,
         SaveConsent
     }
 }

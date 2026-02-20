@@ -1,19 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/set-state-in-effect */
 "use client"
-import { useRouter } from "next/navigation";
-import { FormEvent, useEffect, useState } from "react";
-import useHttpHook from "@/app/includes/useHttpHook";
-import BaseInput from "@/app/components/baseInput";
+import {useState } from "react";
 import BaseButton from "@/app/components/baseButton";
-import { BankItemProps, ItemProps, SavedAccountProps } from "@/app/includes/types";
-import { BankIcon } from "@/app/assets/bank-icon";
-import { BaseLoader } from "@/app/components/baseLoader";
-import BaseModal from "@/app/components/baseModal";
-import BaseSelect from "@/app/components/baseSelect";
 import BaseToggleBtn from "@/app/components/baseCheckBox";
-import { on } from "events";
-
 export interface BankProps {
   accountN?: string;
   firstName?: string;

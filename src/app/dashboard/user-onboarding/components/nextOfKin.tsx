@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
@@ -18,7 +19,7 @@ export interface NextOfKinProps {
   trackingId?:string;
 }
 
-export const NextOfKinPage = ({onClose,onSuccess,trackingId}:{onClose:()=>void;onSuccess:()=>void;trackingId:string}) => {
+export const NextOfKinPage = ({onClose,onSuccess,trackingId}:{onClose:()=>void;onSuccess:(data:any)=>void;trackingId:string}) => {
     const [index,setIndex] =  useState<number>(0)
     const navigate = useRouter();
     const { handleNextOfKin, loading } = useHttpHook();
@@ -39,7 +40,7 @@ export const NextOfKinPage = ({onClose,onSuccess,trackingId}:{onClose:()=>void;o
         trackingId:trackingId
     }).then((res) => {
             if (res.status) {
-            onSuccess()
+            onSuccess(res.data)
             }
         })
     }

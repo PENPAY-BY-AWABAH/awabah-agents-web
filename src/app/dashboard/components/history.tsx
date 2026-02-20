@@ -1,12 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-hooks/set-state-in-effect */
 "use client"
 import { OutflowIcon } from "@/app/assets/outflow-icon";
 import BaseInputSearch from "@/app/components/baseInputSearch";
 import { BaseLoader } from "@/app/components/baseLoader";
 import { COLOURS, CONSTANT, NairaSymbol, ROUTES } from "@/app/includes/constants"
-import { ReturnComma } from "@/app/includes/functions";
 import useHttpHook from "@/app/includes/useHttpHook";
 import { DatabaseIcon } from "lucide-react";
 import moment from "moment";

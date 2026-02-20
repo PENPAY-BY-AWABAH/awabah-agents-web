@@ -1,14 +1,7 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-hooks/set-state-in-effect */
-/* eslint-disable react/no-unescaped-entities */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import BaseButton from "@/app/components/baseButton"
-import { BaseLoader } from "@/app/components/baseLoader"
-import { OTPBaseInput } from "@/app/components/baseOTPInput"
-import { ROUTES } from "@/app/includes/constants"
-import { LoginProps } from "@/app/includes/types"
-import useHttpHook from "@/app/includes/useHttpHook"
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import {  useState } from "react"
 import { SignUpProps } from "../page"
 
 export const SuccessSection = ({signUpForm,onClose,onContinue}:{signUpForm:SignUpProps;onClose:()=>void;onContinue:()=>void})=>{
