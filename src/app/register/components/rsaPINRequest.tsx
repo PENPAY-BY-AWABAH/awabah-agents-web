@@ -7,8 +7,6 @@ import {  useState } from "react"
 export const RSAPinSection = ({email}:{email:string;onClose:()=>void;onRSAPINRequest:()=>void;})=>{
     const [success,setSuccess] = useState<boolean>(false)
     const [loading,setLoading] = useState<boolean>(false);
-    const {handleRSAPINRequest} = useHttpHook();
-    
   
     return <div >
         <div className="text-black text-[16px] font-semibold text-center mt-4 ">OTP Code</div>

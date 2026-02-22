@@ -25,15 +25,18 @@ const [show,setShow] = useState<boolean>(false);
 useEffect(()=>{
  if(selected !== "" && props.placeholder)
 {
-  setList(list.filter((a)=>a?.name !== props.placeholder));
+  props.list?.filter((a)=>a?.name !== props.placeholder);
 }else{
-  setList(list.filter((a)=>a?.name !== "Select an option"));
+  props.list?.filter((a)=>a?.name !== "Select an option");
 }
 },[selected])
 
-useEffect(()=>{
-setList(props.list)
-},[props.list])
+// useEffect(()=>{
+//   if(props.list.length === 0)
+//   {
+//   // setList(props.list)
+//   }
+// },[props.list])
 
 useEffect(()=>{
 setSelected(props.value)
@@ -73,7 +76,7 @@ disabled={props?.disabled}
 required={props.required}
 onChange={({target})=>{
  setSelected(target.value);
- const found = list.find((a)=>a.value === target.value);
+ const found = props.list.find((a)=>a.value === target.value);
  if(found)
  {
     props.onValueChange(found);
@@ -84,7 +87,7 @@ className="form-select w-full border-0 outline-0" aria-label="Select an option">
 <option 
 disabled
  >{props.placeholder?props.placeholder:"Select an option"}</option>
-{list.map((a,i)=><option 
+{props.list.map((a,i)=><option 
 className="text-black"
 selected={selected === a.value} 
 key={i} 
@@ -93,7 +96,7 @@ value={a.value} >{a.name}</option>)}
 
 {props.custom && show && !props?.disabled &&<div 
  onMouseLeave={()=>setShow(false)}
-className={props?.left?`absolute z-40 left-0 min-w-48 mt-1 origin-top-left rounded-md shadow-sm bg-white ring-1 ring-gray-300 ring-opacity-5 group-hover:block overflow-hidden`:`absolute z-40 right-0 min-w-48 mt-1 origin-top-right rounded-md shadow-sm bg-white ring-1 ring-gray-300 ring-opacity-5 group-hover:block overflow-hidden`}>
+className={props?.left?`hidden lg:block lg:absolute z-40 left-0 min-w-48 mt-1 origin-top-left rounded-md shadow-sm bg-white ring-1 ring-gray-300 ring-opacity-5 group-hover:block overflow-hidden`:`hidden lg:block lg:absolute z-40 right-0 min-w-48 mt-1 origin-top-right rounded-md shadow-sm bg-white ring-1 ring-gray-300 ring-opacity-5 group-hover:block overflow-hidden`}>
  <div 
  className="p-2"
  >
@@ -109,16 +112,63 @@ className={props?.left?`absolute z-40 left-0 min-w-48 mt-1 origin-top-left round
  </div>
  <div className=" bg-white max-h-[200px] overflow-scroll "
  >
-{list.filter((a)=>String(a.title).toLowerCase().includes(String(searchTxt))).map((a,i)=><div 
+{props.list?.filter((a)=>String(a.title).toLowerCase().includes(String(searchTxt))).map((a,i)=><div 
 onClick={()=>{
     setShow(false);
     setSelected(a.title!)
     props.onValueChange(a)
 }}
-className={`text-black cursor-pointer hover:bg-gray-200 p-2 px-5 ${i !== 0 && i !== list.length?"border-t-1 border-t-gray-300":""}`}
+className={`text-black cursor-pointer hover:bg-gray-200 p-2 px-5 ${i !== 0 && i !== props.list?.length?"border-t-1 border-t-gray-300":""}`}
 key={i} 
  >{a.title}</div>)}
  </div>
+</div>}
+{props.custom && show && !props?.disabled &&<div 
+className={`lg:hidden fixed inset-0 flex items-center justify-center  `} style={{zIndex:10}}>
+<style>{`
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+        .slide-up-modal {
+            animation: slideUp 0.3s ease-out forwards;
+        }
+`}</style>
+<div 
+onClick={()=>{
+  setShow(false)
+  setSearchText("")
+}}
+className="h-[100vh] w-full bg-[rgba(0,0,0,0.5)] bg-opacity-50 "
+/>
+<div className={`bg-white fixed ps-t-4 max-h-[70vh] min-h-[40vh]  pe-t-4 rounded-lg shadow-lg w-full  bottom-[0px] slide-up-modal`}>
+<div 
+ className="p-4"
+ >
+ <BaseInput
+ name="inputsearch"
+ onValueChange={({value})=>{
+  setSearchText(value)
+ }}
+ placeholder="Search..."
+ type="text"
+ value={searchTxt}
+ />
+ </div>
+ <div className=" bg-white max-h-[60vh] overflow-scroll w-full pb-[50px]"
+ >
+{props.list?.filter((a)=>String(a.title).toLowerCase().includes(String(searchTxt))).map((a,i)=><div 
+onClick={()=>{
+    setShow(false);
+    setSelected(a.title!)
+    setSearchText("")
+    props.onValueChange(a)
+}}
+className={`text-black cursor-pointer hover:bg-gray-200 p-4 px-5 ${i !== 0 && i !== props.list?.length?"border-t-1 border-t-gray-300":""}`}
+key={i} 
+ >{a.title}</div>)}
+ </div>
+</div>
 </div>}
 </div>
 </div>

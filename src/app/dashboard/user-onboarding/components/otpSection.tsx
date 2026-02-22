@@ -9,7 +9,7 @@ import useHttpHook from "@/app/includes/useHttpHook"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
-export const OtpSection = ({email,onClose,trackingId}:{email:string;onClose:()=>void;trackingId?:string})=>{
+export const OtpSection = ({email,onClose,trackingId,userIsMinor}:{email:string;onClose:()=>void;trackingId?:string;userIsMinor?:boolean})=>{
     const navigate = useRouter();
     const [success,setSuccess] = useState<boolean>(false)
     const [formData,setFormData] = useState<LoginProps>({
@@ -22,7 +22,7 @@ export const OtpSection = ({email,onClose,trackingId}:{email:string;onClose:()=>
     const [otp,setOtp] = useState<string>("");
     const {handleEmailOTPVerification,loading,handleSendOtp} = useHttpHook();
     const handleOTPSubmit = ()=>{
-        handleEmailOTPVerification({otp,email}).then((res)=>{
+        handleEmailOTPVerification({otp,email,minor:userIsMinor?1:0,trackingId}).then((res)=>{
             if(res.status)
             {
                 onClose();

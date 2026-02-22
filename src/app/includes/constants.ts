@@ -35,7 +35,8 @@ export const CONSTANT = {
         remit:"remit",
         userFormFields:"userFormFields",
         historySection:"historySection",
-        registrationForm:"registrationForm"
+        registrationForm:"registrationForm",
+        nextOfKin:"nextOfKin"
     }
 }
 export const Currency = {

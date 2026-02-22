@@ -344,7 +344,7 @@ const getAgentProfile  = () => {
         return new Promise<ApiResponse>((resolve) => {
             setLoading(true);
            call({
-                path:`agent-user-registration`,
+                path:`agent-user-${String(data.userType).toLowerCase()}-registration`,
                 body:data,
                 method:"POST",
                 requestType:"json"
@@ -856,6 +856,13 @@ const handleRSAPINRequest =(data:any)=>{
                 requestType:"json"
             }).then((res) => {
                 setLoading(false);
+                if(!res.status)
+                {
+                    ShowMessage({
+                    position:"center",
+                    ...res
+                })
+                }
                 resolve(res);
             })
         })

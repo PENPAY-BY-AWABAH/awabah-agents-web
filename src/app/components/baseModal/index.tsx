@@ -5,10 +5,28 @@ interface BaseModalProps {
     children:ReactNode;
     title:string;
     type?:"md"|"lg"|"sm"
+    slideUp?:boolean;
 }
 const BaseModal = (props:BaseModalProps)=>{
-    return <div className="fixed inset-0 p-[16px] flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50" style={{zIndex:10}}>
-    <div className={`bg-white p-4 rounded-lg shadow-lg ${props.type === "lg"?"max-w-[95vw]":props.type === "md"?"max-w-[50vw]":"max-w-lg"} w-full`}>
+    const style = props?.slideUp ? {
+        animation: "slideUp 0.3s ease-out forwards",
+        "@keyframes slideUp": {
+            from: { transform: "translateY(100%)" },
+            to: { transform: "translateY(0)" }
+        }
+    } : undefined;
+
+    return <div className={`fixed inset-0 p-[16px] flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 ${props?.slideUp?"p-[0px]":""} `} style={{zIndex:10}}>
+    <style>{`
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+        .slide-up-modal {
+            animation: slideUp 0.3s ease-out forwards;
+        }
+    `}</style>
+    <div className={`bg-white p-4 rounded-lg shadow-lg ${props.type === "lg"?"max-w-[95vw]":props.type === "md"?"max-w-[50vw]":"max-w-lg"} w-full ${props?.slideUp?"bottom-[0px] absolute left-[0] right-[0] slide-up-modal":""}`}>
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-2xl font-semibold text-gray-800">{props.title}</h3>
         <button 
@@ -26,3 +44,4 @@ const BaseModal = (props:BaseModalProps)=>{
   </div>
 }
 export default BaseModal;
+

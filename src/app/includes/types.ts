@@ -47,3 +47,8 @@ import { ReactNode } from "react";
         bankCode?:string;
         createdAt?:string;
     }
+export interface StateLGAProp {
+  state: string;
+  alias: string;
+  lgas: string[];
+}

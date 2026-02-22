@@ -4,6 +4,8 @@
 import {useState } from "react";
 import BaseButton from "@/app/components/baseButton";
 import BaseToggleBtn from "@/app/components/baseCheckBox";
+import useHttpHook from "@/app/includes/useHttpHook";
+import { BaseLoader } from "@/app/components/baseLoader";
 export interface BankProps {
   accountN?: string;
   firstName?: string;
@@ -12,10 +14,16 @@ export interface BankProps {
   isFather?: string;
 }
 
-export const ConsentPage = ({onClose,onSuccess,trackingId}:{onClose:()=>void;onSuccess:()=>void;trackingId:string;}) => {
+export const ConsentPage = ({onClose,onSuccess,trackingId,email}:{onClose:()=>void;onSuccess:(data:{rsaPin:string})=>void;trackingId:string;email:string;}) => {
     const [agree,setAgree] = useState<boolean>(false);
+    const {RequestForRSAPIN,loading} = useHttpHook()
     const handleSaveConsent = () => {
-        onSuccess();       
+        RequestForRSAPIN({email,trackingId}).then((res)=>{
+            if(res.status)
+            {
+            onSuccess(res.data);   
+            }
+        })
     }
     return <div className="mt-[20px]">
    <div className="m-auto items-center text-center ">
@@ -52,7 +60,7 @@ export const ConsentPage = ({onClose,onSuccess,trackingId}:{onClose:()=>void;onS
                             </div>
                             <BaseButton
                             disabled={!agree}
-                            text={"Continue"}
+                            text={"Request for RSA PIN"}
                             type={"submit"}
                             onClick={()=>handleSaveConsent()}
                             />
@@ -60,5 +68,6 @@ export const ConsentPage = ({onClose,onSuccess,trackingId}:{onClose:()=>void;onS
                     </div>
                 </div>
     </div>
+    {loading && <BaseLoader color="green" size="lg" modal />}
     </div>
 }

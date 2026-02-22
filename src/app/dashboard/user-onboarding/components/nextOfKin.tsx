@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 import { useRouter } from "next/navigation";
@@ -7,6 +9,9 @@ import BaseInput from "@/app/components/baseInput";
 import BaseButton from "@/app/components/baseButton";
 import BaseSelect from "@/app/components/baseSelect";
 import { ItemProps } from "@/app/includes/types";
+import BaseModal from "@/app/components/baseModal";
+import { BaseLoader } from "@/app/components/baseLoader";
+import { CONSTANT } from "@/app/includes/constants";
 export interface NextOfKinProps {
   email?: string;
   firstName?: string;
@@ -19,9 +24,8 @@ export interface NextOfKinProps {
   trackingId?:string;
 }
 
-export const NextOfKinPage = ({onClose,onSuccess,trackingId}:{onClose:()=>void;onSuccess:(data:any)=>void;trackingId:string}) => {
-    const [index,setIndex] =  useState<number>(0)
-    const navigate = useRouter();
+export const NextOfKinPage = ({email,onSuccess,trackingId,userIsMinor}:{onClose:()=>void;onSuccess:(data:any)=>void;trackingId:string;userIsMinor?:boolean;email:string}) => {
+   
     const { handleNextOfKin, loading } = useHttpHook();
     const [formData, setFormData] = useState<NextOfKinProps>({
         trackingId:"",
@@ -36,16 +40,41 @@ export const NextOfKinPage = ({onClose,onSuccess,trackingId}:{onClose:()=>void;o
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault()
         handleNextOfKin({
-        ...formData,
-        trackingId:trackingId
+        ...formData, 
+        trackingId:userIsMinor?trackingId:email,
+        minor:userIsMinor?1:0
     }).then((res) => {
+        localStorage.setItem(CONSTANT.LocalStore.nextOfKin,JSON.stringify(formData))
             if (res.status) {
             onSuccess(res.data)
             }
         })
     }
+    const unisex = ["COUSIN","SPOUSE","GUARDIAN","FRIEND","RELATIVES"].find((a)=>String(a).toLowerCase().includes(String(formData.relationShip).toLowerCase()))
+
     useEffect(()=>{ 
+        if(!unisex)
+        {
+        const isMale = ["BROTHER","BROTHER-IN-LAW","FATHER","FATHER-IN-LAW","GRANDFATHER","GRANDSON","HUSBAND","NEPHEW","SON","SON-IN-LAW","UNCLE","FIANCE"].find((a)=>String(a).toLowerCase().includes(String(formData.relationShip).toLowerCase()))
+        setFormData({
+            ...formData,
+            gender:isMale?"MALE":"FEMALE"
+        })
         
+        }else{
+          setFormData({
+            ...formData,
+            gender:""
+        })  
+        }
+        
+    },[formData.relationShip,unisex])
+    useEffect(()=>{
+        const nxt = localStorage.getItem(CONSTANT.LocalStore.nextOfKin);
+        if(nxt)
+        {
+           setFormData(JSON.parse(nxt))  
+        }
     },[])
     return <div className="mt-[20px]">
     <div >
@@ -148,13 +177,13 @@ export const NextOfKinPage = ({onClose,onSuccess,trackingId}:{onClose:()=>void;o
                             label="Street Name"
                             placeholder="Enter street Name."
                         />
-                        <div className="text-left mb-3">
+                        {unisex &&<div className="text-left mb-3">
                          <BaseSelect
-                            name="bvn"
+                            name="gender"
                             left
                             list={[
-                                {title:"Male", description:"Male"},
-                                {title:"Female", description:"Female"}
+                                {title:"MALE", description:"Male"},
+                                {title:"FEMALE", description:"Female"}
                             ] as unknown as ItemProps[]}
                             required
                             custom
@@ -169,15 +198,15 @@ export const NextOfKinPage = ({onClose,onSuccess,trackingId}:{onClose:()=>void;o
                             placeholder="Enter gender."
                             className="mb-5"
                         />
-                        </div>
+                        </div> }
                         <div style={{zIndex:10}}>
                         <BaseButton
-                            loading={loading}
                             text="Next"
                             type="submit"
                         />
                         </div>
                 </form>
     </div>
+    {loading && <BaseLoader color="green" size="lg" modal  />}
     </div>
 }
