@@ -55,7 +55,7 @@ export const ConsentPage = ({onClose,onSuccess,trackingId,email}:{onClose:()=>vo
                             type="custom"
                             />
                              <div className="text-gray-500 text-[14px] mt-0">
-                            I Agree to the terms and conditions
+                            I agree to the terms and conditions
                         </div>
                             </div>
                             <BaseButton

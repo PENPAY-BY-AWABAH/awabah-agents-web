@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 import { useRouter } from "next/navigation";
@@ -24,7 +23,7 @@ export interface NextOfKinProps {
   trackingId?:string;
 }
 
-export const NextOfKinPage = ({email,onSuccess,trackingId,userIsMinor}:{onClose:()=>void;onSuccess:(data:any)=>void;trackingId:string;userIsMinor?:boolean;email:string}) => {
+export const NextOfKinPage = ({onSuccess,trackingId,userIsMinor}:{onClose:()=>void;onSuccess:(data:any)=>void;trackingId:string;userIsMinor?:boolean;}) => {
    
     const { handleNextOfKin, loading } = useHttpHook();
     const [formData, setFormData] = useState<NextOfKinProps>({
@@ -41,7 +40,7 @@ export const NextOfKinPage = ({email,onSuccess,trackingId,userIsMinor}:{onClose:
         e.preventDefault()
         handleNextOfKin({
         ...formData, 
-        trackingId:userIsMinor?trackingId:email,
+        trackingId,
         minor:userIsMinor?1:0
     }).then((res) => {
         localStorage.setItem(CONSTANT.LocalStore.nextOfKin,JSON.stringify(formData))
@@ -167,7 +166,7 @@ export const NextOfKinPage = ({email,onSuccess,trackingId,userIsMinor}:{onClose:
                             name="nin"
                             value={formData.streetName}
                             required
-                            max={11}
+                            max={150}
                             onValueChange={({ value }) => {
                                 setFormData({
                                     ...formData,

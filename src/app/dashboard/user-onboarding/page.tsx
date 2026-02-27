@@ -19,7 +19,7 @@ import { ReturnAllNumbers, ValidateEmail } from "@/app/includes/functions";
 import { BaseLoader } from "@/app/components/baseLoader";
 import BaseSelect from "@/app/components/baseSelect";
 import { ItemProps, StateLGAProp } from "@/app/includes/types";
-import { Calendar, CheckCircle,  UploadIcon } from "lucide-react";
+import { Calendar, CameraIcon, CheckCircle,  UploadIcon } from "lucide-react";
 import { ImagePickerOption } from "./components/imagePickerOption";
 import { CameraView } from "./components/cameraView";
 import BaseInputDate from "@/app/components/baseInputDate";
@@ -103,64 +103,18 @@ const Page = () => {
            data.dob = dayjs(data.dob).format("DD-MM-YYYY")
         }
         handleRegisterUser(data).then((res) => {
-             if(res.data?.nextOfKinRegisteredNotFound === true)
+             if(res.status)
             {
                 const data = {
                     ...formData,
                     ...res.data
                 }
-
                 if(userIsMinor)
                 {
-                  data.trackingId = `${formData.email}|${(formData.firstName)?.trim()}|${(formData.lastName)?.trim()}`;
+                //   data.trackingId = `${formData.email}|${(formData.firstName)?.trim()}|${(formData.lastName)?.trim()}`;
                 }
                 setFormData(data);
                 return setSection("Next Of Kin")
-            }
-             if(res.data?.registrationCompleted === true)
-            {
-                const data = {
-                    ...formData,
-                    ...res.data
-                }
-
-                if(userIsMinor)
-                {
-                  data.trackingId = `${formData.email}|${(formData.firstName)?.trim()}|${(formData.lastName)?.trim()}`;
-                }
-                setFormData(data);
-               return setSection("Success")
-            }
-
-             if (String(res.message).includes("OTP")) {
-                const data = {
-                    ...formData,
-                    ...res.data
-                }
-
-                if(userIsMinor)
-                {
-                  data.trackingId = `${formData.email}|${(formData.firstName)?.trim()}|${(formData.lastName)?.trim()}`;
-                }
-                setFormData(data);
-                return setSection("Verify Email");
-            }
-
-            if (res.status) {
-                const data = {
-                    ...formData,
-                    ...res.data
-                }
-                if(userIsMinor)
-                {
-                  data.trackingId = `${formData.email}|${(formData.firstName)?.trim()}|${(formData.lastName)?.trim()}`;
-                }
-                setFormData(data);
-            } 
-            
-            if(String(res.message).toLowerCase().includes("already") && String(res.message).toLowerCase().includes("rsa pin"))
-            {
-                return setSection("Consent Agreement")
             }
         })
     }
@@ -1586,8 +1540,8 @@ const reduceImageSize = (base64String: string, quality: number = 0.7, maxWidth: 
                             src={formData.photo}
                             onClick={()=>setShowOption(true)}
                             />}
-                            <UploadIcon className="absolute bottom-[-10px] right-[-10px]" 
-                            onClick={()=>setShowOption(true)}
+                            <CameraIcon className="absolute bottom-[-10px] right-[-10px]" 
+                            onClick={()=>setShowCamera(true)}
                             />
                         </div>
                         <div 
@@ -1619,7 +1573,7 @@ const reduceImageSize = (base64String: string, quality: number = 0.7, maxWidth: 
                     custom
                     />
                     </div>
-                       {!userIsMinor &&<BaseInput
+                       {/* <BaseInput
                             type="text"
                             name="email"
                             value={formData.email}
@@ -1637,8 +1591,8 @@ const reduceImageSize = (base64String: string, quality: number = 0.7, maxWidth: 
                             onBlur={()=>{
                             //   HandleCheckEmail(String(formData.email).trim())
                             }}
-                        />}
-                        <BaseInput
+                        /> */}
+                        {/* <BaseInput
                         disabled={formData.hasBVN}
                             type="text"
                             name="firstName"
@@ -1656,8 +1610,8 @@ const reduceImageSize = (base64String: string, quality: number = 0.7, maxWidth: 
                              onBlur={()=>{
                                 // HandleCheckEmail(String(formData.email).trim())
                             }}
-                        />
-                        <BaseInput
+                        /> */}
+                        {/* <BaseInput
                         disabled={formData.hasBVN}
                             type="text"
                             name="lastName"
@@ -1672,7 +1626,7 @@ const reduceImageSize = (base64String: string, quality: number = 0.7, maxWidth: 
                             max={40}
                             label="Last Name"
                             placeholder="Enter last name."
-                        />
+                        /> */}
             {userIsMinor &&<div className="text-left mb-4" >
                 <BaseSelect 
                     label="Gender"
@@ -1778,7 +1732,7 @@ const reduceImageSize = (base64String: string, quality: number = 0.7, maxWidth: 
                     custom
                     />
                     </div>}
-                        {!userIsMinor &&<BaseInput
+                        {/* {!userIsMinor &&<BaseInput
                         disabled={formData.hasBVN}
                             type="text"
                             name="phoneNumber"
@@ -1793,9 +1747,9 @@ const reduceImageSize = (base64String: string, quality: number = 0.7, maxWidth: 
                             max={11}
                             label="Phone Number"
                             placeholder="Enter phone number."
-                        />}
+                        />} */}
                    
-                        {!userIsMinor &&<BaseInput
+                        {/* {!userIsMinor &&<BaseInput
                             type="text"
                             name="address"
                             value={formData.address}
@@ -1820,11 +1774,11 @@ const reduceImageSize = (base64String: string, quality: number = 0.7, maxWidth: 
                             max={140}
                             label="Address"
                             placeholder="Enter address."
-                        />}
+                        />} */}
                         </div>
                         <div className={`w-full ${userIsMinor ? "bg-green-200 p-3 rounded-[20px] mb-2 " : "px-[16px]"}`} >
                         {userIsMinor &&<div className="w-full text-left text-green-700 mb-2 font-bold">Parent / Guardian Details</div> }
-                        {userIsMinor &&<BaseInput
+                        {/* {userIsMinor &&<BaseInput
                         disabled={formData.hasBVN}
                             type="text"
                             name="phoneNumber"
@@ -1840,8 +1794,8 @@ const reduceImageSize = (base64String: string, quality: number = 0.7, maxWidth: 
                             max={11}
                             label="Phone Number"
                             placeholder="Enter phone number."
-                        />}
-                        {userIsMinor &&<BaseInput
+                        />} */}
+                        {/* {userIsMinor &&<BaseInput
                             type="text"
                             name="email"
                             value={formData.email}
@@ -1860,9 +1814,9 @@ const reduceImageSize = (base64String: string, quality: number = 0.7, maxWidth: 
                             onBlur={()=>{
                               
                             }}
-                        />}
+                        />} */}
 
-                        {userIsMinor &&<BaseInput
+                        {/* {userIsMinor &&<BaseInput
                             type="text"
                             name="address"
                             className="bg-white"
@@ -1889,22 +1843,22 @@ const reduceImageSize = (base64String: string, quality: number = 0.7, maxWidth: 
                             max={140}
                             label="Address"
                             placeholder="Enter address."
-                        />}
+                        />} */}
                       {!formData.hasBVN &&<BaseInput
                             type="text"
-                            name="nin"
+                            name="rsaPin"
                             className="bg-white"
-                            value={formData.nin}
+                            value={formData.rsaPin}
                             required
-                            max={11}
+                            max={15}
                             onValueChange={({ value }) => {
                                 setFormData({
                                     ...formData,
-                                    nin:value
+                                    rsaPin:value
                                 })
                             }}
-                            label="NIN (National Identity Number)"
-                            placeholder="Enter NIN."
+                            label="RSA Pin"
+                            placeholder="Enter RSA PIN."
                         />}  
                     {userIsMinor &&<div className="text-left mb-4 " >
                     <BaseSelect
@@ -1934,7 +1888,7 @@ const reduceImageSize = (base64String: string, quality: number = 0.7, maxWidth: 
                         <div 
                         className={`px-[16px]`}
                          >
-                        {!formData.hasBVN && !userIsMinor &&<BaseInput
+                        {/* {!formData.hasBVN && !userIsMinor &&<BaseInput
                             type="text"
                             name="bvn"
                             className="bg-white"
@@ -1949,7 +1903,7 @@ const reduceImageSize = (base64String: string, quality: number = 0.7, maxWidth: 
                             }}
                             label="BVN (BANK Verification Number)"
                             placeholder="Enter BVN."
-                        />}
+                        />} */}
                      {!userIsMinor &&<div className="text-left mb-4 mt-3" >
                     <BaseSelect
                             custom
@@ -2031,7 +1985,6 @@ const reduceImageSize = (base64String: string, quality: number = 0.7, maxWidth: 
                         }}
                         trackingId={formData.trackingId!}
                         userIsMinor={userIsMinor}
-                        email={formData.email!}
                     />
                 </div>}
                
