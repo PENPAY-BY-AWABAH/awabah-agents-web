@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import BaseModal from "@/app/components/baseModal"
 import { useRef, useState } from "react"
 import { BaseLoader } from "@/app/components/baseLoader"
@@ -6,7 +7,8 @@ import moment from "moment"
 import BaseButton from "@/app/components/baseButton"
 import html2canvas from 'html2canvas';
 import { ReturnComma } from "@/app/includes/functions"
-import { NairaSymbol } from "@/app/includes/constants"
+import { NairaSymbol } from "@/app/includes/constants";
+import stamp from "../../../assets/images/awabah_stamp.png";
 export const PaymentVericationModal = ({onClose,details,message}:{onClose:()=>void;details:PaymentResponseProp,message:string})=>{
     const [downloading,setDownloading] = useState<boolean>(false)
     const divRef = useRef<HTMLDivElement>(null);
@@ -42,8 +44,13 @@ export const PaymentVericationModal = ({onClose,details,message}:{onClose:()=>vo
             <div className="m-auto text-center">Please wait while we verify your transaction...</div>
         </div>:details?.createdAt?<div className="relative">
         <div ref={divRef} className="relative">
+            <img 
+            className="h-[120px] w-[120px] rotate-[-40deg] absolute top-[60px] right-[40px]"
+            src={stamp.src}
+            alt="stamp"
+            />
         <div className="p-5 grid gap-2" style={{backgroundColor:"#f1f1f1"}}>
-            <div className="font-normal">{String(details.memo).replace("initialized","")}</div>
+            <div className="font-normal">{String(details.memo).replace("initialized","").replace("Naira","").replace(" .",".")}</div>
               <div className="w-full flex gap-3 item-center ">
                 <div className="font-bold">Full Name:</div>
                 <div >{details?.fullName}</div>
@@ -59,6 +66,10 @@ export const PaymentVericationModal = ({onClose,details,message}:{onClose:()=>vo
                 <div className="w-full flex gap-3 item-center ">
                 <div className="font-bold">Amount:</div>
                 <div >{NairaSymbol}{ReturnComma(String(parseFloat(String(details.amount)).toFixed(2)))}</div>
+                </div>
+                <div className="w-full flex gap-3 item-center ">
+                <div className="font-bold">RSA PIN:</div>
+                <div >{details.rsaPin}</div>
                 </div>
                 <div className="w-full flex gap-3 item-center ">
                 <div className="font-bold">Ref. No.:</div>

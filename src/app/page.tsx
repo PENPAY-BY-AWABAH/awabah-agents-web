@@ -48,8 +48,8 @@ export default function Home() {
   },[stop])
   useEffect(()=>{
     const token =localStorage.getItem(CONSTANT.LocalStore.token);
-       if(token)
-       {
+      const path = window.location.pathname;
+      if(!token && !path.includes(ROUTES.self_registered)) {
           navigate.replace(ROUTES.dashboard) 
        }
       },[])

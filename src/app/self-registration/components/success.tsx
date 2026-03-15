@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import BaseButton from "@/app/components/baseButton";
 import { useState } from "react";
 type ReviewStateProps = "request"|"done"| null
-export const SuccessComponent = ({onPay,trackingId,email,pfaName,rsaPin,userIsAgent}:{onPay:()=>void;trackingId:string;email:string;userIsAgent?:boolean;rsaPin?:string;pfaName?:string})=>{
+export const SuccessComponent = ({onPay,pfaName,rsaPin,userIsAgent}:{onPay:()=>void;trackingId:string;email:string;userIsAgent?:boolean;rsaPin?:string;pfaName?:string})=>{
     const [reviewState,setReviewState] = useState<ReviewStateProps>("done");
   
     return <div className={`${reviewState === "done"?"fixed top-0 left-0 w-full z-10 bg-white top-[0px] lg:pt-[50px]":""} m-auto pt-20`}>

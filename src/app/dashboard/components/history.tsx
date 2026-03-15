@@ -143,8 +143,19 @@ const GetRemittance  = (page: number) => {
                     <div className="text-[#000000] text-[14px]">{NairaSymbol}{item.amount}</div>
                     <div className="text-[#000000A6] text-[12px]" >{moment(item.createdAt).format("Do MMM YYYY, hh:mm A")}</div>
                 </div>
+                <div >
+                    <button 
+                    onClick={()=>{
+
+                    }}
+                    className="rounded-[10px] border-1 border-green-800 px-[10px] py-[3px]"
+                    >
+                    Receipt
+                    </button>
+                </div>
             </div>)}
         </div>
         </div>
+        
     </div>
 }

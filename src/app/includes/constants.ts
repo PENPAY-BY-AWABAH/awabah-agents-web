@@ -17,6 +17,7 @@ saveBankAccount:"/dashboard/save-bank-account",
 selectBankAccount:"/dashboard/select-bank-account",
 addAccount:"/dashboard/add-account",
 terms:"/terms-and-conditions",
+self_registered:"/self-registration"
 }
 export interface RouteItem {
 title:string;

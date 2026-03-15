@@ -64,7 +64,7 @@ export const useApiRequest = ()=>{
             toast.success(response.message)
             }
             }
-            if(String(response.message).toLowerCase().includes("invalid access"))
+            if(String(response.message).toLowerCase().includes("invalid access") && props.path !== ROUTES.self_registered)
             {
               console.log("logout:"+props.path);
               localStorage.clear();

@@ -3,11 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "prestart": "fuser -k 3009/tcp || true",
+    "prestart": "fuser -k 8003/tcp || true",
     "dev": "next dev",
     "build": "next build && pm2 reload awabah-agent",
-    "start": "next start -p 3009",
-    "lint": "eslint"
+    "start": "next start -p 8003",
+    "lint": "eslint",
+    "scan":"npx fix-react2shell-next"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -19,8 +20,8 @@
     "html2canvas": "^1.4.1",
     "lucide-react": "^0.562.0",
     "moment": "^2.30.1",
-    "next": "15.3.8",
-    "react": "19.2.3",
+    "next": "15.2.8",
+    "react": "^19.0.0",
     "react-dom": "19.2.3",
     "react-idle-timer": "^5.7.2",
     "react-otp-input": "^3.1.1",

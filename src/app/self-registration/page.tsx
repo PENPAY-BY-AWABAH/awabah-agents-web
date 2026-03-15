@@ -1,9 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable react-hooks/set-state-in-effect */
 "use client"
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import useHttpHook from "@/app/includes/useHttpHook";
 import { CONSTANT, placeHolderAvatar, ROUTES } from "@/app/includes/constants";
@@ -15,16 +15,14 @@ import { OtpSection } from "./components/otpSection";
 import { NextOfKinPage } from "./components/nextOfKin";
 import { SuccessComponent } from "./components/success";
 import { PaymentComponent } from "./components/payment";
-import { ReturnAllNumbers, ValidateEmail } from "@/app/includes/functions";
+import { ReturnAllNumbers } from "@/app/includes/functions";
 import { BaseLoader } from "@/app/components/baseLoader";
 import BaseSelect from "@/app/components/baseSelect";
 import { ItemProps, StateLGAProp } from "@/app/includes/types";
-import { Calendar, CameraIcon, CheckCircle, UploadIcon } from "lucide-react";
+import {CameraIcon, CheckCircle, UploadIcon } from "lucide-react";
 import { ImagePickerOption } from "./components/imagePickerOption";
 import { CameraView } from "./components/cameraView";
-import BaseInputDate from "@/app/components/baseInputDate";
 import dayjs from "dayjs";
-import { opacity } from "html2canvas/dist/types/css/property-descriptors/opacity";
 import { ConsentPage } from "./components/consent";
 import BaseModal from "@/app/components/baseModal";
 type RegisterProps = "User Details" | "Verify Email" | "Next Of Kin" | "Success" | "Pay" | "Employment Details" | "Parent / Guardian Details" | "Bank Details" | "Consent Agreement";
@@ -61,7 +59,7 @@ const Page = () => {
     const [listOfConsent, setListOfConsent] = useState<ItemProps[]>([]);
     const [index, setIndex] = useState<number>(0)
     const [showCamera, setShowCamera] = useState<boolean>(false);
-    const [userIsAgent, setUserIsAgent] = useState<boolean>(false);
+    const [userIsAgent] = useState<boolean>(false);
     const [showOption, setShowOption] = useState<boolean>(false);
     const [userIsMinor, setUserMinor] = useState<boolean>(false);
     const [showState, setShowState] = useState<boolean>(false);
@@ -69,7 +67,7 @@ const Page = () => {
     const [listOfLGA, setListOfLGA] = useState<string[]>([]);
     const [section, setSection] = useState<RegisterProps>("User Details")
     const navigate = useRouter();
-    const { handleRegisterUser, ShowMessage, getUserByEmail, loading, handleCheckUserEmailIsAgent, RequestForRSAPIN, GetListOfSectors } = useHttpHook();
+    const { handleRegisterUser, ShowMessage, loading, RequestForRSAPIN, GetListOfSectors } = useHttpHook();
     const [formData, setFormData] = useState<SignUpProps>({
         email: "",
         firstName: "",
@@ -142,8 +140,6 @@ const Page = () => {
     }
 
     const [avatar, setAvatar] = useState<string>("");
-    const searchParams = useSearchParams()
-    const email = searchParams.get('email')
     useEffect(() => {
         if (section === "User Details") {
             setIndex(0)
@@ -162,20 +158,7 @@ const Page = () => {
         }
     }, [section])
 
-    useEffect(() => {
-        if (email) {
-            getUserByEmail(email).then((res) => {
-                if (res.data?.nextOfKinRegisteredNotFound === true) {
-                    setSection("Next Of Kin")
-                }
-                setFormData({
-                    ...res.data,
-                    phoneNumber: String(res.data?.phoneNumber).replace("+234", "0"),
-                    trackingId: res.data?.trackingId
-                })
-            })
-        }
-    }, [email])
+    
 
     const handleRSAPIN = (e: FormEvent) => {
         e.preventDefault()
@@ -1374,7 +1357,7 @@ const Page = () => {
         }
     }, [])
 
-    return <div className="bg-white h-full lg:px-[100px] lg:py-[60px] overflow-none">
+    return <div className="bg-white h-full lg:px-[100px] lg:py-[60px] overflow-none p-[16px]">
         {section !== "Success" && <div className="mb-6">
             <button
                 onClick={() => {
@@ -1532,7 +1515,7 @@ const Page = () => {
                                     src={placeHolderAvatar.src}
                                     onClick={() => setShowCamera(true)}
                                 />}
-                                <CameraIcon className="absolute bottom-[-10px] right-[-10px]"
+                                <CameraIcon className="absolute bottom-[-10px] right-[-10px] text-black"
                                     onClick={() => setShowCamera(true)}
                                 />
                             </div>
@@ -1656,7 +1639,7 @@ const Page = () => {
                                 <div className="text-left mb-4" >
                                     <BaseSelect
                                         label="LGA"
-                                        list={listOfLGA.map((a, i) => {
+                                        list={listOfLGA.map((a:any, i:number) => {
                                             return {
                                                 title: a,
                                                 name: a,

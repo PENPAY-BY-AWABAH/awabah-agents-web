@@ -45,6 +45,7 @@ export interface PaymentResponseProp {
     phoneNumber?: string;
     fullName?:string;
     refNo?:string;
+    rsaPin?:string;
 }
 const Page = () => {
     const [listOfPfa, setListOfPfa] = useState<ListOfPfa[]>([])
@@ -66,7 +67,18 @@ const Page = () => {
     const getListOfProvider = () => {
         getProviders().then((res) => {
             if (res.status) {
-                setListOfPfa(res.data)
+                const whiteList = [
+                   "Leadway Pensure",
+                   "AccessARM Pensions",
+                   "Norrenberger Pensions Limited",
+                   "Veritas Glanvills Pensions Limited",
+                   "Trustfund Pensions", 
+                   "Guaranty Trust Pension Managers (gtco)", 
+                   "CardinalStone Pensions Limited", 
+                   "NLPC Pension Fund Administrators Limited(NLPC PFA)",
+                   "Stanbic Ibtc Pension Managers"
+                ]
+                setListOfPfa(res.data);//.filter((a:ListOfPfa)=>whiteList.includes(a.name)))
             }
         })
     }
@@ -81,6 +93,7 @@ const Page = () => {
     useEffect(() => {
         getListOfProvider();
     }, [])
+
     useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
         const urlParams = getUrlParams(queryParams);
@@ -106,7 +119,8 @@ const Page = () => {
             })
 
         }
-    }, [])
+    }, []);
+
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
         if (!formData.isValid) {
@@ -118,29 +132,35 @@ const Page = () => {
             }).then((res) => {
                 setLoading(false)
                 if (res.status) {
-                    setFormData({
+                    let data = {
                         ...formData,
                         isValid: true,
-                        fullName: res.data.rsaDetail.name,
-                        pfaName: res.data.rsaDetail.pfaName
-                    })
+                        fullName: res.data.rsaDetail.name
+                    }
+                    if(res?.data?.rsaDetail?.pfaName)
+                    {
+                       data = {...data,pfaName: res.data.rsaDetail.pfaName}
+                    }
+                    setFormData(data)
                 }
             })
         } else {
             if(parseFloat(String(formData.amount)) < 3000)
             {
-                return ShowMessage({status:false,message:"Oops! the minimum amount is N3,000",data:null,position:"center"})
+                // return ShowMessage({status:false,message:"Oops! the minimum amount is N3,000",data:null,position:"center"})
             }
             setShowPaymentOption(true)
         }
     }
+
     useEffect(()=>{
      const data = localStorage.getItem(CONSTANT.LocalStore.remit);
      if(data)
      {
         setFormData(JSON.parse(data))
      }
-    },[])
+    },[]);
+
     const handlePayNow = (value:string)=>{
         if(String(formData.phoneNumber).length !== 11)
           {
@@ -148,14 +168,15 @@ const Page = () => {
            }
         if(parseFloat(String(formData.amount)) < 3000)
           {
-           return ShowMessage({status:false,message:"Minimum amount is N3,000",data:null,position:"center"})
+        //    return ShowMessage({status:false,message:"Minimum amount is N3,000",data:null,position:"center"})
            }
             setLoading(true)
             const webhook = String(window.location.href).split("?").filter((a,i)=>i == 0).join("");
             remitMicroPension({
                 ...formData,
                 callback_url:webhook,
-                paymentOption:value
+                paymentOption:value,
+                ...formData
             }).then((res) => {
                 if (res.status && res.data?.paymentUrl) {
                     setShowPaymentOption(false)
@@ -165,6 +186,7 @@ const Page = () => {
                 }
             })
     }
+
     return <div className="bg-white h-screen lg:p-4">
         <div className="mb-6">
             <button
@@ -266,11 +288,11 @@ const Page = () => {
                         }
                         if(formData.amount && parseFloat(String(formData.amount)) < 3000)
                         {
-                            ShowMessage({status:false,message:"Minimum amount is N3,000",data:null,position:"center"})
-                            setFormData({
-                            ...formData,
-                            amount: ""
-                        });
+                        //     ShowMessage({status:false,message:"Minimum amount is N3,000",data:null,position:"center"})
+                        //     setFormData({
+                        //     ...formData,
+                        //     amount: ""
+                        // });
                         }
                     }}
                 />

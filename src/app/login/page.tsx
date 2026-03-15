@@ -76,10 +76,10 @@ const Page = () => {
         <div className="m-auto items-center text-center overflow-scroll px-[8px] pb-[8px] ">
             <div className="m-auto items-center text-center rounded-[30px] lg:min-h-[400px] shadow lg:w-[500px] px-[16px]  lg:p-[30px] pb-[20px]  lg:pb-[60px]">
                 <div className="text-black text-[24px] font-bold text-center">Login</div>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} >
                     <BaseInput
-                        type="text"
-                        name="email"
+                        type={"text"}
+                        name={String(formData.email).length > 11 && !String(formData.email).includes("@")?"phone":"email"}
                         value={formData.email}
                         required
                         onValueChange={({ value }) => {
@@ -88,8 +88,9 @@ const Page = () => {
                                 email: String(value).trim().toLowerCase()
                             })
                         }}
-                        label="Email"
-                        placeholder="Enter Email."
+                        max={String(formData.email).length > 11 && !String(formData.email).includes("@")?11:100}
+                        label="Email or PhoneNumber"
+                        placeholder="Enter Email or PhoneNumber."
                     />
                     <BaseInput
                         required
@@ -129,6 +130,7 @@ const Page = () => {
                         text="Log in"
                         type="submit"
                     />
+                    
                     <div className="flex items-center justify-center mt-[30px] gap-1">
                         <span className="text-[14px] text-black">Don`t have an account?</span>
                         <Link
@@ -139,6 +141,14 @@ const Page = () => {
                         </Link>
                     </div>
                 </form>
+                <div className="mt-5" >
+                 <Link
+                  href={ROUTES.self_registered}
+                  className="text-[14px] text-[#009668] "
+                  >
+                I want to register myself
+                  </Link>
+                  </div>
                 <HandleResetData
                 />
 

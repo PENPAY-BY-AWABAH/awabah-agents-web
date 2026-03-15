@@ -6,9 +6,11 @@ import useHttpHook from "@/app/includes/useHttpHook"
 import { useEffect, useState } from "react"
 import { CommissionStatsProps } from "../../commission/components/Tabs"
 import { WithdrawalSuccessScreen } from "./success"
+import { ForgotPINView } from "./forgotPin"
 
 export const TransactionPINModal = ({onClose,account_number,bankName}:{onClose:()=>void;account_number:string;bankName:string})=>{
     const [pin,setPIN] = useState<string>("");
+    const [showForgotPin,setShowForgotPin] = useState<boolean>(false);
     const {handleWithdrawalToAccount,loading,getAllCommisionStats} = useHttpHook();
     const [stats,setStats] = useState<CommissionStatsProps>({
         commissionEarn:0,
@@ -38,15 +40,24 @@ export const TransactionPINModal = ({onClose,account_number,bankName}:{onClose:(
     }
     return <BaseModal 
     onClose={()=>{
-        if(!loading)
+        if(loading)
         {
-           onClose() 
+          return ;
         }
+        if(showForgotPin)
+        {
+          return setShowForgotPin(false)
+        }
+        onClose() 
+        
     }}
-    title={success?"":"Transaction PIN"}
+    title={success?"":showForgotPin?"Forgot PIN":"Transaction PIN"}
     >
     <div >
-     {success?<WithdrawalSuccessScreen
+    
+     {showForgotPin?<ForgotPINView 
+     onClose={()=>setShowForgotPin(false)}
+     />:success?<WithdrawalSuccessScreen
      onClose={()=>onClose()}
      message={success}
      />:<div>
@@ -82,6 +93,13 @@ export const TransactionPINModal = ({onClose,account_number,bankName}:{onClose:(
      type="button"
      onClick={HandleTransfer}
      />
+     <div className="flex items-center justify-center p-5">
+      <button onClick={()=>{
+        setShowForgotPin(true)
+      }}
+      className="text-green-800 cursor-pointer "
+      >Forgot your PIN?</button>
+     </div>
      </div>}
      </div>
     </BaseModal>

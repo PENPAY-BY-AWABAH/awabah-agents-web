@@ -28,6 +28,7 @@ export interface UserItemProp {
   employerDetailsRegistered?: boolean;
   parentDetailRegistered?:boolean;
   commission?:string;
+  pfaName?:string;
 }
 
 export const UsersSection = ({page}:{page?:boolean})=>{
@@ -156,6 +157,14 @@ export const UsersSection = ({page}:{page?:boolean})=>{
             <div className="font-normal text-[12px] text-[#000000A6]">Commission Earned:</div>
             <div className="font-normal text-[12px]"> {NairaSymbol}{item?.commission}</div>
         </div>
+         {item?.rsaNumber &&<div className="flex items-center gap-[2px] h-[20px]">
+            <div className="font-normal text-[12px] text-[#000000A6]">RSA PIN:</div>
+            <div className="font-normal text-[12px]"> {item?.rsaNumber}</div>
+        </div>}
+        {item?.pfaName &&<div className="flex items-center gap-[2px] h-[20px]">
+            <div className="font-normal text-[12px] text-[#000000A6]">PFA NAME:</div>
+            <div className="font-normal text-[12px]"> {item?.pfaName}</div>
+        </div>}
         <div className="flex items-center gap-[2px] h-[20px]">
             <div className="font-normal text-[12px] text-[#000000A6]">Contact:</div>
             <div className="font-normal text-[12px]"> {item.phoneNumber}</div>

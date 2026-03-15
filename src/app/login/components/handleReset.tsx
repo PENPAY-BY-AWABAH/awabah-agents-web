@@ -1,8 +1,9 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import BaseButton from "@/app/components/baseButton";
 import BaseInput from "@/app/components/baseInput";
 import BaseModal from "@/app/components/baseModal";
 import useHttpHook from "@/app/includes/useHttpHook";
-import { FormEvent, useState } from "react"
+import { FormEvent, useEffect, useState } from "react"
 
 export const HandleResetData = ()=>{
     const {loading,ResetTestData} = useHttpHook();
@@ -17,13 +18,21 @@ export const HandleResetData = ()=>{
             }
         })
     }
+    const [isTest,setIsTest] = useState<boolean>(false);
+    useEffect(()=>{
+        const path = String(window.location.href).toLowerCase();
+        if(String(path).includes("localhost") || String(path).includes("demo."))
+        {
+            setIsTest(true);
+        }
+    },[])
     return <div >
-        <button 
+        {isTest &&<button 
               onClick={()=>setShow(true)}
               className="p-3 text-black mt-5 cursor-pointer"
               >
                 Reset Test Data
-              </button>
+              </button>}
               {show && <BaseModal 
               title="Reset test data"
               onClose={()=>setShow(false)}

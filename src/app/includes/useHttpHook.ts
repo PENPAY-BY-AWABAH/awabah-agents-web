@@ -60,10 +60,13 @@ const useHttpHook = () => {
                 requestType:"json"
             }).then((res) => {
                 setLoading(false);
+                if(!res.data?.switch_account)
+                {
                 ShowMessage({
                     position:"center",
                     ...res
                 })
+            }
                 if(res.status && res.data?.accessToken)
                 {
                     window.localStorage.setItem(name,res.data.accessToken);
@@ -352,6 +355,7 @@ const getAgentProfile  = () => {
                 setLoading(false);
                 if(!res.status)
                 {
+                    res.message = String(res.message).replace("NIN found","NIN already registered.")
                     ShowMessage({
                     position:"center",
                     ...res
@@ -911,11 +915,44 @@ const GetListOfSectors = ()=>{
         })
     }
 
+const handleForgotTransactionPin = ()=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-forgot-txt-pin`,
+                body:{},
+                method:"GET",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                resolve(res);
+            })
+        })
+    }
 const SaveConsent = (data:any)=>{
         return new Promise<ApiResponse>((resolve) => {
          setLoading(true);
            call({
                 path:`agent-save-consent`,
+                body:data,
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                ShowMessage({
+                    position:"center",
+                    ...res
+                })
+                resolve(res);
+            })
+        })
+    }
+
+const handleSaveTxtPIN = (data:any)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-verify-and-save-transation-pin`,
                 body:data,
                 method:"POST",
                 requestType:"json"
@@ -983,7 +1020,9 @@ const SaveConsent = (data:any)=>{
         handleCheckUserEmailIsAgent,
         ResendOTP,
         GetListOfSectors,
-        SaveConsent
+        SaveConsent,
+        handleForgotTransactionPin,
+        handleSaveTxtPIN
     }
 }
 export default useHttpHook;
