@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client"
 import { useEffect, useState } from "react";
@@ -25,7 +26,7 @@ export default function Home() {
     {
       graphics:<CardThree size={220} />,
       title:"Earn & Withdraw Commissions",
-      description:"Earn 300Naira per onboarding and Convert your earned commissions to cash and withdraw directly to your bank account when eligible."
+      description:"Earn 1000Naira per onboarding and Convert your earned commissions to cash and withdraw directly to your bank account when eligible."
     }
   ]);
   const [showOnboardingBtn,setShowOnboardingBtn] = useState<boolean>(false);

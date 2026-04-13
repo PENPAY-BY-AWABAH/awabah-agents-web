@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import BaseButton from "@/app/components/baseButton";
 import BaseInput from "@/app/components/baseInput";
 import { BaseLoader } from "@/app/components/baseLoader";
@@ -8,7 +10,6 @@ import { useEffect, useState } from "react"
 
 export const ForgotPINView = ({onClose}:{onClose:()=>void})=>{
 const {handleForgotTransactionPin,handleSaveTxtPIN} = useHttpHook();
-const [send,setSend] = useState<boolean>(false);
 const [processing,setProcessing] = useState<boolean>(false);
 const [loading,setLoading] = useState<boolean>(false);
 const [message,setMessage] = useState<string>("");

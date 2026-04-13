@@ -137,21 +137,26 @@ const GetRemittance  = (page: number) => {
         </div>}
         <div className="my-8 mt-6 grid gap-3">
             {filteredList.map((item, i) => <div key={i} className="lg:h-[80px] pb-2 flex gap-3 items-center border-b-[0.5px] border-b-gray-200">
-                <OutflowIcon />
+                <span className={`${item.status === "pending"?"text-red-700  border-red-700":"text-green-700 border-green-700"} ${item.memo?.includes("Payment") && "flip-vertical"}`} >
+                <OutflowIcon  />
+                </span>
                 <div className="flex-1">
                     <div className="text-[#000000] text-[18px]">{String(item.memo).replace("initialized .",".").replace("Naira ","")} <span className="text-gray-400">{selectedItem === "remittance"?" ~ "+item.fullName:""}</span></div>
                     <div className="text-[#000000] text-[14px]">{NairaSymbol}{item.amount}</div>
                     <div className="text-[#000000A6] text-[12px]" >{moment(item.createdAt).format("Do MMM YYYY, hh:mm A")}</div>
                 </div>
                 <div >
-                    <button 
+                    <span className={`${item.status === "pending"?"text-red-700  border-red-700":"text-green-700 border-green-700"} rounded-md border-[1px] px-3 py-1 text-[14px]`}>{item.status}</span>
+                </div>
+                <div >
+                    {/* <button 
                     onClick={()=>{
 
                     }}
-                    className="rounded-[10px] border-1 border-green-800 px-[10px] py-[3px]"
+                    className="rounded-md border-[1px] border-green-800 px-[10px] py-[3px]"
                     >
                     Receipt
-                    </button>
+                    </button> */}
                 </div>
             </div>)}
         </div>

@@ -72,6 +72,7 @@ export const EmploymentPage = ({ onClose, onSuccess, trackingId }: { onClose: ()
             dateOfCurrentEmployment: dayjs(formData.dateOfCurrentEmployment!).format("YYYY-MM-DD"),
             dateOfAppointment: dayjs(formData.dateOfAppointment!).format("YYYY-MM-DD")
         }).then((res) => {
+           
             if (res.status) {
                 onSuccess(res.data?.tempPIN)
                 setConsent(false);

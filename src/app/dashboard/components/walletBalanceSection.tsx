@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client"
 import { GreenBackground } from "@/app/assets/green-background"
 import BaseButton from "@/app/components/baseButton";
@@ -11,7 +12,8 @@ import Link from "next/link";
 import { useEffect, useState } from "react"
 export interface WalletBalanceProps {
     balance: string;
-    earnings?: string;
+   total_commission_earned?: string;
+   total_commission_count?: string;
 }
 export const WalletBalance = () => {
     const { GetBalance } = useHttpHook();
@@ -19,7 +21,8 @@ export const WalletBalance = () => {
     const [showBalance, setShowBalance] = useState<boolean>(false)
     const [balance, setBalance] = useState<WalletBalanceProps>({
         balance: "0.00",
-        earnings: "0.00"
+        total_commission_count: "0.00",
+        total_commission_earned: "0.00"
     })
     const GetWalletInfo = () => {
         GetBalance().then((res) => {
@@ -44,7 +47,7 @@ export const WalletBalance = () => {
                     {showBalance ? <EyeOpen /> : <EyeClosed />}
                 </button></div>
                 <div className="text-white lg:font-normal font-bold text-[20px] lg:text-[38px] ">{MaskBalance(balance.balance, !showBalance)}</div>
-                <div className="text-[#FFD983] text-[12px] lg:text-[14px]">Total Earned: {MaskBalance((balance?.earnings || "0.00"), !showBalance)}<span></span></div>
+                <div className="text-[#FFD983] text-[12px] lg:text-[14px]">Total Earned: {MaskBalance((balance?.total_commission_earned || "0.00"), !showBalance)}<span></span></div>
             </div>
             <div className="lg:me-20 flex items-center">
                 <Link

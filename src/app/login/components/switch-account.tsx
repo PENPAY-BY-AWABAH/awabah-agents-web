@@ -1,7 +1,7 @@
 import BaseButton from "@/app/components/baseButton"
 import BaseToggleBtn from "@/app/components/baseCheckBox"
 import BaseModal from "@/app/components/baseModal"
-import { CONSTANT, ROUTES } from "@/app/includes/constants";
+import { ROUTES } from "@/app/includes/constants";
 import useHttpHook from "@/app/includes/useHttpHook";
 import Link from "next/link";
 import { useRouter } from "next/navigation";

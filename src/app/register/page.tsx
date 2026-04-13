@@ -1,6 +1,6 @@
-/* eslint-disable react-hooks/set-state-in-effect */
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client"
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { BackIcon } from "../assets/back-icon";
 import BaseInput from "../components/baseInput";
 import { FormEvent, useEffect, useState } from "react";

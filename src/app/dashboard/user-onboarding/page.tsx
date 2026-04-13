@@ -15,18 +15,17 @@ import { OtpSection } from "./components/otpSection";
 import { NextOfKinPage } from "./components/nextOfKin";
 import { SuccessComponent } from "./components/success";
 import { PaymentComponent } from "./components/payment";
-import { ReturnAllNumbers, ValidateEmail } from "@/app/includes/functions";
 import { BaseLoader } from "@/app/components/baseLoader";
 import BaseSelect from "@/app/components/baseSelect";
 import { ItemProps, StateLGAProp } from "@/app/includes/types";
-import { Calendar, CameraIcon, CheckCircle, UploadIcon } from "lucide-react";
+import { CameraIcon, CheckCircle, UploadIcon } from "lucide-react";
 import { ImagePickerOption } from "./components/imagePickerOption";
 import { CameraView } from "./components/cameraView";
-import BaseInputDate from "@/app/components/baseInputDate";
 import dayjs from "dayjs";
 import { opacity } from "html2canvas/dist/types/css/property-descriptors/opacity";
 import { ConsentPage } from "./components/consent";
 import BaseModal from "@/app/components/baseModal";
+import { title } from "process";
 type RegisterProps = "User Details" | "Verify Email" | "Next Of Kin" | "Success" | "Pay" | "Employment Details" | "Parent / Guardian Details" | "Bank Details" | "Consent Agreement";
 export interface SignUpProps {
     email?: string;
@@ -69,7 +68,7 @@ const Page = () => {
     const [listOfLGA, setListOfLGA] = useState<string[]>([]);
     const [section, setSection] = useState<RegisterProps>("User Details")
     const navigate = useRouter();
-    const { handleRegisterUser, ShowMessage, getUserByEmail, loading, handleCheckUserEmailIsAgent, RequestForRSAPIN, GetListOfSectors } = useHttpHook();
+    const { handleRegisterUser, ShowMessage, getUserByEmail, loading, GetListOfPFA, RequestForRSAPIN, GetListOfSectors } = useHttpHook();
     const [formData, setFormData] = useState<SignUpProps>({
         email: "",
         firstName: "",
@@ -103,7 +102,7 @@ const Page = () => {
             ...formData,
             userType: userIsMinor ? "MINOR" : "ADULT"
         };
-
+          
         if (userIsMinor) {
             data.dob = dayjs(data.dob).format("DD-MM-YYYY")
         }
@@ -122,12 +121,17 @@ const Page = () => {
         setShowState(false);
         setShowAddress(false);
         handleRegisterUser(data).then((res) => {
+           
             if (res.status) {
                 const data = {
                     ...formData,
                     ...res.data
                 }
                 setFormData(data);
+                if(res.data?.rsaPin)
+                {
+                    return setSection("Success")
+                }
                 return setSection("Next Of Kin")
             }else{
                 if(res.data?.lgaNotFound === true || res.data?.stateNotFound === true || res.data?.countryNotFound === true)
@@ -198,44 +202,7 @@ const Page = () => {
         })
     }
    
-    const pfaList: ItemProps[] = [
-        {
-            title: "ACCESSARM PENSIONS",
-            name: "ACCESSARM PENSIONS",
-            value: "024"
-        },
-        {
-            title:"LEADWAY PENSURE",
-            name:"LEADWAY PENSURE",
-            value:"023"
-        }
-        ,
-        {
-            title:"Stanbic Ibtc Pension Managers",
-            name:"Stanbic Ibtc Pension Managers",
-            value:"021"
-        },
-        {
-            title:"Fidelity Pension Managers Limited",
-            name:"Fidelity Pension Managers Limited",
-            value:"043"
-        },
-        {
-            title:"CrusaderSterling Pensions Limited",
-            name:"CrusaderSterling Pensions Limited",
-            value:"032"
-        },
-        {
-            title:"NLPC Pension Fund Administrators Limited(NLPC PFA)",
-            name:"NLPC Pension Fund Administrators Limited(NLPC PFA)",
-            value:"031"
-        },
-        {
-            title:"Trustfund Pensions Limited",
-            name:"Trustfund Pensions Limited",
-            value:"028"
-        }
-    ];
+    const [pfaList,setPfaList] = useState<ItemProps[]>([]);
     
     const ListOfSectors = () => {
         GetListOfSectors().then((res) => {
@@ -252,8 +219,21 @@ const Page = () => {
             }
         })
     }
+     const GetPFAList = () => {
+        GetListOfPFA().then((res) => {
+            if (res.status) {
+                setPfaList(res.data.map((a:any)=>{
+                    return {
+                        ...a,
+                        value:a.code
+                    }
+                }));
+            }
+        })
+    }
     useEffect(() => {
         ListOfSectors();
+        GetPFAList();
     }, []);
 
     useEffect(() => {
@@ -1438,7 +1418,7 @@ const Page = () => {
                                 // HandleCheckEmail(String(formData.email).trim())
                             }}
                         />
-                        {!formData.hasBVN && <BaseInput
+                        {/* {!formData.hasBVN && <BaseInput
                             type="text"
                             name="BVN"
                             value={formData.bvn}
@@ -1452,7 +1432,7 @@ const Page = () => {
                             max={11}
                             label={`BVN`}
                             placeholder="Enter BVN."
-                        />}
+                        />} */}
                          
                         <BaseInput
                             type="text"
@@ -1838,7 +1818,7 @@ const Page = () => {
                                     label="RSA PIN"
                                     placeholder="Enter RSA PIN."
                                 /> :null}
-                        {!formData.hasBVN && !userIsMinor &&<BaseInput
+                        {/* {!formData.hasBVN && !userIsMinor &&<BaseInput
                             type="text"
                             name="bvn"
                             className="bg-white"
@@ -1853,7 +1833,7 @@ const Page = () => {
                             }}
                             label="BVN (Bank Verification Number)"
                             placeholder="Enter BVN."
-                        />}
+                        />} */}
                        
                                 {userIsMinor && <div className="text-left mb-4 " >
                                     <BaseSelect

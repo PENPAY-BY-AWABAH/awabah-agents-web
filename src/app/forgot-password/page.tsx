@@ -2,11 +2,9 @@
 import { useRouter } from "next/navigation";
 import { BackIcon } from "../assets/back-icon";
 import BaseInput from "../components/baseInput";
-import BaseToggleBtn from "../components/baseCheckBox";
 import { FormEvent, useState } from "react";
 import BaseButton from "../components/baseButton";
-import { CONSTANT, ROUTES } from "../includes/constants";
-import Link from "next/link";
+import { CONSTANT } from "../includes/constants";
 import useHttpHook from "../includes/useHttpHook";
 import { LoginProps } from "../includes/types";
 import { OtpSection } from "./components/otpSection";

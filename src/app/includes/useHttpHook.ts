@@ -75,7 +75,24 @@ const useHttpHook = () => {
             })
         })
     }
-    
+    const handleLoginWithNIN = (prop: any) => {
+        return new Promise<ApiResponse>((resolve) => {
+            setLoading(true);
+            call({
+                path:"agent-sign-in-with-nin",
+                body:prop,
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                ShowMessage({
+                    position:"center",
+                    ...res
+                })
+                resolve(res);
+            })
+        })
+    }
     const handleOtp = (prop: LoginProps) => {
         return new Promise<ApiResponse>((resolve) => {
             setLoading(true);
@@ -860,6 +877,10 @@ const handleRSAPINRequest =(data:any)=>{
                 requestType:"json"
             }).then((res) => {
                 setLoading(false);
+                  if(res.message.includes("Unknown Employer"))
+                    {
+                    res.message = "We are unable to process your job type at the moment. Please select a different option. Thank you."
+                    }
                 if(!res.status)
                 {
                     ShowMessage({
@@ -966,6 +987,57 @@ const handleSaveTxtPIN = (data:any)=>{
             })
         })
     }
+const GetListOfPFA = ()=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-get-list-onboarded-pfa`,
+                body:{},
+                method:"GET",
+                requestType:"json"
+            }).then((res) => {
+                resolve(res);
+            })
+        })
+    }
+const validateNIN = (nin:string)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-validate-nin`,
+                body:{nin},
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                if(!res.status){
+                    ShowMessage({
+                        position:"center",
+                        ...res
+                    })
+                }
+                resolve(res);
+            })
+        })
+    }
+const handleDeleteAccount = (nin:string)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-delete-account`,
+                body:{nin},
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                    ShowMessage({
+                        position:"center",
+                        ...res
+                    })
+                resolve(res);
+            })
+        })
+    }
     return {
         loading,
         handleGetTransactions,
@@ -1022,7 +1094,11 @@ const handleSaveTxtPIN = (data:any)=>{
         GetListOfSectors,
         SaveConsent,
         handleForgotTransactionPin,
-        handleSaveTxtPIN
+        handleSaveTxtPIN,
+        GetListOfPFA,
+        handleLoginWithNIN,
+        validateNIN,
+        handleDeleteAccount
     }
 }
 export default useHttpHook;

@@ -8,7 +8,6 @@ import BaseInput from "@/app/components/baseInput";
 import BaseButton from "@/app/components/baseButton";
 import BaseSelect from "@/app/components/baseSelect";
 import { ItemProps } from "@/app/includes/types";
-import BaseModal from "@/app/components/baseModal";
 import { BaseLoader } from "@/app/components/baseLoader";
 import { CONSTANT } from "@/app/includes/constants";
 export interface NextOfKinProps {

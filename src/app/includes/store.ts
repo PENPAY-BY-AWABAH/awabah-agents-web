@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {create} from 'zustand';
-
 interface CommissionParamProp {
   showCommissionBalance:boolean;
   update:(state:CommissionProp)=>void;

@@ -12,12 +12,12 @@ import { LoginProps } from "../includes/types";
 import { SwitchAccount } from "./components/switch-account";
 import { HandleResetData } from "./components/handleReset";
 import { OtpSection } from "./components/otp-screen";
+import { ReturnMobile } from "../includes/functions";
 
 const Page = () => {
-
     const [showAccountSwitch, setShowAccountSwitch] = useState<boolean>(false)
     const navigate = useRouter();
-    const { handleLogin, loading } = useHttpHook();
+    const { handleLogin,handleLoginWithNIN, loading } = useHttpHook();
      
     const [formData, setFormData] = useState<LoginProps>({
         email: "",
@@ -26,6 +26,34 @@ const Page = () => {
     const [showOTP, setShowOTP] = useState<boolean>(false);
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault()
+        if(isNINInput)
+        {
+          return handleLoginWithNIN({
+            password: formData.password,
+            nin: formData.email
+        }).then((res) => {
+            if (res.message.includes("OTP")) {
+               return setShowOTP(true)
+            }
+             if (res?.data?.other_info_not_saved) {
+                localStorage.setItem(CONSTANT.LocalStore.registrationForm,JSON.stringify(res.data))
+                return navigate.replace(`${ROUTES.register}?step=2`)
+            }
+            
+             if (res.data?.transaction_pin_not_saved) {
+                 localStorage.setItem(CONSTANT.LocalStore.registrationForm,JSON.stringify(res.data))
+                return navigate.replace(`${ROUTES.register}?step=3`)
+            }
+          
+            if (res.status) {
+                navigate.replace(ROUTES.dashboard)
+            } else {
+                if (res.data?.switch_account) {
+                    setShowAccountSwitch(true)
+                }
+            }
+        })  
+        }
         handleLogin(formData).then((res) => {
             if (res.message.includes("OTP")) {
                return setShowOTP(true)
@@ -57,6 +85,11 @@ const Page = () => {
             // navigate.replace(ROUTES.dashboard) 
         }
     }, [])
+     let isNINInput = false;
+     if(formData.email?.length !== 0)
+     {
+     isNINInput = /^[0-9]+$/.test(formData.email![0])
+     }
     return <div className="bg-white min-h-full lg:px-[100px] p-[16px] lg:py-[60px] overflow-hidden">
         <div className="mb-6">
             <button
@@ -78,19 +111,27 @@ const Page = () => {
                 <div className="text-black text-[24px] font-bold text-center">Login</div>
                 <form onSubmit={handleSubmit} >
                     <BaseInput
-                        type={"text"}
-                        name={String(formData.email).length > 11 && !String(formData.email).includes("@")?"phone":"email"}
+                        type={isNINInput?"text":"email"}
+                        name={"email"}
                         value={formData.email}
                         required
                         onValueChange={({ value }) => {
-                            setFormData({
-                                ...formData,
-                                email: String(value).trim().toLowerCase()
-                            })
+                            if(isNINInput)
+                            {
+                                setFormData({
+                                    ...formData,
+                                    email: ReturnMobile(String(value).trim())
+                                })
+                            }else{
+                                setFormData({
+                                    ...formData,
+                                    email: String(value).trim().toLowerCase()
+                                })
+                            }
                         }}
-                        max={String(formData.email).length > 11 && !String(formData.email).includes("@")?11:100}
-                        label="Email or PhoneNumber"
-                        placeholder="Enter Email or PhoneNumber."
+                        max={isNINInput?11:100}
+                        label="Email or NIN"
+                        placeholder="Enter Email or NIN."
                     />
                     <BaseInput
                         required
@@ -143,7 +184,7 @@ const Page = () => {
                 </form>
                 <div className="mt-5" >
                  <Link
-                  href={ROUTES.self_registered}
+                  href={"https://onboarding.awabah.com/generate-rsa-pin"}
                   className="text-[14px] text-[#009668] "
                   >
                 I want to register myself
@@ -151,7 +192,6 @@ const Page = () => {
                   </div>
                 <HandleResetData
                 />
-
             </div>
         </div>
         {showOTP && <OtpSection

@@ -263,7 +263,7 @@ export const ConsentPage = ({onClose,onSuccess,trackingId,email,userData}:{onClo
     </div>
                         <div
                         className="w-full pb-[16px] text-left">
-                            <div className="items-left mb-4 flex gap-2 items-center mt-5">
+                            <div className="items-left mb-4 flex gap-2 items-center mt-0">
                             <BaseToggleBtn
                             onChange={()=>setAgree(!agree)}
                             value={agree}

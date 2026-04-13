@@ -16,7 +16,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-const navigate = useRouter();
 useEffect(() => {
   const token = localStorage.getItem(CONSTANT.LocalStore.token);
   if(!token) {

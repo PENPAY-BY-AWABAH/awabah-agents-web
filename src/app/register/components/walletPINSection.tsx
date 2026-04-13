@@ -17,7 +17,6 @@ export const WalletPINSection = ({signUpForm}:{signUpForm:SignUpProps;onSuccess:
         password:"",
         confirmPassword:""
     })
-    const [counter,setCounter] = useState<number>(0);
     const [pin,setPin] = useState<string>("");
     const [confirmPin,setConfirmPin] = useState<string>("");
     const {handleUpdateWalletPIN,loading} = useHttpHook();

@@ -29,6 +29,7 @@ export interface UserItemProp {
   parentDetailRegistered?:boolean;
   commission?:string;
   pfaName?:string;
+  pfaCode?:string;
 }
 
 export const UsersSection = ({page}:{page?:boolean})=>{
@@ -175,20 +176,20 @@ export const UsersSection = ({page}:{page?:boolean})=>{
         </div>
         </div>
         <BaseButton 
-        text={item.nextOfKinRegistered === false || item.employerDetailsRegistered === false || item.parentDetailRegistered === false?"Complete Registration":"Pay Now"}
+        text={!item.rsaNumber?"Complete Registration":"Pay Now"}
         onClick={()=>{
-        if(item.nextOfKinRegistered === false || item.employerDetailsRegistered === false || item.parentDetailRegistered === false)
+        if(!item.rsaNumber)
         {
            navigate.push(`${ROUTES.userOnboarding}?email=${item.email}`) 
         }else{
             localStorage.setItem(CONSTANT.LocalStore.remit,JSON.stringify({
             rsaPin: item.rsaNumber,
-            pfaName: "",
-            providerId: "",
+            pfaName: item.pfaName,
+            providerId: item.pfaCode,
             phoneNumber:String(item.phoneNumber).replace("+234","0"),
             amount: 3000,
             fullName: item.firstName+" "+item.lastName,
-            isValid: false,
+            isValid: true,
             blockFields:true
             }))
             navigate.push(ROUTES.remit)
