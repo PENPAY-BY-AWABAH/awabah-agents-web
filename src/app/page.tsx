@@ -9,9 +9,11 @@ import { CardTwo } from "./dashboard/components/card2";
 import { CardThree } from "./dashboard/components/card3";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Script from "next/script";
 
 export default function Home() {
   const navigate = useRouter();
+  const gaMeasurementId = "";
   const [slider,setSlider] = useState<SlideItemProp[]>([
     {
       graphics:<CardOne />,
@@ -54,7 +56,22 @@ export default function Home() {
           navigate.replace(ROUTES.dashboard) 
        }
       },[])
-  return (<div className="lg:min-h-screen overflow-scroll lg:pb-[140px] items-center justify-center bg-white font-sans grid grid-cols-1 ">
+  return (<>
+    {gaMeasurementId ? <>
+      <Script
+        src={`https://www.googletagmanager.com/gtag/js?id=${gaMeasurementId}`}
+        strategy="afterInteractive"
+      />
+      <Script id="google-analytics" strategy="afterInteractive">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', '${gaMeasurementId}');
+        `}
+      </Script>
+    </> : null}
+    <div className="lg:min-h-screen overflow-scroll lg:pb-[140px] items-center justify-center bg-white font-sans grid grid-cols-1 ">
      <div className="m-auto items-center text-center  lg:h-[500px] ">
      {slider.filter((a,i)=>selectedIndex === i).map((item,index)=>{
       return <div key={index} className="m-auto items-center text-center  rounded-[30px] shadow lg:w-[400px] pt-[10px]  my-[60px] lg:p-[30px] pb-[60px]">
@@ -125,5 +142,6 @@ export default function Home() {
      </div>}
      </div>
     </div>
+  </>
   );
 }

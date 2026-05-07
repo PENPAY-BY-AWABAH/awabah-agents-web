@@ -46,8 +46,17 @@ import { ReactNode } from "react";
         bankCode?:string;
         createdAt?:string;
     }
+export interface LGAProps {
+  name?:string
+  code?:string;
+  id?: number;
+  postCode?: number;
+}
 export interface StateLGAProp {
-  state: string;
-  alias: string;
-  lgas: string[];
+  Id: number;
+  CountryID:number;
+  StateName:string;
+  Code:string;
+  lgas:LGAProps[];
+  Alias?:string;
 }

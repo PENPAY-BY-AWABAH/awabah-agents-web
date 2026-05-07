@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-duplicate-props */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
@@ -14,6 +15,7 @@ import { PaymentVericationModal } from "./components/payment_verification_modal"
 import { CONSTANT } from "@/app/includes/constants";
 import { BaseLoader } from "@/app/components/baseLoader";
 import { PaymentOptionsModal } from "./components/payment_option_modal";
+import BaseModal from "@/app/components/baseModal";
 interface PaymentProp {
     rsaPin?: string;
     pfaName?: string;
@@ -46,6 +48,13 @@ export interface PaymentResponseProp {
     fullName?:string;
     refNo?:string;
     rsaPin?:string;
+}
+export interface ValidationProp {
+    name?: string;
+    pfaCode?: string;
+    providerCode?: string;
+    providerName?: string;
+    rsaPin?: string;
 }
 const Page = () => {
     const [listOfPfa, setListOfPfa] = useState<ListOfPfa[]>([])
@@ -120,7 +129,7 @@ const Page = () => {
 
         }
     }, []);
-
+const [listValidation,setListValidation] = useState<ValidationProp[]>([]);
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
         if (!formData.isValid) {
@@ -132,16 +141,16 @@ const Page = () => {
             }).then((res) => {
                 setLoading(false)
                 if (res.status) {
-                    let data = {
+                    if(res.data?.list?.length > 1)
+                    {
+                    return setListValidation(res.data?.list || []);
+                    }
+                    const  data = {
                         ...formData,
                         isValid: true,
-                        fullName: res.data.rsaDetail.name
+                        ...res.data[0]
                     }
-                    if(res?.data?.rsaDetail?.pfaName)
-                    {
-                       data = {...data,pfaName: res.data.rsaDetail.pfaName}
-                    }
-                    setFormData(data)
+                    setFormData(data);
                 }
             })
         } else {
@@ -354,6 +363,26 @@ const Page = () => {
         details={paymentDetails}
         message={message}
         />}
+        {listValidation.length > 0 && <BaseModal
+        title={"Validation Result"}
+        onClose={()=>setListValidation([])}
+        >
+        <div className="text-left">
+        <div className="font-normal">We found a different provider from the one you selected.
+        Please select the correct provider and continue .</div>
+        {listValidation.map((a:ValidationProp,index:number)=>{
+        return <div
+        onClick={()=>{
+            setFormData({...formData,...a,isValid:true})
+            setListValidation([])
+               }}
+        key={index} 
+        className="my-3 border-[1px] cursor-pointer hover:border-green-900 transition-all duration-300 border-green-900 p-2 rounded-md " >
+        <span className="font-normal text-green-900">{a.providerName}</span>
+        </div>
+        })}
+        </div>
+        </BaseModal>}
         {loading && <BaseLoader modal color="green" size="lg" />}
     </div>
 }

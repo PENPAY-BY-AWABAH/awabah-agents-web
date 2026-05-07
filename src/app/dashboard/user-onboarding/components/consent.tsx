@@ -9,6 +9,9 @@ import { BaseLoader } from "@/app/components/baseLoader";
 import { SignUpProps } from "../page";
 import moment from "moment";
 import html2canvas from "html2canvas";
+import { useRouter } from "next/navigation";
+import { CONSTANT, ROUTES } from "@/app/includes/constants";
+import { toast } from "react-toastify";
 export interface BankProps {
   accountN?: string;
   firstName?: string;
@@ -19,12 +22,18 @@ export interface BankProps {
 
 export const ConsentPage = ({onClose,onSuccess,trackingId,email,userData}:{onClose:()=>void;onSuccess:(data:{rsaPin:string})=>void;trackingId:string;email:string;userData?:SignUpProps}) => {
     const [agree,setAgree] = useState<boolean>(false);
+    const [processed,setProcessed] = useState<string>("");
     const {RequestForRSAPIN,loading} = useHttpHook()
     const handleSaveConsent = () => {
         Download().then((res)=>{
         RequestForRSAPIN({email,trackingId,consentForm:res}).then((res)=>{
             if(res.status)
             {
+              if(String(res.message).includes("processed"))
+              {
+                toast.success(res.message);
+                return setProcessed(res.message);   
+              }
             onSuccess(res.data);   
             }
         })
@@ -40,6 +49,56 @@ export const ConsentPage = ({onClose,onSuccess,trackingId,email,userData}:{onClo
     // link.href = dataURL;
     // link.download = `consent-form`;
     // link.click();
+    }
+    if(processed){
+      return <div className="mt-[20px] h-full px-[40px]">
+        <div className="flex flex-col items-center justify-center text-center p-6">
+          {/* Animated check icon */}
+          <svg
+            className="w-20 h-20 text-green-500 mb-4"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <style>{`
+              @keyframes drawCheck {
+                0% {
+                  stroke-dashoffset: 100;
+                }
+                100% {
+                  stroke-dashoffset: 0;
+                }
+              }
+              .check-path {
+                stroke-dasharray: 100;
+                stroke-dashoffset: 100;
+                animation: drawCheck 0.6s ease-out forwards;
+              }
+            `}</style>
+            <circle cx="12" cy="12" r="10" stroke="#10b981" strokeWidth="2" fill="none" />
+            <path
+              className="check-path"
+              d="M7 12l3 3 7-7"
+              stroke="#10b981"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </div>
+          <p className="text-gray-600 text-md w-full text-center mb-3"> 
+            {processed}
+          </p>
+          <div className="flex justify-center text-background">
+          <BaseButton 
+          onClick={()=>{
+           window.location.href = ROUTES.userOnboarding;
+          }}
+          text={"Close"}
+          type={"button"}
+          />
+      </div>
+      </div>
     }
     return <div className="mt-[20px]">
    <div className="m-auto items-center text-center ">

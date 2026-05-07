@@ -1038,6 +1038,19 @@ const handleDeleteAccount = (nin:string)=>{
             })
         })
     }
+const GetListOfStates = ()=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`get-list-of-states-lgas`,
+                body:{},
+                method:"GET",
+                requestType:"json"
+            }).then((res) => {
+                resolve(res);
+            })
+        })
+    }
     return {
         loading,
         handleGetTransactions,
@@ -1098,7 +1111,8 @@ const handleDeleteAccount = (nin:string)=>{
         GetListOfPFA,
         handleLoginWithNIN,
         validateNIN,
-        handleDeleteAccount
+        handleDeleteAccount,
+        GetListOfStates
     }
 }
 export default useHttpHook;
