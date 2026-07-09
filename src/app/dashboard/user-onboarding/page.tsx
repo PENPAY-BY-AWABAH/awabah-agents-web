@@ -164,8 +164,11 @@ const Page = () => {
         if (section === "Consent Agreement") {
             setIndex(3)
         }
-        if (section === "Success") {
+        if (section === "Pay") {
             setIndex(4)
+        }
+        if (section === "Success") {
+            setIndex(5)
         }
     }, [section])
 
@@ -385,6 +388,10 @@ const GetStates = ()=>{
                         return setSection("Next Of Kin")
                     }
 
+                    if (section === "Pay") {
+                        return setSection("Consent Agreement")
+                    }
+
                     navigate.back();
                 }}
                 className="flex items-center gap-2 cursor-pointer">
@@ -402,7 +409,7 @@ const GetStates = ()=>{
                 <div className="text-black text-[24px] font-bold text-center mb-[20px] ">{section}</div>
                 <div className="w-[200px]">
                     <BaseHorizontalIndicator
-                        count={5}
+                        count={6}
                         selectedIndex={index}
                     />
                 </div>
@@ -963,7 +970,7 @@ const GetStates = ()=>{
                 {section === "Pay" && <div >
                     <PaymentComponent
                         onSuccess={() => {
-
+                            setSection("Success")
                         }}
                         userdata={formData}
                     />
@@ -975,7 +982,7 @@ const GetStates = ()=>{
                                 ...formData,
                                 rsaPin
                             })
-                            setSection("Success")
+                            setSection("Pay")
                         }}
                         onClose={() => {
 

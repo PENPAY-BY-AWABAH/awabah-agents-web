@@ -10,7 +10,7 @@ interface PaymentProps {
     providerId?:string;
 }
 export const PaymentComponent = ({onSuccess,userdata}:{onSuccess:()=>void;userdata:SignUpProps})=>{
-    const { handleRemiteMicroPensions, loading , getRSAPIN} = useHttpHook();
+    const { remitMicroPension, loading , getRSAPIN} = useHttpHook();
     const [showPayment,setShowPayment] = useState<boolean>(false);
     const [formData, setFormData] = useState<PaymentProps>({
         rsaPIN:"",
@@ -20,7 +20,14 @@ export const PaymentComponent = ({onSuccess,userdata}:{onSuccess:()=>void;userda
 
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault()
-        handleRemiteMicroPensions(formData).then((res) => {
+        remitMicroPension({
+            rsaPin: formData.rsaPIN,
+            phoneNumber: formData.phoneNumber,
+            providerId: formData.providerId,
+            fullName: (userdata.firstName || "") + " " + (userdata.lastName || ""),
+            amount: 3000,
+            paymentOption: "monnify"
+        }).then((res) => {
             if (res.status) {
             onSuccess()
             }
@@ -47,12 +54,7 @@ export const PaymentComponent = ({onSuccess,userdata}:{onSuccess:()=>void;userda
             <path d="M16.6693 14.5835C16.6693 16.6543 16.6693 18.3335 10.0026 18.3335C3.33594 18.3335 3.33594 16.6543 3.33594 14.5835C3.33594 12.5127 6.32094 10.8335 10.0026 10.8335C13.6843 10.8335 16.6693 12.5127 16.6693 14.5835Z" stroke="#009668"/>
             </svg>
             </div>
-        <div >{userdata.fullName}</div>
-    </div>
-    <div className="flex items-center justify-center">
-        <div >RSA Pin:</div>
-        <div className="flex-1 items-center justify-end">
-        </div>
+        <div >{userdata.firstName} {userdata.lastName}</div>
     </div>
      <div className="flex items-center justify-center">
         <div >PFA Name:</div>
@@ -60,23 +62,12 @@ export const PaymentComponent = ({onSuccess,userdata}:{onSuccess:()=>void;userda
         </div>
     </div>
     </div>
+    <BaseButton
+        text="Continue to Payment"
+        type="button"
+        onClick={() => setShowPayment(true)}
+    />
      </div>:<form onSubmit={handleSubmit}>
-                        <BaseInput
-                            type="text"
-                            name="rsaPIN"
-                            value={formData.rsaPIN}
-                            required
-                            onValueChange={({ value }) => {
-                                setFormData({
-                                    ...formData,
-                                    rsaPIN: value
-                                })
-                            }}
-                            disabled
-                            max={11}
-                            label="RSA PIN"
-                            placeholder="Enter rsaPIN."
-                        />
                         <BaseInput
                             type="text"
                             name="phoneNumber"
@@ -96,7 +87,7 @@ export const PaymentComponent = ({onSuccess,userdata}:{onSuccess:()=>void;userda
                         <BaseButton
                         
                             loading={loading}
-                            text="Next"
+                            text="Pay ₦3,000"
                             type="submit"
                         />
        </form>}
