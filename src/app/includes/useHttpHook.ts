@@ -373,10 +373,13 @@ const getAgentProfile  = () => {
                 if(!res.status)
                 {
                     res.message = String(res.message).replace("NIN found","NIN already registered.")
-                    ShowMessage({
-                    position:"center",
-                    ...res
-                })
+                    // Don't show toast for LGA/state/country/address errors — modal handles it
+                    if (!res.data?.lgaNotFound && !res.data?.stateNotFound && !res.data?.countryNotFound && !res.data?.addressNotFound) {
+                        ShowMessage({
+                        position:"center",
+                        ...res
+                    })
+                    }
                 }
                 resolve(res);
             })

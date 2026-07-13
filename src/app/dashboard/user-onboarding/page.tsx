@@ -151,24 +151,20 @@ const Page = () => {
     const searchParams = useSearchParams()
     const email = searchParams.get('email')
     useEffect(() => {
-        setSection("User Details")
         if (section === "User Details") {
             setIndex(0)
         }
-        if (section === "Verify Email") {
+        if (section === "Next Of Kin") {
             setIndex(1)
         }
-        if (section === "Next Of Kin") {
+        if (section === "Consent Agreement") {
             setIndex(2)
         }
-        if (section === "Consent Agreement") {
+        if (section === "Pay") {
             setIndex(3)
         }
-        if (section === "Pay") {
-            setIndex(4)
-        }
         if (section === "Success") {
-            setIndex(5)
+            setIndex(4)
         }
     }, [section])
 
@@ -409,7 +405,7 @@ const GetStates = ()=>{
                 <div className="text-black text-[24px] font-bold text-center mb-[20px] ">{section}</div>
                 <div className="w-[200px]">
                     <BaseHorizontalIndicator
-                        count={6}
+                        count={5}
                         selectedIndex={index}
                     />
                 </div>
