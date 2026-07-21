@@ -24,8 +24,8 @@ approved?:boolean;
 export const CommissionSection = ({page}:{page?:boolean})=>{
 
     const [list,setList] = useState<CommissionItemProp[]>([]);
-    const {getAllComission,handleSearchUser,loading} = useHttpHook()
-    const GetAllUsers = (page:number)=>{
+    const {getAllComission,getAllWithdrawals,loading} = useHttpHook()
+    const GetComission = (page:number)=>{
     getAllComission(page).then((res)=>{
         if(res.status)
         {
@@ -34,14 +34,32 @@ export const CommissionSection = ({page}:{page?:boolean})=>{
     })
     }
    
+   
+    const [activeTab,ActiveTab] = useState("commission")
+   
     useEffect(()=>{
-        GetAllUsers(1);
-    },[])
-
+        if(activeTab === "commission")
+        {
+            GetComission(1);
+        }else
+        {
+            getAllWithdrawals(1).then((res)=>{
+                if(res.status)
+                {
+                    setList(res.data.list)
+                }
+            })
+            setList([]);
+        }
+    },[activeTab])
    
     return <div>
         <div className="flex mt-[16px]  " >
-        <div className="text-[18px] font-medium lg:text-[24px] ">Commission History</div>
+        <div className="flex flex-grow gap-4 border-b-[0.5px] border-b-gray-200 items-center"  >
+        <button className={`text-[18px] cursor-pointer font-medium lg:text-[24px] ${activeTab === "commission"?"text-[#000000]":"text-[#999]"}`} onClick={()=>ActiveTab("commission")}>Commission History</button>
+        <div  className="w-[1px] h-[20px] bg-[#999]"/>
+        <button className={`text-[18px] cursor-pointer font-medium lg:text-[24px] ${activeTab === "withdrawal"?"text-[#000000]":"text-[#999]"}`} onClick={()=>ActiveTab("withdrawal")}>Withdrawal Request History</button>
+        </div>
         {!page &&<Link href={ROUTES.history} className={`text-[22px] text-${COLOURS.green}`} >View All</Link>}
         </div>
         {loading && <div className="m-auto  mt-5 text-center">
@@ -65,7 +83,7 @@ export const CommissionSection = ({page}:{page?:boolean})=>{
              className="h-full w-full" />
             </div>
         <div className="flex-1 grid-cols-1 mb-3 gap-2">
-            <div className="text-[#000000] text-[14px] lg:text-[18px] ">{item.fullName}<span className="ms-3 text-[14px] lg:text-[18px] text-[#00000073]">~ {parseFloat(String(item.amount)) === 700?"Payment":parseFloat(String(item.amount)) === 300?"Onboarding":""}</span></div>
+            <div className="text-[#000000] text-[14px] lg:text-[18px] ">{item.fullName?item.fullName:`Withdrawal Request of ${NairaSymbol}${item.amount}`}<span className="ms-3 text-[14px] lg:text-[18px] text-[#00000073]">~ {parseFloat(String(item.amount)) === 700?"Payment":parseFloat(String(item.amount)) === 300?"Onboarding":""}</span></div>
             <div className="text-[16px] lg:text-[16px] font-bold flex gap-2 item-center text-black ">{NairaSymbol}{item.amount}</div>
             <div className="text-[12px] lg:text-[14px] flex gap-2 item-center text-[#000000A6] " >
                 {item.approved?<div  className="flex item-center text-[10px] gap-1 items-center bg-[#00A55826] text-[#00A558] rounded-[30px] px-2 py-1" >

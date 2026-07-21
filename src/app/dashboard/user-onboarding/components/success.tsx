@@ -2,7 +2,7 @@
 import BaseButton from "@/app/components/baseButton";
 import { useState } from "react";
 type ReviewStateProps = "request"|"done"| null
-export const SuccessComponent = ({onPay,trackingId,email,pfaName,rsaPin,userIsAgent}:{onPay:()=>void;trackingId:string;email:string;userIsAgent?:boolean;rsaPin?:string;pfaName?:string})=>{
+export const SuccessComponent = ({onPay,trackingId,email,pfaName,firstCommissionAmount,rsaPin,userIsAgent}:{onPay:()=>void;trackingId:string;email:string;userIsAgent?:boolean;rsaPin?:string;pfaName?:string;firstCommissionAmount?:number})=>{
     const [reviewState,setReviewState] = useState<ReviewStateProps>("done");
   
     return <div className={`${reviewState === "done"?"fixed top-0 left-0 w-full z-10 bg-white top-[0px] lg:pt-[50px]":""} m-auto pt-20`}>
@@ -364,9 +364,9 @@ This usually takes a few minutes.`}</div>}
 </svg>
   </div>
 </div>:<div >
-<div className=" absolute top-[260px] w-full flex justify-center items-center">
-<div className="text-green-900 text-[18px] text-center w-full m-auto ">
-  You've earned ₦100 Naira commission for this onboarding.
+<div className=" absolute top-[260px] w-full flex justify-center items-center left-0">
+<div className="text-green-900 text-[18px] text-center w-max-[300px] m-auto ">
+  You've earned ₦{firstCommissionAmount} Naira commission for this onboarding.
 </div>
 </div>
 <div className="mt-5" >RSA PIN - <b>{rsaPin}</b></div>

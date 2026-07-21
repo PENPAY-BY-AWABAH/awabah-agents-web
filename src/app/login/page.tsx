@@ -12,7 +12,7 @@ import { LoginProps } from "../includes/types";
 import { SwitchAccount } from "./components/switch-account";
 import { HandleResetData } from "./components/handleReset";
 import { OtpSection } from "./components/otp-screen";
-import { ReturnMobile } from "../includes/functions";
+import { ReturnAllNumbers } from "../includes/functions";
 
 const Page = () => {
     const [showAccountSwitch, setShowAccountSwitch] = useState<boolean>(false)
@@ -82,14 +82,11 @@ const Page = () => {
     useEffect(() => {
         const token = localStorage.getItem(CONSTANT.LocalStore.token);
         if (token) {
-            // navigate.replace(ROUTES.dashboard) 
+           return navigate.replace(ROUTES.dashboard) 
         }
+      
     }, [])
-     let isNINInput = false;
-     if(formData.email?.length !== 0)
-     {
-     isNINInput = /^[0-9]+$/.test(formData.email![0])
-     }
+    const isNINInput = /^[0-9]/.test(formData.email ?? "")
     return <div className="bg-white min-h-full lg:px-[100px] p-[16px] lg:py-[60px] overflow-hidden">
         <div className="mb-6">
             <button
@@ -120,7 +117,7 @@ const Page = () => {
                             {
                                 setFormData({
                                     ...formData,
-                                    email: ReturnMobile(String(value).trim())
+                                    email: ReturnAllNumbers(String(value).trim())
                                 })
                             }else{
                                 setFormData({
@@ -156,7 +153,7 @@ const Page = () => {
                             value={true}
 
                         />
-                        <span className="text-[14px">Remember me</span>
+                        <span className="text-[14px]">Remember me</span>
                         <div className="flex items-center justify-end flex-1">
                             <Link
                                 href={ROUTES.forgotPassword}

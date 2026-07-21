@@ -16,6 +16,7 @@ export const TransactionPINModal = ({onClose,account_number,bankName}:{onClose:(
         commissionEarn:0,
         withdrawals:0,
         balance:0,
+        total_commission_earned:"0.00"
     });
     const [success,setSuccess] = useState<string | null>(null);
     useEffect(()=>{

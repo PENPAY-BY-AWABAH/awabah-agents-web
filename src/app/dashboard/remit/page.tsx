@@ -147,6 +147,7 @@ const [listValidation,setListValidation] = useState<ValidationProp[]>([]);
                     }
                     const  data = {
                         ...formData,
+                        fullName:res.data?.name || "",
                         isValid: true,
                         ...res.data[0]
                     }

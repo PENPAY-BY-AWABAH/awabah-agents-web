@@ -5,6 +5,7 @@ import { LoginProps } from "./types";
 import { toast } from "react-toastify";
 import { useApiRequest } from "./functions";
 import {name}  from "../../../package.json";
+import { UserItemProp } from "../dashboard/components/users";
 export interface ApiResponse {
     status:boolean;
     message:string;
@@ -370,13 +371,23 @@ const getAgentProfile  = () => {
                 requestType:"json"
             }).then((res) => {
                 setLoading(false);
-                if(!res.status)
+                if(String(res.message).includes("found") === true)
                 {
-                    res.message = String(res.message).replace("NIN found","NIN already registered.")
+                    res.message = "NIN already registered.";
                     ShowMessage({
                     position:"center",
                     ...res
-                })
+                    })
+                }
+                if(!res.status)
+                {
+                    if(res.data?.lgaNotFound === false || res.data?.stateNotFound === false || res.data?.countryNotFound === false)
+                   {
+                    ShowMessage({
+                    position:"center",
+                    ...res
+                    })
+                    }
                 }
                 resolve(res);
             })
@@ -1051,6 +1062,51 @@ const GetListOfStates = ()=>{
             })
         })
     }
+
+const pushToPencom = (user:UserItemProp)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`admin-awabah-pushtopencom`,
+                body:{trackingId:user.trackingId},
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                resolve(res);
+            })
+        })
+    }  
+
+const pushToPFC= (user:UserItemProp)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`admin-awabah-pushtopfc`,
+                body:{trackingId:user.trackingId},
+                method:"POST",
+                requestType:"json"
+            },false,true).then((res) => {
+                setLoading(false);
+                resolve(res);
+            },)
+        })
+    }  
+    
+const pushToPFA= (user:UserItemProp)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`admin-awabah-pushtopfa`,
+                body:{trackingId:user.trackingId},
+                method:"POST",
+                requestType:"json"
+            },false,true).then((res) => {
+                setLoading(false);
+                resolve(res);
+            })
+        })
+    }     
     return {
         loading,
         handleGetTransactions,
@@ -1112,7 +1168,10 @@ const GetListOfStates = ()=>{
         handleLoginWithNIN,
         validateNIN,
         handleDeleteAccount,
-        GetListOfStates
+        GetListOfStates,
+        pushToPencom,
+        pushToPFC,
+        pushToPFA
     }
 }
 export default useHttpHook;

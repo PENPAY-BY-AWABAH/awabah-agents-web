@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { UserCheckIcon } from "@/app/assets/user-check-icon"
 import { UserPendingIcon } from "@/app/assets/user-pending-icon"
 import { UserRejectIcon } from "@/app/assets/user-reject-icon"

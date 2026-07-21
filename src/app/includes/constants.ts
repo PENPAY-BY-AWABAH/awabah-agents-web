@@ -32,6 +32,7 @@ export const CONSTANT = {
     LocalStore:{
         token:"token",
         baseUrl:"baseurl", 
+        referrer:"referrer",
         resetPassword:"resetPassword",
         remit:"remit",
         userFormFields:"userFormFields",

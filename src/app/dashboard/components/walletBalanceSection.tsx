@@ -145,7 +145,7 @@ export const WalletBalance = () => {
                         <path opacity="0.2" d="M47.1326 19.1032C47.062 19.0629 46.9788 19.0369 46.8909 19.0278C46.8394 19.0173 46.7852 19.0173 46.7338 19.0278C46.2181 19.1817 47.2051 19.8395 47.3582 19.4744C47.3792 19.4115 47.3692 19.3451 47.33 19.2873C47.2876 19.2137 47.2194 19.1501 47.1326 19.1032Z" fill="white" />
                     </svg>
                     <div className="text-[14px] text-center mt-5 mb-6" >Your last user onboarding was successful.
-                        <br />You’ve earned ₦300, which has been added to your wallet.
+                        <br />You’ve earned ₦100, which has been added to your wallet.
                     </div>
                     <BaseButton
                         text="Okay"

@@ -22,6 +22,7 @@ import BaseSelect from "@/app/components/baseSelect";
 import { ItemProps } from "@/app/includes/types";
 import { AvatarSection } from "./components/avatar-section";
 import { UserIcon } from "@/app/assets/user-p-icon";
+import { User2 } from "lucide-react";
 
 const Page = () => {
     const { getAgentProfile } = useHttpHook();
@@ -123,6 +124,12 @@ const Page = () => {
                                     <PendingIcon />
                                     <div >Pending</div>
                                 </div>}
+                            </div>
+                            <div className="flex mt-[5px] gap-[4px] " >
+                                <div className="flex text-[10px] gap-1 items-center bg-[#a5000026] text-[#a50000] rounded-[30px] px-2 py-1" >
+                                    <User2 size={13} />
+                                    <div>{details?.accountType}</div>
+                                </div>
                             </div>
                         </div>
                 </div>
@@ -307,15 +314,16 @@ const Page = () => {
         <div className="bg-[#C4C4C426] p-[15px] rounded-[15px] my-[20px] mb-[120px]">
             <div className="text-[24px]">Log Out</div>
             <div
-                className="w-[150px] mt-[20px]"
+             className="w-[150px] mt-[20px]"
             >
-                <BaseButton
-                    type="button"
+                <button
+                    className="w-full h-[40px] bg-[#FF4D4F] text-white rounded-[12px] shadow-[0.5px] cursor-pointer"
                     onClick={() => {
                         setShowLogin(true)
                     }}
-                    text="Logout"
-                />
+                >
+                Logout
+                </button>
             </div>
             <div className="text-[16px] text-[#000000A6] mt-[20px]" >You’ll need your login details to sign in again.</div>
         </div>

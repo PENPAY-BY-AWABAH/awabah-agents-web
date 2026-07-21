@@ -142,6 +142,7 @@ const GetRemittance  = (page: number) => {
                 </span>
                 <div className="flex-1">
                     <div className="text-[#000000] text-[18px]">{String(item.memo).replace("initialized .",".").replace("Naira ","")} <span className="text-gray-400">{selectedItem === "remittance"?" ~ "+item.fullName:""}</span></div>
+                    {item.ref && item.ref?.includes("AWA-C") && <div className="text-[#000000] text-[14px]">{item.ref}</div>}
                     <div className="text-[#000000] text-[14px]">{NairaSymbol}{item.amount}</div>
                     <div className="text-[#000000A6] text-[12px]" >{moment(item.createdAt).format("Do MMM YYYY, hh:mm A")}</div>
                 </div>

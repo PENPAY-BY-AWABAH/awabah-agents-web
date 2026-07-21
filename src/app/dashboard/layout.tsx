@@ -20,7 +20,15 @@ function Layout({
       {
         setLogin(true)
       }else{
-        navigate.replace(ROUTES.login)
+        const urlParams = new URLSearchParams(window.location.search);
+      const referrer = urlParams.get("referrer");
+      if(referrer)
+      {
+        localStorage.setItem(CONSTANT.LocalStore.referrer, referrer);
+        navigate.replace(ROUTES.register)
+        return;
+      }
+        // navigate.replace(ROUTES.login)
       }
     },[isLogin])
 const [isIdle, setIsIdle] = useState(false);

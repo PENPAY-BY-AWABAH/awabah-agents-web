@@ -5,6 +5,7 @@ import BaseButton from "@/app/components/baseButton";
 import BaseCard from "@/app/components/baseCard";
 import BaseInputSearch from "@/app/components/baseInputSearch";
 import {BaseLoader} from "@/app/components/baseLoader";
+import BaseModal from "@/app/components/baseModal";
 import { COLOURS, CONSTANT, NairaSymbol, placeHolderAvatar, ROUTES } from "@/app/includes/constants"
 import useHttpHook from "@/app/includes/useHttpHook";
 import { DatabaseIcon } from "lucide-react";
@@ -12,6 +13,7 @@ import moment from "moment";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react"
+import { CheckRSAStatusComponent } from "./checkRSAStatusComponent";
 export interface UserItemProp {
   id?: string;
   firstName?: string;
@@ -30,6 +32,8 @@ export interface UserItemProp {
   commission?:string;
   pfaName?:string;
   pfaCode?:string;
+  resend_rsa_request?:boolean;
+  trackingId?:string;
 }
 
 export const UsersSection = ({page}:{page?:boolean})=>{
@@ -52,6 +56,7 @@ export const UsersSection = ({page}:{page?:boolean})=>{
     useEffect(()=>{
         GetAllUsers(1);
     },[])
+    const [checkRSAPINStatus,setCheckRSAPINStatus] =useState<UserItemProp | null>(null);
     const handleSearch = (search:string)=>{
         setSearchText(search);
         if(search == "")
@@ -176,11 +181,15 @@ export const UsersSection = ({page}:{page?:boolean})=>{
         </div>
         </div>
         <BaseButton 
-        text={!item.rsaNumber?"Complete Registration":"Pay Now"}
+        text={!item.rsaNumber?item?.resend_rsa_request?"Check RSA PIN status":"Complete Registration":"Pay Now"}
         onClick={()=>{
+        if(item?.resend_rsa_request)
+        {
+        return setCheckRSAPINStatus(item);
+        }
         if(!item.rsaNumber)
         {
-           navigate.push(`${ROUTES.userOnboarding}?email=${item.email}`) 
+          navigate.push(`${ROUTES.userOnboarding}?email=${item.email}`) 
         }else{
             localStorage.setItem(CONSTANT.LocalStore.remit,JSON.stringify({
             rsaPin: item.rsaNumber,
@@ -200,7 +209,11 @@ export const UsersSection = ({page}:{page?:boolean})=>{
         />
         </div>)}
         </div>
-        
+        {checkRSAPINStatus && <CheckRSAStatusComponent
+        onClose={()=>setCheckRSAPINStatus(null)}
+       user={checkRSAPINStatus}
+
+        />}
         </div>
 }
 export const ApprovedIcon = ()=>{

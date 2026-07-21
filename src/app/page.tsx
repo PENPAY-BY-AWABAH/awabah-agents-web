@@ -12,7 +12,6 @@ import { useRouter } from "next/navigation";
 import Script from "next/script";
 
 export default function Home() {
-  const navigate = useRouter();
   const gaMeasurementId = "";
   const [slider,setSlider] = useState<SlideItemProp[]>([
     {
@@ -33,29 +32,21 @@ export default function Home() {
   ]);
   const [showOnboardingBtn,setShowOnboardingBtn] = useState<boolean>(false);
   const [selectedIndex,setSelectedIndex] = useState<number>(0);
-  const [stop,setStop] = useState<boolean>(false);
   useEffect(()=>{
-  //   const intervalTime = setInterval(()=>{
-  //     setSelectedIndex((count)=>{
-  //       if(count > slider.length - 2)
-  //       {
-  //         setShowOnboardingBtn(true)
-  //         return 0
-  //       }
-  //       return count + 1
-  //     })
-  //   },4000)
-  // return ()=>{
-  //   clearInterval(intervalTime);
-  // }
-  },[stop])
-  useEffect(()=>{
-    const token =localStorage.getItem(CONSTANT.LocalStore.token);
-      const path = window.location.pathname;
-      if(!token && !path.includes(ROUTES.self_registered)) {
-          navigate.replace(ROUTES.dashboard) 
-       }
-      },[])
+    const urlParams = new URLSearchParams(window.location.search);
+    const referrer = urlParams.get("referrer");
+    if(referrer)
+    {
+      localStorage.setItem(CONSTANT.LocalStore.referrer, referrer);
+      const login = localStorage.getItem(CONSTANT.LocalStore.token);
+      if(login)
+      {
+       window.location.href = `${window.location.origin}/${ROUTES.userOnboarding}`;
+       return;
+      }
+    window.location.href = `${window.location.origin}/${ROUTES.register}`;
+    }
+ },[])
   return (<>
     {gaMeasurementId ? <>
       <Script

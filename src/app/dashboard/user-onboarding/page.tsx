@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable react-hooks/set-state-in-effect */
 "use client"
 import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, useEffect, useRef, useState } from "react";
@@ -15,21 +14,19 @@ import { OtpSection } from "./components/otpSection";
 import { NextOfKinPage } from "./components/nextOfKin";
 import { SuccessComponent } from "./components/success";
 import { PaymentComponent } from "./components/payment";
-import { ReturnAllNumbers, ValidateEmail } from "@/app/includes/functions";
 import { BaseLoader } from "@/app/components/baseLoader";
 import BaseSelect from "@/app/components/baseSelect";
 import { ItemProps, StateLGAProp } from "@/app/includes/types";
-import { Calendar, CameraIcon, CheckCircle, UploadIcon } from "lucide-react";
+import { CameraIcon, CheckCircle, UploadIcon } from "lucide-react";
 import { ImagePickerOption } from "./components/imagePickerOption";
 import { CameraView } from "./components/cameraView";
-import BaseInputDate from "@/app/components/baseInputDate";
 import dayjs from "dayjs";
-import { opacity } from "html2canvas/dist/types/css/property-descriptors/opacity";
 import { ConsentPage } from "./components/consent";
 import BaseModal from "@/app/components/baseModal";
-import { title } from "process";
+import useCommissionStore from "@/app/includes/store";
 type RegisterProps = "User Details" | "Verify Email" | "Next Of Kin" | "Success" | "Pay" | "Employment Details" | "Parent / Guardian Details" | "Bank Details" | "Consent Agreement";
 export interface SignUpProps {
+    referralCode?: string;
     email?: string;
     firstName?: string;
     lastName?: string;
@@ -54,6 +51,8 @@ export interface SignUpProps {
     lga?: string;
     dob?: string;
     gender?: string;
+    firstCommissionAmount?: number;
+    secondCommissionAmount?: number;
 }
 
 const Page = () => {
@@ -62,7 +61,7 @@ const Page = () => {
     const [listOfConsent, setListOfConsent] = useState<ItemProps[]>([]);
     const [index, setIndex] = useState<number>(0)
     const [showCamera, setShowCamera] = useState<boolean>(false);
-    const [userIsAgent, setUserIsAgent] = useState<boolean>(false);
+    const [userIsAgent] = useState<boolean>(false);
     const [showOption, setShowOption] = useState<boolean>(false);
     const [userIsMinor, setUserMinor] = useState<boolean>(false);
     const [showState, setShowState] = useState<boolean>(false);
@@ -92,7 +91,8 @@ const Page = () => {
         state: "",
         lga: "",
         signature: "",
-        gender: ""
+        gender: "",
+        firstCommissionAmount: 100
     })
 
     const handleSubmit = (e?: FormEvent) => {
@@ -102,7 +102,8 @@ const Page = () => {
         }
         const data = {
             ...formData,
-            userType: userIsMinor ? "MINOR" : "ADULT"
+            userType: userIsMinor ? "MINOR" : "ADULT",
+            referralCode,
         };
           
         if (userIsMinor) {
@@ -123,7 +124,6 @@ const Page = () => {
         setShowState(false);
         setShowAddress(false);
         handleRegisterUser(data).then((res) => {
-           
             if (res.status) {
                 const data = {
                     ...formData,
@@ -147,26 +147,23 @@ const Page = () => {
         })
     }
     const [listOfStates, setListOfStates] = useState<StateLGAProp[]>([]);
-    const [avatar, setAvatar] = useState<string>("");
     const searchParams = useSearchParams()
-    const email = searchParams.get('email')
+    const email = searchParams.get('email');
+    const [referralCode,setReferralCode] = useState<string>("");
+    const { userDetails } = useCommissionStore()
     useEffect(() => {
-        setSection("User Details")
-        if (section === "User Details") {
-            setIndex(0)
+        const sectionMap: Record<RegisterProps, number> = {
+            "User Details": 0,
+            "Verify Email": 1,
+            "Next Of Kin": 2,
+            "Success": 4,
+            "Pay": 4,
+            "Employment Details": 0,
+            "Parent / Guardian Details": 0,
+            "Bank Details": 0,
+            "Consent Agreement": 3,
         }
-        if (section === "Verify Email") {
-            setIndex(1)
-        }
-        if (section === "Next Of Kin") {
-            setIndex(2)
-        }
-        if (section === "Consent Agreement") {
-            setIndex(3)
-        }
-        if (section === "Success") {
-            setIndex(4)
-        }
+        setIndex(sectionMap[section] ?? 0)
     }, [section])
 
     useEffect(() => {
@@ -183,6 +180,16 @@ const Page = () => {
             })
         }
     }, [email])
+
+    useEffect(()=>{
+        const referrer = localStorage.getItem(CONSTANT.LocalStore.referrer);
+        if(referrer)
+        {
+        setReferralCode(referrer);
+        setDisableReferralCode(true);
+        localStorage.removeItem(CONSTANT.LocalStore.referrer);
+        }
+    },[userDetails])
 
     const handleRSAPIN = (e: FormEvent) => {
         e.preventDefault()
@@ -238,14 +245,6 @@ const Page = () => {
         ListOfSectors();
         GetPFAList();
     }, []);
-
-    useEffect(() => {
-        if (formData.photo) {
-            setAvatar(formData.photo)
-        } else {
-            setAvatar(placeHolderAvatar.src)
-        }
-    }, [formData.photo])
 
     const triggerClick = () => {
         // Safely trigger the hidden input
@@ -320,7 +319,6 @@ const GetStates = ()=>{
                 reader.onload = async function (e: any) {
                     const base64String = e.target.result;
                     const compressedBase64 = await reduceImageSize(base64String, 0.7, 100, 100);
-                    setAvatar(compressedBase64);
                     setFormData({
                         ...formData,
                         photo: compressedBase64
@@ -366,8 +364,8 @@ const GetStates = ()=>{
     useEffect(() => {
         GetStates();
     }, [])
-
-    return <div className="bg-white h-full lg:px-[100px] lg:py-[60px] overflow-none">
+    const [disableReferralCode, setDisableReferralCode] = useState(false);
+    return <div className="bg-white h-full lg:px-[100px] lg:py-[60px] overflow-none relative">
         {section !== "Success" && <div className="mb-6">
             <button
                 onClick={() => {
@@ -398,6 +396,7 @@ const GetStates = ()=>{
             </button>
         </div>}
         {section !== "Success" ? <div className="m-auto items-center text-center h-full overflow-x-scroll">
+            
             <div className="m-auto items-center text-center  rounded-[30px] min-h-[400px] py-[16px] shadow lg:w-[500px] lg:p-[30px] pb-[180px] lg:pb-[60px]">
                 <div className="text-black text-[24px] font-bold text-center mb-[20px] ">{section}</div>
                 <div className="w-[200px]">
@@ -406,8 +405,13 @@ const GetStates = ()=>{
                         selectedIndex={index}
                     />
                 </div>
+                {/* {userDetails.accountType === "Agent" && userDetails?.isAgentAsignedToSuperAgent && <div 
+            className="w-full text-center p-2"
+            >
+             <div className="text-[#FF4D4F] text-[14px] font-bold">{`You've already been assigned to a super agent`}<b></b></div>
+            </div>} */}
                 {section === "User Details" && <div className="mt-[20px]">
-                    {userIsAgent ? <form
+                {userIsAgent ? <form
                         className="mt-5"
                         onSubmit={handleRSAPIN}
                     >
@@ -431,55 +435,6 @@ const GetStates = ()=>{
                                 // HandleCheckEmail(String(formData.email).trim())
                             }}
                         />
-                        {/* {!formData.hasBVN && <BaseInput
-                            type="text"
-                            name="BVN"
-                            value={formData.bvn}
-                            required
-                            onValueChange={({ value }) => {
-                                setFormData({
-                                    ...formData,
-                                    bvn: value
-                                })
-                            }}
-                            max={11}
-                            label={`BVN`}
-                            placeholder="Enter BVN."
-                        />} */}
-                         
-                        <BaseInput
-                            type="text"
-                            name="firstName"
-                            disabled
-                            value={formData.firstName}
-                            required
-                            onValueChange={({ value }) => {
-                                setFormData({
-                                    ...formData,
-                                    firstName: value
-                                })
-                            }}
-                            max={40}
-                            label="First Name"
-                            placeholder="Enter First Name."
-                        />
-                        <BaseInput
-                            type="text"
-                            name="lastName"
-                            value={formData.lastName}
-                            required
-                            disabled
-                            onValueChange={({ value }) => {
-                                setFormData({
-                                    ...formData,
-                                    lastName: value
-                                })
-                            }}
-                            max={40}
-                            label="Last Name"
-                            placeholder="Enter last name."
-                        />
-
                         <div className="mt-5" >
                             <BaseButton
                                 disabled={formData.rsaPin !== ""}
@@ -557,59 +512,17 @@ const GetStates = ()=>{
                                         custom
                                     />
                                 </div>
-                                {/* <BaseInput
+                            {userDetails.accountType === "Agent" && !userDetails?.isAgentAsignedToSuperAgent && <BaseInput
                             type="text"
-                            name="email"
-                            value={formData.email}
-                            required
+                            disabled={disableReferralCode}
+                            name="referralCode"
+                            value={referralCode}
                             onValueChange={({ value }) => {
-                                setFormData({
-                                    ...formData,
-                                    email: value
-                                })
-                              
+                               setReferralCode(value);
                             }}
-                            max={140}
-                            label="Email"
-                            placeholder="Enter Email."
-                            onBlur={()=>{
-                            //   HandleCheckEmail(String(formData.email).trim())
-                            }}
-                        /> */}
-                       {userIsMinor && <BaseInput
-                        disabled={formData.hasBVN}
-                            type="text"
-                            name="firstName"
-                            value={formData.firstName}
-                            required
-                            onValueChange={({ value }) => {
-                                setFormData({
-                                    ...formData,
-                                    firstName: value
-                                })
-                            }}
-                            max={40}
-                            label="First Name"
-                            placeholder="Enter First Name."
-                             onBlur={()=>{
-                                // HandleCheckEmail(String(formData.email).trim())
-                            }}
-                        /> }
-                        {userIsMinor && <BaseInput
-                        disabled={formData.hasBVN}
-                            type="text"
-                            name="lastName"
-                            value={formData.lastName}
-                            required
-                            onValueChange={({ value }) => {
-                                setFormData({
-                                    ...formData,
-                                    lastName: value
-                                })
-                            }}
-                            max={40}
-                            label="Last Name"
-                            placeholder="Enter last name."
+                            max={60}
+                            label={`Referral Code`}
+                            placeholder="Enter Referral Code."
                         />}
                                 
                                 {showState && <BaseModal 
@@ -620,7 +533,7 @@ const GetStates = ()=>{
                                 <div className="text-left mb-4" >
                                     <BaseSelect
                                         label="State"
-                                        list={listOfStates.map((a: StateLGAProp, i: number) => {
+                                        list={listOfStates.map((a: StateLGAProp) => {
                                             return {
                                                 name: a.StateName,
                                                 title: a.StateName,
@@ -637,7 +550,7 @@ const GetStates = ()=>{
                                                 state: value,
                                                 lga: ""
                                             })
-                                            const foundItem = listOfStates.find((a, i) => a.StateName === value);
+                                            const foundItem = listOfStates.find((a) => a.StateName === value);
                                             if (foundItem) {
                                                 setListOfLGA(foundItem.lgas.map((a: any) => {
                                                     return a.name
@@ -651,7 +564,7 @@ const GetStates = ()=>{
                                 <div className="text-left mb-4" >
                                     <BaseSelect
                                         label="LGA"
-                                        list={listOfLGA.map((a, i) => {
+                                        list={listOfLGA.map((a) => {
                                             return {
                                                 title: a,
                                                 name: a,
@@ -901,7 +814,7 @@ const GetStates = ()=>{
                                         label="Select your Job type"
                                     />
                                 </div>}
-                                <div className={`mb-5 h-[45px] mt-5 overflow-hidden flex gap-2 cursor-pointer items-center justify-center block w-full border border-gray-300 rounded-md shadow-sm sm:text-sm relative `}
+                                <div className={`mb-5 h-[45px] mt-5 overflow-hidden flex gap-2 cursor-pointer items-center justify-center w-full border border-gray-300 rounded-md shadow-sm sm:text-sm relative `}
                                 >
                                     {!formData?.signature ? <UploadIcon /> : <CheckCircle color="green" />}
                                     <div className={`${formData?.signature ? "text-green-700" : "text-black"}`} >{formData?.signature ? "Change Signature" : "Upload Signature"}</div>
@@ -959,7 +872,6 @@ const GetStates = ()=>{
                         userIsMinor={userIsMinor}
                     />
                 </div>}
-
                 {section === "Pay" && <div >
                     <PaymentComponent
                         onSuccess={() => {
@@ -1035,6 +947,7 @@ const GetStates = ()=>{
             trackingId={formData.trackingId!}
             rsaPin={formData.rsaPin!}
             pfaName={formData?.pfaName}
+            firstCommissionAmount={formData?.firstCommissionAmount}
         />}
         {showOption && <ImagePickerOption
             onSelect={(d: string) => {
@@ -1052,7 +965,6 @@ const GetStates = ()=>{
         {showCamera && <CameraView
             onSuccess={(base64: string) => {
                 reduceImageSize(base64).then((res) => {
-                    setAvatar(base64)
                     setFormData({
                         ...formData,
                         photo: res

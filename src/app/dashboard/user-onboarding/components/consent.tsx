@@ -27,6 +27,11 @@ export const ConsentPage = ({onClose,onSuccess,trackingId,email,userData}:{onClo
     const handleSaveConsent = () => {
         Download().then((res)=>{
         RequestForRSAPIN({email,trackingId,consentForm:res}).then((res)=>{
+          if(String(res.message).includes("processed"))
+              {
+                toast.success(res.message);
+                return setProcessed(res.message);   
+              }
             if(res.status)
             {
               if(String(res.message).includes("processed"))
@@ -34,7 +39,7 @@ export const ConsentPage = ({onClose,onSuccess,trackingId,email,userData}:{onClo
                 toast.success(res.message);
                 return setProcessed(res.message);   
               }
-            onSuccess(res.data);   
+              onSuccess(res.data);   
             }
         })
         });
@@ -51,7 +56,8 @@ export const ConsentPage = ({onClose,onSuccess,trackingId,email,userData}:{onClo
     // link.click();
     }
     if(processed){
-      return <div className="mt-[20px] h-full px-[40px]">
+      return <div className="mt-[20px] flex justify-center items-center h-full px-[40px] absolute top-[0px] left-[0px] right-[0px]  bg-white">
+        <div className="lg:w-[400px] h-full pt-[55%]  lg:pt-[60px]">
         <div className="flex flex-col items-center justify-center text-center p-6">
           {/* Animated check icon */}
           <svg
@@ -97,6 +103,7 @@ export const ConsentPage = ({onClose,onSuccess,trackingId,email,userData}:{onClo
           text={"Close"}
           type={"button"}
           />
+      </div>
       </div>
       </div>
     }

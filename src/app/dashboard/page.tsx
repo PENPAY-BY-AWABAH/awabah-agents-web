@@ -1,16 +1,17 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 import { useEffect, useState } from "react";
-import { CopyIcon } from "../assets/copy-icon";
 import { FeaturesBtnSection } from "./components/featuresButtonSection";
 import { HistorySection } from "./components/history";
 import { PerformanceSection } from "./components/performanceSection";
+import { ShareModal } from "./components/shareModal";
 import { WalletBalance } from "./components/walletBalanceSection";
-import { CopyToClipboard } from "../includes/functions";
+import useCommissionStore from "../includes/store";
 import useHttpHook from "../includes/useHttpHook";
-import { placeHolderAvatar, ROUTES } from "../includes/constants";
+import { placeHolderAvatar } from "../includes/constants";
 import Link from "next/link";
 import { BellIcon } from "../assets/bell-icon";
+import { Share2Icon } from "lucide-react";
 export interface UserDetails {
     firstName?: string;
     lastName?: string;
@@ -52,28 +53,23 @@ export interface UserDetails {
 }
 const Page = () => {
     const { getAgentProfile } = useHttpHook()
-    const [details, setDetails] = useState<UserDetails>(
-        {
-            firstName: "",
-            lastName: "",
-            agentId: "",
-            phoneNumber: "",
-            createdAt: "",
-            activated: "",
-            accountType: "",
-            rsaNumber: ""
-        }
-    );
-    const GetProfile = () => {
+    const { userDetails, update } = useCommissionStore()
+    const details = userDetails as UserDetails
+    const [showShareModal, setShowShareModal] = useState(false);
+
+    useEffect(() => {
         getAgentProfile().then((res) => {
             if (res.status) {
-                setDetails(res.data)
+                update({
+                    userDetails: {
+                        ...res.data,
+                        fullName: `${res.data.firstName || ""} ${res.data.lastName || ""}`.trim(),
+                        phoneNumber: String(res.data.phoneNumber).replace("+234", "0")
+                    }
+                })
             }
         })
-    }
-    useEffect(() => {
-        GetProfile();
-    }, [])
+    }, [update])
     return <div >
         <div className="flex item-center gap-2">
          <div className="lg:hidden h-[55px] w-[55px] bg-[#C4C4C459] border-[0.5px] rounded-[55px] overflow-hidden" >
@@ -83,13 +79,16 @@ const Page = () => {
         </div>
         <div className="flex-grow">
         <div className="text-[18px] lg:text-[34px] font-bold">Welcome, {details?.firstName || "User"}!</div>
-        <div className="text-[14px] lg:text-[20px]  text-[#000000A6] font-normal flex items-center gap-1">{details?.agentId} <button
-            onClick={() => {
-                CopyToClipboard(String(details?.agentId));
-            }}
+        <div className="text-[14px] lg:text-[20px]  text-[#000000A6] font-normal flex items-center gap-2">
+        {details?.agentId} 
+        <button
+            onClick={()=>setShowShareModal(true)}
             className="cursor-pointer">
-            <CopyIcon />
+            <Share2Icon color="green" />
         </button>
+        </div>
+         <div >
+            <small className="text-[12px] lg:text-[16px] text-[#00000087] font-normal">Share your referral code to invite others to register their RSA PIN.</small>
         </div>
         </div>
         <div className="lg:hidden flex-1 gap-1 flex text-center items-center justify-center">
@@ -104,6 +103,9 @@ const Page = () => {
         <FeaturesBtnSection />
         <PerformanceSection />
         <HistorySection />
+        {showShareModal && <ShareModal
+            onClose={() => setShowShareModal(false)}
+        />}
     </div>
 }
 export default Page;

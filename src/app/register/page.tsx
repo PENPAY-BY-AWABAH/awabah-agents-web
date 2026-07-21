@@ -14,6 +14,7 @@ import { RSAPinSection } from "./components/rsaPINRequest";
 import { CreatAccounContinue } from "./components/create_account_continue";
 import { SuccessSection } from "./components/success";
 import { WalletPINSection } from "./components/walletPINSection";
+import BaseSelect from "../components/baseSelect";
 type RegisterProps = "Create Account" | "Verify Email" | "RSA PIN Request" | "Account" | "Wallet Pin" | "Confirm Pin" ;
 export interface SignUpProps {
 email?:string;
@@ -29,6 +30,8 @@ state?:string;
 howDoYouFindUs?:string;
 address?:string;
 agentId?:string;
+isSuperAgent?:string;
+referalCode?:string;
 }
 const Page = () => {
     const [section, setSection] = useState<RegisterProps>("Create Account")
@@ -39,7 +42,9 @@ const Page = () => {
     const [formData, setFormData] = useState<SignUpProps>({
         email: "",
         password: "",
-        agentId:""
+        agentId:"",
+        isSuperAgent:"Agent",
+        referalCode:""
     })
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault()
@@ -83,6 +88,7 @@ const Page = () => {
             }
         })
     }
+   const [editReferal,setEditReferal] = useState<boolean>(true);
    const searchParams = useSearchParams();
     useEffect(()=>{
       const data = localStorage.getItem(CONSTANT.LocalStore.registrationForm);
@@ -106,6 +112,12 @@ const Page = () => {
                 return setSection("Wallet Pin")
             }
         }
+      }
+      const referrer = localStorage.getItem(CONSTANT.LocalStore.referrer);
+      if(referrer)
+      {
+        setFormData({...formData,referalCode:referrer});
+        setEditReferal(false);
       }
     },[])
     
@@ -188,6 +200,21 @@ const Page = () => {
                             label="Phone Number"
                             placeholder="Enter phone number."
                         />
+                         <BaseInput
+                            type="text"
+                            name="referalCode"
+                            disabled={!editReferal}
+                            value={formData?.referalCode}
+                            onValueChange={({ value }) => {
+                                setFormData({
+                                    ...formData,
+                                    referalCode: value
+                                })
+                            }}
+                            max={80}
+                            label="Referal Code (optional)"
+                            placeholder="Enter referal code."
+                        />
                          {formsStep == null && <BaseInput
                             required
                             type="password"
@@ -218,7 +245,33 @@ const Page = () => {
                             label="Password"
                             placeholder="Enter Password."
                         />}
-                   
+            {/* <BaseSelect 
+            className="text-left"
+            name="isSuperAgent"
+            value={formData?.isSuperAgent || "Agent"}
+            onValueChange={({ value }) => {
+                setFormData({
+                    ...formData,
+                    isSuperAgent: value
+                })
+            }}
+            list={[
+                {
+                    title: "Agent",
+                    value: "Agent",
+                    name: "Agent"
+                },
+                {
+                    title: "Super Agent",
+                    value: "Agent",
+                    name: "Super Agent"
+                }
+            ]}
+            required
+            custom
+            label="Account Type"
+            placeholder="Select your account type."
+            />      */}
             <div className="text-[#009668] mb-5 text-[14px] text-left mt-4">Minimum of 8 letters and a special character ( *#&)</div>
              <div className="flex items-center gap-3 text-black mb-[30px]">
              <div className="w-[30px] h-[30px]">

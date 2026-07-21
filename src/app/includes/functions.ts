@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { CONSTANT, ROUTES } from "./constants";
@@ -23,7 +22,7 @@ export interface UnknownKeyPair {
 export const useApiRequest = ()=>{
   const navigate = useRouter()
     const [loading,setLoading] = useState<boolean>(false);
-    const call = async(props:PayloadProps,showMessage?:boolean)=>{
+    const call = async(props:PayloadProps,showMessage?:boolean,hideFailMessage?:boolean)=>{
     return new Promise<ApiResponse>(async (resolve)=>{
         const body = new FormData();
         const accessToken = await localStorage.getItem(name)
@@ -53,6 +52,10 @@ export const useApiRequest = ()=>{
         fetch(`${CONSTANT.BaseURL}${props.path}`,options).then((response)=>response.json()).then((response)=>{
             setLoading(false)
             console.log(response);
+            if(response.message.includes("Failed"))
+            {
+              response.message = "Failed to fetch. Please check your internet connectivity.";
+            }
             if(response.status)
             {
             if(response.data?.accessToken)
@@ -64,6 +67,7 @@ export const useApiRequest = ()=>{
             toast.success(response.message)
             }
             }
+            
             if(String(response.message).toLowerCase().includes("invalid access") && props.path !== ROUTES.self_registered)
             {
               console.log("logout:"+props.path);
@@ -73,10 +77,13 @@ export const useApiRequest = ()=>{
             resolve(response)
         }).catch((error)=>{
             setLoading(false)
-            toast.error(error.message)  
+            if(!hideFailMessage)
+            {
+            toast.error("Failed to fetch. Please check your internet connectivity.")  
+            }
             resolve({
                 status:false,
-                message:error.message,
+                message:"Failed to fetch. Please check your internet connectivity.",
                 data:{}
             })
         })
