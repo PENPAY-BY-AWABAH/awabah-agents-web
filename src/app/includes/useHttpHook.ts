@@ -373,19 +373,11 @@ const getAgentProfile  = () => {
                 setLoading(false);
                 if(String(res.message).includes("found") === true)
                 {
-                    res.message = "NIN already registered.";
-                    ShowMessage({
-                    position:"center",
-                    ...res
-                    })
-                }
-                if(!res.status)
-                {
-                    if(res.data?.lgaNotFound === false || res.data?.stateNotFound === false || res.data?.countryNotFound === false)
-                   {
-                    ShowMessage({
-                    position:"center",
-                    ...res
+                    res.message = String(res.message).replace("NIN found","Oops, this NIN already has an RSA, please contact your PFA.")
+                    if (!res.data?.lgaNotFound && !res.data?.stateNotFound && !res.data?.countryNotFound && !res.data?.addressNotFound) {
+                        ShowMessage({
+                        position:"center",
+                        ...res
                     })
                     }
                 }

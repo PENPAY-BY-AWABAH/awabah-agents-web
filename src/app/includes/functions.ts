@@ -25,7 +25,7 @@ export const useApiRequest = ()=>{
     const call = async(props:PayloadProps,showMessage?:boolean,hideFailMessage?:boolean)=>{
     return new Promise<ApiResponse>(async (resolve)=>{
         const body = new FormData();
-        const accessToken = await localStorage.getItem(name)
+        const accessToken = await localStorage.getItem(CONSTANT.LocalStore.token)
         setLoading(true)
         Object.keys(props.body).forEach((a:string)=>{
           console.log("keys:",a);

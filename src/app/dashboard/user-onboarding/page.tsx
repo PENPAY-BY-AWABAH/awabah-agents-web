@@ -152,18 +152,21 @@ const Page = () => {
     const [referralCode,setReferralCode] = useState<string>("");
     const { userDetails } = useCommissionStore()
     useEffect(() => {
-        const sectionMap: Record<RegisterProps, number> = {
-            "User Details": 0,
-            "Verify Email": 1,
-            "Next Of Kin": 2,
-            "Success": 4,
-            "Pay": 4,
-            "Employment Details": 0,
-            "Parent / Guardian Details": 0,
-            "Bank Details": 0,
-            "Consent Agreement": 3,
+        if (section === "User Details") {
+            setIndex(0)
         }
-        setIndex(sectionMap[section] ?? 0)
+        if (section === "Next Of Kin") {
+            setIndex(1)
+        }
+        if (section === "Consent Agreement") {
+            setIndex(2)
+        }
+        if (section === "Pay") {
+            setIndex(3)
+        }
+        if (section === "Success") {
+            setIndex(4)
+        }
     }, [section])
 
     useEffect(() => {
@@ -381,6 +384,10 @@ const GetStates = ()=>{
 
                     if (section === "Consent Agreement") {
                         return setSection("Next Of Kin")
+                    }
+
+                    if (section === "Pay") {
+                        return setSection("Consent Agreement")
                     }
 
                     navigate.back();
@@ -875,7 +882,7 @@ const GetStates = ()=>{
                 {section === "Pay" && <div >
                     <PaymentComponent
                         onSuccess={() => {
-
+                            setSection("Success")
                         }}
                         userdata={formData}
                     />
@@ -887,7 +894,7 @@ const GetStates = ()=>{
                                 ...formData,
                                 rsaPin
                             })
-                            setSection("Success")
+                            setSection("Pay")
                         }}
                         onClose={() => {
 

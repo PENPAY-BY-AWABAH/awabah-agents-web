@@ -34,11 +34,6 @@ export const ConsentPage = ({onClose,onSuccess,trackingId,email,userData}:{onClo
               }
             if(res.status)
             {
-              if(String(res.message).includes("processed"))
-              {
-                toast.success(res.message);
-                return setProcessed(res.message);   
-              }
               onSuccess(res.data);   
             }
         })
@@ -46,9 +41,14 @@ export const ConsentPage = ({onClose,onSuccess,trackingId,email,userData}:{onClo
     }
     const divRef = useRef<HTMLDivElement>(null);
     const Download = async()=>{
-     const canvas = await html2canvas(divRef.current!);
-    const dataURL = canvas.toDataURL('image/png');
-    return dataURL;
+      let dataURL = "";
+      try {
+      const canvas = await html2canvas(divRef.current!);
+      dataURL = canvas.toDataURL('image/png');
+      } catch (e) {
+        // fallback: return empty string if html2canvas fails
+      }
+      return dataURL;
     // Create a temporary link to trigger download
     // const link = document.createElement('a');
     // link.href = dataURL;
