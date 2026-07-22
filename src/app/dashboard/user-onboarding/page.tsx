@@ -130,10 +130,6 @@ const Page = () => {
                     ...res.data
                 }
                 setFormData(data);
-                if(res.data?.rsaPin)
-                {
-                    return setSection("Success")
-                }
                 return setSection("Next Of Kin")
             }else{
                 if(res.data?.lgaNotFound === true || res.data?.stateNotFound === true || res.data?.countryNotFound === true)
@@ -209,7 +205,7 @@ const Page = () => {
                     ...formData,
                     ...res.data
                 })
-                return setSection("Success")
+                return setSection("Next Of Kin")
             }
             ShowMessage({ ...res, message: String(res.message).replace("NIN and ", ""), position: "center" })
         })
