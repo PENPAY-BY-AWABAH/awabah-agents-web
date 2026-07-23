@@ -14,7 +14,6 @@ import { RSAPinSection } from "./components/rsaPINRequest";
 import { CreatAccounContinue } from "./components/create_account_continue";
 import { SuccessSection } from "./components/success";
 import { WalletPINSection } from "./components/walletPINSection";
-import BaseSelect from "../components/baseSelect";
 type RegisterProps = "Create Account" | "Verify Email" | "RSA PIN Request" | "Account" | "Wallet Pin" | "Confirm Pin" ;
 export interface SignUpProps {
 email?:string;
@@ -31,7 +30,10 @@ howDoYouFindUs?:string;
 address?:string;
 agentId?:string;
 isSuperAgent?:string;
-referalCode?:string;
+referralCode?:string;
+pfaCode?:string;
+pfaName?:string;
+trackingId?:string;
 }
 const Page = () => {
     const [section, setSection] = useState<RegisterProps>("Create Account")
@@ -44,7 +46,7 @@ const Page = () => {
         password: "",
         agentId:"",
         isSuperAgent:"Agent",
-        referalCode:""
+        referralCode:""
     })
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault()
@@ -101,7 +103,7 @@ const Page = () => {
         {
             const step = searchParams.get("step")
             setFormStep(parseInt(step!))
-            setFormData({...iData,password:"Qwerty@123",nin:"12345678900"});
+            setFormData({...iData,password:"",nin:""});
             if(String(step) === "2")
             {
                 setSuccess(true)
@@ -116,7 +118,7 @@ const Page = () => {
       const referrer = localStorage.getItem(CONSTANT.LocalStore.referrer);
       if(referrer)
       {
-        setFormData({...formData,referalCode:referrer});
+        setFormData({...formData,referralCode:referrer});
         setEditReferal(false);
       }
     },[])
@@ -204,11 +206,11 @@ const Page = () => {
                             type="text"
                             name="referalCode"
                             disabled={!editReferal}
-                            value={formData?.referalCode}
+                            value={formData?.referralCode}
                             onValueChange={({ value }) => {
                                 setFormData({
                                     ...formData,
-                                    referalCode: value
+                                    referralCode: value
                                 })
                             }}
                             max={80}

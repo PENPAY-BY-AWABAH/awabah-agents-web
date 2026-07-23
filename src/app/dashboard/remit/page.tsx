@@ -26,6 +26,7 @@ interface PaymentProp {
     phoneNumber?: string;
     refNo?:string;
     blockFields?:boolean;
+    firstTransaction?: boolean;
 }
 interface ListOfPfa {
     id: string;
@@ -217,8 +218,8 @@ const [listValidation,setListValidation] = useState<ValidationProp[]>([]);
             onSubmit={handleSubmit}
         >
             <div className="m-auto items-center text-center  rounded-[30px] min-h-[400px] shadow lg:w-[500px] p-[16px] lg:p-[30px] pb-[180px] lg:pb-[60px]">
-                <div className="text-black text-[24px] text-center mb-5">{formData.isValid?"Review Details":"Fill in the details to pay"}</div>
-                <BaseInput
+                <div className="text-black text-[24px] text-center mb-5">{formData.isValid?formData.firstTransaction?"Fund Your PIN":"Review Details":"Fill in the details to pay"}</div>
+                {!formData.firstTransaction && <BaseInput
                     required
                     disabled={formData?.blockFields}
                     label="RSA PIN"
@@ -246,7 +247,7 @@ const [listValidation,setListValidation] = useState<ValidationProp[]>([]);
           
                         }
                     }}
-                />
+                />}
                 <BaseInput
                     required
                     label="Phone number"
@@ -306,7 +307,7 @@ const [listValidation,setListValidation] = useState<ValidationProp[]>([]);
                         }
                     }}
                 />
-                {!String(formData?.rsaPin).toUpperCase().includes("AWA") && <div className="text-left">
+                {!formData.firstTransaction && <div className="text-left">
                     <BaseSelect
                         custom
                         list={listOfPfa.map((a: any) => {

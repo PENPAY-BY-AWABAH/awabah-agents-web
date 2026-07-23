@@ -28,8 +28,8 @@ export const PaymentComponent = ({onSuccess,userdata}:{onSuccess:()=>void;userda
         remitMicroPension({
             rsaPin: formData.rsaPIN,
             phoneNumber: userdata.phoneNumber || formData.phoneNumber,
-            providerId: userdata.pfaCode || formData.providerId,
-            pfaName: userdata.pfaName || formData.pfaName,
+            providerId: userdata?.pfaCode || formData.providerId,
+            pfaName: userdata?.pfaName || formData.pfaName,
             fullName: (userdata.firstName || "") + " " + (userdata.lastName || ""),
             amount: amount,
             paymentOption: "monnify"

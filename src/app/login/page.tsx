@@ -127,8 +127,8 @@ const Page = () => {
                             }
                         }}
                         max={isNINInput?11:100}
-                        label="Email or NIN"
-                        placeholder="Enter Email or NIN."
+                        label="Email"
+                        placeholder="Enter Email."
                     />
                     <BaseInput
                         required

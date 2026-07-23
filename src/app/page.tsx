@@ -8,11 +8,10 @@ import { SlideItemProp } from "./includes/types";
 import { CardTwo } from "./dashboard/components/card2";
 import { CardThree } from "./dashboard/components/card3";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import Script from "next/script";
 
 export default function Home() {
-  const gaMeasurementId = "";
+  const gaMeasurementId = "G-H6CGQ8LXX8";
   const [slider,setSlider] = useState<SlideItemProp[]>([
     {
       graphics:<CardOne />,

@@ -121,6 +121,18 @@ const Page = () => {
             return setShowAddress(true)
             }
         }
+        if(formData?.state === "")
+        {
+            return setShowState(true)
+        }
+        if(formData?.lga === "")
+        {
+            return setShowState(true)
+        }
+        if(formData?.address === "")
+        {
+            return setShowAddress(true)
+        }
         setShowState(false);
         setShowAddress(false);
         handleRegisterUser(data).then((res) => {
@@ -162,7 +174,8 @@ const Page = () => {
             setIndex(2)
         }
         if (section === "Pay") {
-            setIndex(3)
+            localStorage.setItem(CONSTANT.LocalStore.remit, JSON.stringify({...formData,firstTransaction: true,isValid: true,fullName: formData.firstName + " " + formData.lastName,providerId: formData.pfaCode}));
+            window.location.href = ROUTES.remit;
         }
         if (section === "Success") {
             setIndex(4)
