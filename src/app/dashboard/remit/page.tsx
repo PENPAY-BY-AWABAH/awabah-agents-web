@@ -49,6 +49,8 @@ export interface PaymentResponseProp {
     fullName?:string;
     refNo?:string;
     rsaPin?:string;
+    providerName?:string;
+    firstTransaction?: boolean;
 }
 export interface ValidationProp {
     name?: string;
@@ -77,18 +79,7 @@ const Page = () => {
     const getListOfProvider = () => {
         getProviders().then((res) => {
             if (res.status) {
-                const whiteList = [
-                   "Leadway Pensure",
-                   "AccessARM Pensions",
-                   "Norrenberger Pensions Limited",
-                   "Veritas Glanvills Pensions Limited",
-                   "Trustfund Pensions", 
-                   "Guaranty Trust Pension Managers (gtco)", 
-                   "CardinalStone Pensions Limited", 
-                   "NLPC Pension Fund Administrators Limited(NLPC PFA)",
-                   "Stanbic Ibtc Pension Managers"
-                ]
-                setListOfPfa(res.data);//.filter((a:ListOfPfa)=>whiteList.includes(a.name)))
+                setListOfPfa(res.data);
             }
         })
     }
@@ -202,7 +193,7 @@ const [listValidation,setListValidation] = useState<ValidationProp[]>([]);
         <div className="mb-6">
             <button
                 onClick={() => {
-                    navigate.back();
+                 navigate.back();
                 }}
                 className="flex items-center gap-2 cursor-pointer">
                  <span className="hidden lg:block" >
@@ -248,7 +239,7 @@ const [listValidation,setListValidation] = useState<ValidationProp[]>([]);
                         }
                     }}
                 />}
-                <BaseInput
+                {!formData.firstTransaction && <BaseInput
                     required
                     label="Phone number"
                     placeholder="Enter Phone number"
@@ -274,7 +265,7 @@ const [listValidation,setListValidation] = useState<ValidationProp[]>([]);
                         return ShowMessage({status:false,message:"Phone number must be 11 digits",data:null,position:"center"})
                         }
                     }}
-                />
+                />}
                 <BaseInput
                     required
                     label="Amount"

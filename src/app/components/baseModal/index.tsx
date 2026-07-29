@@ -6,17 +6,21 @@ interface BaseModalProps {
     title:string;
     type?:"md"|"lg"|"sm"
     slideUp?:boolean;
+    slideUpOnMobile?:boolean;
 }
 const BaseModal = (props:BaseModalProps)=>{
-    const style = props?.slideUp ? {
-        animation: "slideUp 0.3s ease-out forwards",
-        "@keyframes slideUp": {
-            from: { transform: "translateY(100%)" },
-            to: { transform: "translateY(0)" }
-        }
-    } : undefined;
+    const sizeClass = props.type === "lg"
+        ? "w-full max-w-[95vw]"
+        : props.type === "md"
+            ? "w-full max-w-[95vw] md:max-w-[50vw]"
+            : "w-full max-w-full md:max-w-lg";
+    const bottomSheetClass = props.slideUp
+        ? "absolute bottom-[0px] left-[0] right-[0] rounded-b-none rounded-t-[24px] slide-up-modal"
+        : props.slideUpOnMobile
+            ? "absolute bottom-[0px] left-[0] right-[0] rounded-b-none rounded-t-[24px] slide-up-mobile md:relative md:bottom-auto md:left-auto md:right-auto md:rounded-lg"
+            : "";
 
-    return <div className={`fixed inset-0 p-[16px] flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 ${props?.slideUp?"p-[0px]":""} `} style={{zIndex:10}}>
+    return <div className={`fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 ${props?.slideUp?"p-0 items-end":props?.slideUpOnMobile?"p-0 items-end md:p-4 md:items-center":"p-4"} `} style={{zIndex:10}}>
     <style>{`
         @keyframes slideUp {
             from { transform: translateY(100%); }
@@ -25,8 +29,13 @@ const BaseModal = (props:BaseModalProps)=>{
         .slide-up-modal {
             animation: slideUp 0.3s ease-out forwards;
         }
+        @media (max-width: 767px) {
+            .slide-up-mobile {
+                animation: slideUp 0.3s ease-out forwards;
+            }
+        }
     `}</style>
-    <div className={`bg-white p-4 rounded-lg shadow-lg ${props.type === "lg"?"max-w-[95vw]":props.type === "md"?"max-w-[50vw]":"max-w-lg"} w-full ${props?.slideUp?"bottom-[0px] absolute left-[0] right-[0] slide-up-modal":""}`}>
+    <div className={`bg-white p-4 rounded-lg shadow-lg ${sizeClass} ${bottomSheetClass}`}>
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-2xl font-semibold text-gray-800">{props.title}</h3>
         <button 
@@ -44,4 +53,3 @@ const BaseModal = (props:BaseModalProps)=>{
   </div>
 }
 export default BaseModal;
-

@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
-import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 import useHttpHook from "@/app/includes/useHttpHook";
 import BaseInput from "@/app/components/baseInput";
@@ -10,6 +9,7 @@ import BaseSelect from "@/app/components/baseSelect";
 import { ItemProps } from "@/app/includes/types";
 import { BaseLoader } from "@/app/components/baseLoader";
 import { CONSTANT } from "@/app/includes/constants";
+import { SignUpProps } from "@/app/register/page";
 export interface NextOfKinProps {
   email?: string;
   firstName?: string;
@@ -24,7 +24,10 @@ export interface NextOfKinProps {
 
 export const NextOfKinPage = ({onSuccess,trackingId,userIsMinor}:{onClose:()=>void;onSuccess:(data:any)=>void;trackingId:string;userIsMinor?:boolean;}) => {
    
-    const { handleNextOfKin, loading } = useHttpHook();
+    const { handleNextOfKin, loading,ShowMessage } = useHttpHook();
+    const [signUpForm, setSignUpForm] = useState<SignUpProps>({
+        phoneNumber:"",
+    })
     const [formData, setFormData] = useState<NextOfKinProps>({
         trackingId:"",
         firstName:"",
@@ -36,7 +39,12 @@ export const NextOfKinPage = ({onSuccess,trackingId,userIsMinor}:{onClose:()=>vo
         streetName:""
     })
     const handleSubmit = (e: FormEvent) => {
-        e.preventDefault()
+        e.preventDefault();
+         if(formData.phoneNumber === signUpForm.phoneNumber)
+        {
+          ShowMessage({message:"Next of kin phone number cannot be same as user phone number",position:"center",status:false,data:{}})
+          return;
+        }
         handleNextOfKin({
         ...formData, 
         trackingId,
@@ -73,9 +81,14 @@ export const NextOfKinPage = ({onSuccess,trackingId,userIsMinor}:{onClose:()=>vo
         {
            setFormData(JSON.parse(nxt))  
         }
+        const user = localStorage.getItem(CONSTANT.LocalStore.userFormFields);
+        if(user)
+        {
+           setSignUpForm(JSON.parse(user))  
+        } 
     },[])
     return <div className="mt-[20px]">
-    <div >
+       <div >
             <div className="text-[#009668] text-[14px] text-left mt-4">Next of kin details</div>
                 <form onSubmit={handleSubmit}>
                         <BaseInput

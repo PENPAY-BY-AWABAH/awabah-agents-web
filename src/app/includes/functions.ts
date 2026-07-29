@@ -316,3 +316,25 @@ export function ReturnAllFloatNumbers(d: string) {
   d = String(d).trim();
   return d.replace(/[-+,&\/\\#()$~%;'":*?<>{}A-Z a-z]/g, '');
 }
+export const Base64Decode = (str: string) => {
+  try {
+    const normalized = String(str)
+      .replace(/-/g, "+")
+      .replace(/_/g, "/");
+    const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, "=");
+    const decoded = atob(padded);
+
+    try {
+      return decodeURIComponent(
+        decoded
+          .split("")
+          .map((char) => `%${char.charCodeAt(0).toString(16).padStart(2, "0")}`)
+          .join("")
+      );
+    } catch {
+      return decoded;
+    }
+  } catch {
+    return "";
+  }
+}

@@ -39,6 +39,9 @@ export const CONSTANT = {
         historySection:"historySection",
         registrationForm:"registrationForm",
         nextOfKin:"nextOfKin"
+    },
+    Event:{
+        showRegisterOptions:"showRegisterOptions"
     }
 }
 export const Currency = {

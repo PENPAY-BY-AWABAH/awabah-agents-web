@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable @next/next/no-img-element */
 "use client"
@@ -23,18 +24,31 @@ export interface BankProps {
 export const ConsentPage = ({onClose,onSuccess,trackingId,email,userData}:{onClose:()=>void;onSuccess:(data:{rsaPin:string})=>void;trackingId:string;email:string;userData?:SignUpProps}) => {
     const [agree,setAgree] = useState<boolean>(false);
     const [processed,setProcessed] = useState<string>("");
-    const {RequestForRSAPIN,loading} = useHttpHook()
+    const {RequestForRSAPIN,loading,ShowMessage} = useHttpHook()
     const handleSaveConsent = () => {
         Download().then((res)=>{
         RequestForRSAPIN({email,trackingId,consentForm:res}).then((res)=>{
-          if(String(res.message).includes("processed"))
+          if(res.data?.pushedLater)
               {
-                toast.success(res.message);
+                ShowMessage({message:res.message,position:"center",status:true,data:{}})
                 return setProcessed(res.message);   
               }
             if(res.status)
             {
-              onSuccess(res.data);   
+              if(res.data?.rsaPin)
+              {
+                localStorage.setItem(CONSTANT.LocalStore.remit, JSON.stringify({
+                    rsaPin: res.data.rsaPin,
+                    pfaName: userData?.pfaName,
+                    providerId: userData?.pfaCode,
+                    phoneNumber: String(userData?.phoneNumber).replace("undefined", "").replace("+234", "0"),
+                    amount: 3000,
+                    fullName: userData?.firstName + " " + userData?.lastName,
+                    isValid: true,
+                    firstTransaction: true
+                }))
+                window.location.href = ROUTES.remit;
+              } 
             }
         })
         });
@@ -56,7 +70,7 @@ export const ConsentPage = ({onClose,onSuccess,trackingId,email,userData}:{onClo
     // link.click();
     }
     if(processed){
-      return <div className="mt-[20px] flex justify-center items-center h-full px-[40px] absolute top-[0px] left-[0px] right-[0px]  bg-white">
+      return <div className="mt-[0px] flex justify-center items-center h-full px-[40px] absolute top-[0px] left-[0px] right-[0px]  bg-white">
         <div className="lg:w-[400px] h-full pt-[55%]  lg:pt-[60px]">
         <div className="flex flex-col items-center justify-center text-center p-6">
           {/* Animated check icon */}

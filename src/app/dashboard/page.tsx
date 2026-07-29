@@ -12,6 +12,7 @@ import { placeHolderAvatar } from "../includes/constants";
 import Link from "next/link";
 import { BellIcon } from "../assets/bell-icon";
 import { Share2Icon } from "lucide-react";
+import RegisterOptions from "./components/registerOptions";
 export interface UserDetails {
     firstName?: string;
     lastName?: string;
@@ -56,7 +57,7 @@ const Page = () => {
     const { userDetails, update } = useCommissionStore()
     const details = userDetails as UserDetails
     const [showShareModal, setShowShareModal] = useState(false);
-
+ 
     useEffect(() => {
         getAgentProfile().then((res) => {
             if (res.status) {
@@ -103,6 +104,7 @@ const Page = () => {
         <FeaturesBtnSection />
         <PerformanceSection />
         <HistorySection />
+        <RegisterOptions />
         {showShareModal && <ShareModal
             onClose={() => setShowShareModal(false)}
         />}

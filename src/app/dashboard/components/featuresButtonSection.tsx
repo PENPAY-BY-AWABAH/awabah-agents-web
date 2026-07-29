@@ -80,6 +80,17 @@ export const FeaturesBtnSection =()=>{
                    }
                    if(btn.route)
                    {
+                    if(btn.route === ROUTES.userOnboarding)
+                    {
+                        // window send custom event
+                        window.dispatchEvent(new CustomEvent(CONSTANT.Event.showRegisterOptions));
+                        return
+                    }
+                    if(btn.route === ROUTES.remit)
+                    {
+                        window.location.href = ROUTES.remit;
+                        return
+                    }
                     navigation.push(btn.route)
                    }
                 }}

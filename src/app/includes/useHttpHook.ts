@@ -1099,6 +1099,20 @@ const pushToPFA= (user:UserItemProp)=>{
             })
         })
     }     
+const ConfirmRegistration = (nin:any)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`continue-rsa-pin-registration`,
+                body:{nin},
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                resolve(res);
+            })
+        })
+    }
     return {
         loading,
         handleGetTransactions,
@@ -1163,7 +1177,8 @@ const pushToPFA= (user:UserItemProp)=>{
         GetListOfStates,
         pushToPencom,
         pushToPFC,
-        pushToPFA
+        pushToPFA,
+        ConfirmRegistration
     }
 }
 export default useHttpHook;

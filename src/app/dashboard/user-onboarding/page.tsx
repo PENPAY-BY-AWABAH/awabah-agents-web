@@ -24,6 +24,7 @@ import dayjs from "dayjs";
 import { ConsentPage } from "./components/consent";
 import BaseModal from "@/app/components/baseModal";
 import useCommissionStore from "@/app/includes/store";
+import { Base64Decode } from "@/app/includes/functions";
 type RegisterProps = "User Details" | "Verify Email" | "Next Of Kin" | "Success" | "Pay" | "Employment Details" | "Parent / Guardian Details" | "Bank Details" | "Consent Agreement";
 export interface SignUpProps {
     referralCode?: string;
@@ -142,6 +143,21 @@ const Page = () => {
                     ...res.data
                 }
                 setFormData(data);
+                if(res.data?.firstTransaction === true)
+                {
+                    const rsaPin = Base64Decode(res.data?.spin);
+                    localStorage.setItem(CONSTANT.LocalStore.remit, JSON.stringify({
+                    rsaPin,
+                    pfaName: res.data?.pfaName,
+                    providerId: res.data?.providerId,
+                    phoneNumber: String(formData.phoneNumber).replace("undefined", "").replace("+234", "0"),
+                    amount: 3000,
+                    fullName: res.data?.firstName + " " + res.data?.lastName,
+                    isValid: true,
+                    firstTransaction: true
+                }))
+                 return navigate.push(ROUTES.remit)
+                }
                 if(res.data?.rsaPin)
                 {
                     return setSection("Success")
@@ -174,8 +190,9 @@ const Page = () => {
             setIndex(2)
         }
         if (section === "Pay") {
-            localStorage.setItem(CONSTANT.LocalStore.remit, JSON.stringify({...formData,firstTransaction: true,isValid: true,fullName: formData.firstName + " " + formData.lastName,providerId: formData.pfaCode}));
-            window.location.href = ROUTES.remit;
+            // localStorage.setItem(CONSTANT.LocalStore.remit, JSON.stringify({...formData,firstTransaction: true,isValid: true,fullName: formData.firstName + " " + formData.lastName,providerId: formData.pfaCode}));
+            // window.location.href = ROUTES.remit;
+             setIndex(3)
         }
         if (section === "Success") {
             setIndex(4)
@@ -268,6 +285,7 @@ const Page = () => {
             fileUploadInputRef.current?.click();
         }
     };
+
 const GetStates = ()=>{
     GetListOfStates().then((res) => {
         if (res.status) {
@@ -285,7 +303,6 @@ const GetStates = ()=>{
         }
     })
 }
-   
 
     const reduceImageSize = (base64String: string, quality: number = 0.7, maxWidth: number = 1000, maxHeight: number = 1000): Promise<string> => {
         return new Promise((resolve) => {
@@ -903,11 +920,27 @@ const GetStates = ()=>{
                 {section === "Consent Agreement" && <div >
                     <ConsentPage
                         onSuccess={({ rsaPin }) => {
-                            setFormData({
-                                ...formData,
-                                rsaPin
-                            })
-                            setSection("Pay")
+                          setFormData({
+                            ...formData,
+                            rsaPin
+                          })
+                          
+                    if(!formData.rsaPin)
+                    {
+                      return setSection("Success");
+                    }
+                    localStorage.setItem(CONSTANT.LocalStore.remit, JSON.stringify({
+                    rsaPin: formData.rsaPin,
+                    pfaName: formData.pfaName,
+                    providerId: formData?.pfaCode,
+                    phoneNumber: String(formData.phoneNumber).replace("undefined", "").replace("+234", "0"),
+                    amount: 3000,
+                    fullName: formData.firstName + " " + formData.lastName,
+                    isValid: true,
+                    firstTransaction: true
+                }))
+                navigate.push(ROUTES.remit);
+                        //   setSection("Success");
                         }}
                         onClose={() => {
 
@@ -917,7 +950,8 @@ const GetStates = ()=>{
                         userData={formData}
                     />
                 </div>}
-                {/* {section === "Employment Details" && <div >
+                {/* 
+                {section === "Employment Details" && <div >
                     <EmploymentPage
                         onSuccess={(tempPIN) => {
                         update({showCommissionBalance:true});
@@ -932,7 +966,8 @@ const GetStates = ()=>{
                         }}
                         trackingId={formData.trackingId!}
                     />
-                </div>} */}
+                </div>} 
+                */}
                 {/* {section === "Parent / Guardian Details" && <div >
                     <ParentDetailPage
                         onSuccess={() => {
