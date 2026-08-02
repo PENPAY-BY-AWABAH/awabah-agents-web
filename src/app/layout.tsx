@@ -48,7 +48,7 @@ useEffect(() => {
         <meta name="twitter:description" content="Pension Sales Agent responsible for registering new users, facilitating RSA PIN issuance, and earning performance-based commissions." />
       </head>
       <body
-        className={`h-screen bg-white`}
+        className={`h-screen bg-white `}
       >
         <Suspense
         fallback={<div className="flex items-center justify-center h-screen w-screen">
