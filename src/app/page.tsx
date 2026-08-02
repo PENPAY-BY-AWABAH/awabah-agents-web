@@ -15,7 +15,7 @@ export default function Home() {
   const [slider,setSlider] = useState<SlideItemProp[]>([
     {
       graphics:<CardOne />,
-      title:"Become an Awabah Agent",
+      title:"Become an Awabah Agent X",
       description:"Help new users get started on Awabah and earn commissions for every successful onboarding."
     },
     {
