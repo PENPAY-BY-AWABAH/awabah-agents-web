@@ -371,16 +371,11 @@ const getAgentProfile  = () => {
                 requestType:"json"
             }).then((res) => {
                 setLoading(false);
-                if(String(res.message).includes("found") === true)
-                {
                     res.message = String(res.message).replace("NIN found","Oops, this NIN already has an RSA, please contact your PFA.")
-                    if (!res.data?.lgaNotFound && !res.data?.stateNotFound && !res.data?.countryNotFound && !res.data?.addressNotFound) {
                         ShowMessage({
                         position:"center",
                         ...res
                     })
-                    }
-                }
                 resolve(res);
             })
         })
