@@ -1,5 +1,5 @@
+/* eslint-disable react/jsx-no-duplicate-props */
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 import { BackIcon } from "@/app/assets/back-icon";
@@ -15,6 +15,7 @@ import { PaymentVericationModal } from "./components/payment_verification_modal"
 import { CONSTANT } from "@/app/includes/constants";
 import { BaseLoader } from "@/app/components/baseLoader";
 import { PaymentOptionsModal } from "./components/payment_option_modal";
+import BaseModal from "@/app/components/baseModal";
 interface PaymentProp {
     rsaPin?: string;
     pfaName?: string;
@@ -25,6 +26,7 @@ interface PaymentProp {
     phoneNumber?: string;
     refNo?:string;
     blockFields?:boolean;
+    firstTransaction?: boolean;
 }
 interface ListOfPfa {
     id: string;
@@ -46,6 +48,16 @@ export interface PaymentResponseProp {
     phoneNumber?: string;
     fullName?:string;
     refNo?:string;
+    rsaPin?:string;
+    providerName?:string;
+    firstTransaction?: boolean;
+}
+export interface ValidationProp {
+    name?: string;
+    pfaCode?: string;
+    providerCode?: string;
+    providerName?: string;
+    rsaPin?: string;
 }
 const Page = () => {
     const [listOfPfa, setListOfPfa] = useState<ListOfPfa[]>([])
@@ -67,7 +79,7 @@ const Page = () => {
     const getListOfProvider = () => {
         getProviders().then((res) => {
             if (res.status) {
-                setListOfPfa(res.data)
+                setListOfPfa(res.data);
             }
         })
     }
@@ -82,6 +94,7 @@ const Page = () => {
     useEffect(() => {
         getListOfProvider();
     }, [])
+
     useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
         const urlParams = getUrlParams(queryParams);
@@ -107,7 +120,8 @@ const Page = () => {
             })
 
         }
-    }, [])
+    }, []);
+const [listValidation,setListValidation] = useState<ValidationProp[]>([]);
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
         if (!formData.isValid) {
@@ -119,29 +133,36 @@ const Page = () => {
             }).then((res) => {
                 setLoading(false)
                 if (res.status) {
-                    setFormData({
+                    if(res.data?.list?.length > 1)
+                    {
+                    return setListValidation(res.data?.list || []);
+                    }
+                    const  data = {
                         ...formData,
+                        fullName:res.data?.name || "",
                         isValid: true,
-                        fullName: res.data.rsaDetail.name,
-                        pfaName: res.data.rsaDetail.pfaName
-                    })
+                        ...res.data[0]
+                    }
+                    setFormData(data);
                 }
             })
         } else {
             if(parseFloat(String(formData.amount)) < 3000)
             {
-                return ShowMessage({status:false,message:"Oops! the minimum amount is N3,000",data:null,position:"center"})
+                // return ShowMessage({status:false,message:"Oops! the minimum amount is N3,000",data:null,position:"center"})
             }
             setShowPaymentOption(true)
         }
     }
+
     useEffect(()=>{
      const data = localStorage.getItem(CONSTANT.LocalStore.remit);
      if(data)
      {
         setFormData(JSON.parse(data))
      }
-    },[])
+    },[]);
+
     const handlePayNow = (value:string)=>{
         if(String(formData.phoneNumber).length !== 11)
           {
@@ -149,27 +170,30 @@ const Page = () => {
            }
         if(parseFloat(String(formData.amount)) < 3000)
           {
-           return ShowMessage({status:false,message:"Minimum amount is N3,000",data:null,position:"center"})
+        //    return ShowMessage({status:false,message:"Minimum amount is N3,000",data:null,position:"center"})
            }
             setLoading(true)
             const webhook = String(window.location.href).split("?").filter((a,i)=>i == 0).join("");
             remitMicroPension({
                 ...formData,
                 callback_url:webhook,
-                paymentOption:value
+                paymentOption:value,
+                ...formData
             }).then((res) => {
-                setLoading(false)
                 if (res.status && res.data?.paymentUrl) {
                     setShowPaymentOption(false)
                     window.open(res.data.paymentUrl,"_self")
+                }else{
+                setLoading(false)
                 }
             })
     }
+
     return <div className="bg-white h-screen lg:p-4">
         <div className="mb-6">
             <button
                 onClick={() => {
-                    navigate.back();
+                 navigate.back();
                 }}
                 className="flex items-center gap-2 cursor-pointer">
                  <span className="hidden lg:block" >
@@ -185,8 +209,8 @@ const Page = () => {
             onSubmit={handleSubmit}
         >
             <div className="m-auto items-center text-center  rounded-[30px] min-h-[400px] shadow lg:w-[500px] p-[16px] lg:p-[30px] pb-[180px] lg:pb-[60px]">
-                <div className="text-black text-[24px] text-center mb-5">{formData.isValid?"Review Details":"Fill in the details to pay"}</div>
-                <BaseInput
+                <div className="text-black text-[24px] text-center mb-5">{formData.isValid?formData.firstTransaction?"Fund Your PIN":"Review Details":"Fill in the details to pay"}</div>
+                {!formData.firstTransaction && <BaseInput
                     required
                     disabled={formData?.blockFields}
                     label="RSA PIN"
@@ -214,8 +238,8 @@ const Page = () => {
           
                         }
                     }}
-                />
-                <BaseInput
+                />}
+                {!formData.firstTransaction && <BaseInput
                     required
                     label="Phone number"
                     placeholder="Enter Phone number"
@@ -241,7 +265,7 @@ const Page = () => {
                         return ShowMessage({status:false,message:"Phone number must be 11 digits",data:null,position:"center"})
                         }
                     }}
-                />
+                />}
                 <BaseInput
                     required
                     label="Amount"
@@ -266,15 +290,15 @@ const Page = () => {
                         }
                         if(formData.amount && parseFloat(String(formData.amount)) < 3000)
                         {
-                            ShowMessage({status:false,message:"Minimum amount is N3,000",data:null,position:"center"})
-                            setFormData({
-                            ...formData,
-                            amount: ""
-                        });
+                        //     ShowMessage({status:false,message:"Minimum amount is N3,000",data:null,position:"center"})
+                        //     setFormData({
+                        //     ...formData,
+                        //     amount: ""
+                        // });
                         }
                     }}
                 />
-                {!String(formData?.rsaPin).toUpperCase().includes("AWA") && <div className="text-left">
+                {!formData.firstTransaction && <div className="text-left">
                     <BaseSelect
                         custom
                         list={listOfPfa.map((a: any) => {
@@ -322,7 +346,9 @@ const Page = () => {
         </form>
         {showPaymentOption &&<PaymentOptionsModal
         details={formData}
-        onClose={()=>{}}
+        onClose={()=>{
+            setShowPaymentOption(false)
+        }}
         onPayment={(value)=>handlePayNow(value)}
         />}
         {paymentDetails && <PaymentVericationModal
@@ -330,6 +356,26 @@ const Page = () => {
         details={paymentDetails}
         message={message}
         />}
+        {listValidation.length > 0 && <BaseModal
+        title={"Validation Result"}
+        onClose={()=>setListValidation([])}
+        >
+        <div className="text-left">
+        <div className="font-normal">We found a different provider from the one you selected.
+        Please select the correct provider and continue .</div>
+        {listValidation.map((a:ValidationProp,index:number)=>{
+        return <div
+        onClick={()=>{
+            setFormData({...formData,...a,isValid:true})
+            setListValidation([])
+               }}
+        key={index} 
+        className="my-3 border-[1px] cursor-pointer hover:border-green-900 transition-all duration-300 border-green-900 p-2 rounded-md " >
+        <span className="font-normal text-green-900">{a.providerName}</span>
+        </div>
+        })}
+        </div>
+        </BaseModal>}
         {loading && <BaseLoader modal color="green" size="lg" />}
     </div>
 }

@@ -4,7 +4,8 @@ import { useState } from "react";
 import { LoginProps } from "./types";
 import { toast } from "react-toastify";
 import { useApiRequest } from "./functions";
-import {name}  from "../../../package.json"
+import {name}  from "../../../package.json";
+import { UserItemProp } from "../dashboard/components/users";
 export interface ApiResponse {
     status:boolean;
     message:string;
@@ -60,10 +61,13 @@ const useHttpHook = () => {
                 requestType:"json"
             }).then((res) => {
                 setLoading(false);
+                if(!res.data?.switch_account)
+                {
                 ShowMessage({
                     position:"center",
                     ...res
                 })
+            }
                 if(res.status && res.data?.accessToken)
                 {
                     window.localStorage.setItem(name,res.data.accessToken);
@@ -72,7 +76,24 @@ const useHttpHook = () => {
             })
         })
     }
-    
+    const handleLoginWithNIN = (prop: any) => {
+        return new Promise<ApiResponse>((resolve) => {
+            setLoading(true);
+            call({
+                path:"agent-sign-in-with-nin",
+                body:prop,
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                ShowMessage({
+                    position:"center",
+                    ...res
+                })
+                resolve(res);
+            })
+        })
+    }
     const handleOtp = (prop: LoginProps) => {
         return new Promise<ApiResponse>((resolve) => {
             setLoading(true);
@@ -159,6 +180,10 @@ const useHttpHook = () => {
                 requestType:"json"
             }).then((res) => {
                 setLoading(false);
+                ShowMessage({
+                    ...res,
+                    position:"center"
+                })
                 resolve(res);
             })
         })
@@ -187,7 +212,7 @@ const useHttpHook = () => {
         return new Promise<ApiResponse>((resolve) => {
             setLoading(true);
             call({ 
-               path:"agent-get-nigerian-banks",
+               path:"agent-get-nigerian-banks?monnify=true",
                 body:{},
                 method:"GET",
                 requestType:"json"  
@@ -212,12 +237,18 @@ const useHttpHook = () => {
             })
         })
     }   
-    const saveBankAccount = (accountNumber: string,bankCode:string) => {
+
+    const saveBankAccount = (accountNumber: string,bankCode:string,trackingId?:string) => {
         return new Promise<ApiResponse>((resolve) => {
             setLoading(true);
             call({
                 path:"agent-save-bank-details",
-                body:{accountNumber,bankCode},
+                body:{
+                    accountNumber,
+                    bankCode,
+                    monnify:true,
+                    trackingId
+                },
                 method:"POST",
                 requestType:"json"
             }).then((res) => {
@@ -334,19 +365,17 @@ const getAgentProfile  = () => {
         return new Promise<ApiResponse>((resolve) => {
             setLoading(true);
            call({
-                path:`agent-user-registration`,
+                path:`agent-user-${String(data.userType).toLowerCase()}-registration`,
                 body:data,
                 method:"POST",
                 requestType:"json"
             }).then((res) => {
                 setLoading(false);
-                if(!res.status)
-                {
-                    ShowMessage({
-                    position:"center",
-                    ...res
-                })
-                }
+                    res.message = String(res.message).replace("NIN found","Oops, this NIN already has an RSA, please contact your PFA.")
+                        ShowMessage({
+                        position:"center",
+                        ...res
+                    })
                 resolve(res);
             })
         })
@@ -361,13 +390,10 @@ const getAgentProfile  = () => {
                 requestType:"json"
             }).then((res) => {
                 setLoading(false);
-                if(!res.status)
-                {
                     ShowMessage({
                     position:"center",
                     ...res
                 })
-                }
                 resolve(res);
             })
         })
@@ -781,10 +807,13 @@ const handleRSAPINRequest =(data:any)=>{
                 requestType:"json"
             }).then((res) => {
                 setLoading(false);
+                if(!res.status)
+                {
                 ShowMessage({
                     position:"center",
                     ...res
                 })
+            }
                 resolve(res);
             })
         })
@@ -836,12 +865,95 @@ const handleRSAPINRequest =(data:any)=>{
             })
         })
     }
-    const RequestForRSAPIN = (email:string)=>{
+    const RequestForRSAPIN = (data:any)=>{
         return new Promise<ApiResponse>((resolve) => {
          setLoading(true);
            call({
                 path:`agent-request-rsa-pin`,
+                body:data,
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                  if(res.message.includes("Unknown Employer"))
+                    {
+                    res.message = "We are unable to process your job type at the moment. Please select a different option. Thank you."
+                    }
+                if(!res.status)
+                {
+                    ShowMessage({
+                    position:"center",
+                    ...res
+                })
+                }
+                resolve(res);
+            })
+        })
+    }
+   const handleCheckUserEmailIsAgent = (email:string)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-check-if-user-is-agent`,
                 body:{email},
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                resolve(res);
+            })
+        })
+    }
+const ResendOTP = (email:string)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-resend-otp`,
+                body:{email},
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                resolve(res);
+            })
+        })
+    }
+    
+const GetListOfSectors = ()=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-get-consent`,
+                body:{},
+                method:"GET",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                resolve(res);
+            })
+        })
+    }
+
+const handleForgotTransactionPin = ()=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-forgot-txt-pin`,
+                body:{},
+                method:"GET",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                resolve(res);
+            })
+        })
+    }
+const SaveConsent = (data:any)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-save-consent`,
+                body:data,
                 method:"POST",
                 requestType:"json"
             }).then((res) => {
@@ -854,8 +966,148 @@ const handleRSAPINRequest =(data:any)=>{
             })
         })
     }
+
+const handleSaveTxtPIN = (data:any)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-verify-and-save-transation-pin`,
+                body:data,
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                ShowMessage({
+                    position:"center",
+                    ...res
+                })
+                resolve(res);
+            })
+        })
+    }
+const GetListOfPFA = ()=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-get-list-onboarded-pfa`,
+                body:{},
+                method:"GET",
+                requestType:"json"
+            }).then((res) => {
+                resolve(res);
+            })
+        })
+    }
+const validateNIN = (nin:string)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-validate-nin`,
+                body:{nin},
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                if(!res.status){
+                    ShowMessage({
+                        position:"center",
+                        ...res
+                    })
+                }
+                resolve(res);
+            })
+        })
+    }
+const handleDeleteAccount = (nin:string)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-delete-account`,
+                body:{nin},
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                    ShowMessage({
+                        position:"center",
+                        ...res
+                    })
+                resolve(res);
+            })
+        })
+    }
+const GetListOfStates = ()=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`get-list-of-states-lgas`,
+                body:{},
+                method:"GET",
+                requestType:"json"
+            }).then((res) => {
+                resolve(res);
+            })
+        })
+    }
+
+const pushToPencom = (user:UserItemProp)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`admin-awabah-pushtopencom`,
+                body:{trackingId:user.trackingId},
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                resolve(res);
+            })
+        })
+    }  
+
+const pushToPFC= (user:UserItemProp)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`admin-awabah-pushtopfc`,
+                body:{trackingId:user.trackingId},
+                method:"POST",
+                requestType:"json"
+            },false,true).then((res) => {
+                setLoading(false);
+                resolve(res);
+            },)
+        })
+    }  
     
-    
+const pushToPFA= (user:UserItemProp)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`admin-awabah-pushtopfa`,
+                body:{trackingId:user.trackingId},
+                method:"POST",
+                requestType:"json"
+            },false,true).then((res) => {
+                setLoading(false);
+                resolve(res);
+            })
+        })
+    }     
+const ConfirmRegistration = (nin:any)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`continue-rsa-pin-registration`,
+                body:{nin},
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                resolve(res);
+            })
+        })
+    }
     return {
         loading,
         handleGetTransactions,
@@ -906,7 +1158,22 @@ const handleRSAPINRequest =(data:any)=>{
         getUserByEmail,
         ShowMessage,
         ResetTestData,
-        RequestForRSAPIN
+        RequestForRSAPIN,
+        handleCheckUserEmailIsAgent,
+        ResendOTP,
+        GetListOfSectors,
+        SaveConsent,
+        handleForgotTransactionPin,
+        handleSaveTxtPIN,
+        GetListOfPFA,
+        handleLoginWithNIN,
+        validateNIN,
+        handleDeleteAccount,
+        GetListOfStates,
+        pushToPencom,
+        pushToPFC,
+        pushToPFA,
+        ConfirmRegistration
     }
 }
 export default useHttpHook;

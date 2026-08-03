@@ -20,16 +20,22 @@ function Layout({
       {
         setLogin(true)
       }else{
-        navigate.replace(ROUTES.login)
+        const urlParams = new URLSearchParams(window.location.search);
+      const referrer = urlParams.get("referrer");
+      if(referrer)
+      {
+        localStorage.setItem(CONSTANT.LocalStore.referrer, referrer);
+        navigate.replace(ROUTES.register)
+        return;
+      }
+        // navigate.replace(ROUTES.login)
       }
     },[isLogin])
 const [isIdle, setIsIdle] = useState(false);
 const [remaining, setRemaining] = useState(0);
 
   const onIdle = () => {
-    setIsIdle(true);
-    console.log('User is idle');
-    // Auto logout or show modal
+    // setIsIdle(true);
   };
 
   const onActive = () => {
@@ -64,6 +70,7 @@ useEffect(() => {
 useEffect(()=>{
   if(isIdle)
   {
+  localStorage.clear();
   navigate.replace(ROUTES.login)
   }
 },[isIdle])

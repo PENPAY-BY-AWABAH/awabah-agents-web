@@ -1,12 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-hooks/set-state-in-effect */
 "use client"
 import { OutflowIcon } from "@/app/assets/outflow-icon";
 import BaseInputSearch from "@/app/components/baseInputSearch";
 import { BaseLoader } from "@/app/components/baseLoader";
 import { COLOURS, CONSTANT, NairaSymbol, ROUTES } from "@/app/includes/constants"
-import { ReturnComma } from "@/app/includes/functions";
 import useHttpHook from "@/app/includes/useHttpHook";
 import { DatabaseIcon } from "lucide-react";
 import moment from "moment";
@@ -139,14 +137,31 @@ const GetRemittance  = (page: number) => {
         </div>}
         <div className="my-8 mt-6 grid gap-3">
             {filteredList.map((item, i) => <div key={i} className="lg:h-[80px] pb-2 flex gap-3 items-center border-b-[0.5px] border-b-gray-200">
-                <OutflowIcon />
+                <span className={`${item.status === "pending"?"text-red-700  border-red-700":"text-green-700 border-green-700"} ${item.memo?.includes("Payment") && "flip-vertical"}`} >
+                <OutflowIcon  />
+                </span>
                 <div className="flex-1">
                     <div className="text-[#000000] text-[18px]">{String(item.memo).replace("initialized .",".").replace("Naira ","")} <span className="text-gray-400">{selectedItem === "remittance"?" ~ "+item.fullName:""}</span></div>
+                    {item.ref && item.ref?.includes("AWA-C") && <div className="text-[#000000] text-[14px]">{item.ref}</div>}
                     <div className="text-[#000000] text-[14px]">{NairaSymbol}{item.amount}</div>
                     <div className="text-[#000000A6] text-[12px]" >{moment(item.createdAt).format("Do MMM YYYY, hh:mm A")}</div>
+                </div>
+                <div >
+                    <span className={`${item.status === "pending"?"text-red-700  border-red-700":"text-green-700 border-green-700"} rounded-md border-[1px] px-3 py-1 text-[14px]`}>{item.status}</span>
+                </div>
+                <div >
+                    {/* <button 
+                    onClick={()=>{
+
+                    }}
+                    className="rounded-md border-[1px] border-green-800 px-[10px] py-[3px]"
+                    >
+                    Receipt
+                    </button> */}
                 </div>
             </div>)}
         </div>
         </div>
+        
     </div>
 }

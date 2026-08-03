@@ -40,7 +40,7 @@ const [selectedOption,setSelectedOption] = useState<string>(List[0].action);
         <div>
         <div className="mt-5 ">
         <div className="text-left w-full">Select one of the payment options below.</div>
-        {List.map((a,i,self)=><div onClick={()=>{
+        {List.map((a,i,self)=><button onClick={()=>{
         setList(List.map((item,index)=>{
             item.selected = index === i;
             return item;
@@ -48,8 +48,9 @@ const [selectedOption,setSelectedOption] = useState<string>(List[0].action);
         setSelectedOption(a.action)
     }} 
     key={i}
-     className={`${a.selected?" bg-green-50 shadow rounded-md":"bg-white shadow rounded-md"} my-3 p-2`}>
-    <div className="flex items-center p-3 gap-2 cursor-pointer">
+    disabled={i == 1}
+     className={`${i == 1?"opacity-[0.3] cursor-not-allowed":" cursor-pointer "} ${a.selected?" bg-green-50 shadow rounded-md":"bg-white shadow rounded-md"} my-3 p-2 w-full`}>
+    <div className="flex items-center p-3 gap-2 ">
     <div className="pe-2" style={{width:40}}>
     {typeof(a.icon) === "string"?<img alt="x" style={{width:20,height:20,backgroundColor:"#ddd"}} src={a.icon}/>:a.icon}
     </div>
@@ -62,7 +63,7 @@ const [selectedOption,setSelectedOption] = useState<string>(List[0].action);
     </div>:i === self.length - 1?<div className="right-[8px]" >
     </div>:null}
     </div>
-    </div>)}
+    </button>)}
         <BaseButton
         text="Pay Now"
         type="button"

@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { CONSTANT, ROUTES } from "./constants";
@@ -23,10 +22,10 @@ export interface UnknownKeyPair {
 export const useApiRequest = ()=>{
   const navigate = useRouter()
     const [loading,setLoading] = useState<boolean>(false);
-    const call = async(props:PayloadProps,showMessage?:boolean)=>{
+    const call = async(props:PayloadProps,showMessage?:boolean,hideFailMessage?:boolean)=>{
     return new Promise<ApiResponse>(async (resolve)=>{
         const body = new FormData();
-        const accessToken = await localStorage.getItem(name)
+        const accessToken = await localStorage.getItem(CONSTANT.LocalStore.token)
         setLoading(true)
         Object.keys(props.body).forEach((a:string)=>{
           console.log("keys:",a);
@@ -53,6 +52,10 @@ export const useApiRequest = ()=>{
         fetch(`${CONSTANT.BaseURL}${props.path}`,options).then((response)=>response.json()).then((response)=>{
             setLoading(false)
             console.log(response);
+            if(response.message.includes("Failed"))
+            {
+              response.message = "Failed to fetch. Please check your internet connectivity.";
+            }
             if(response.status)
             {
             if(response.data?.accessToken)
@@ -64,18 +67,23 @@ export const useApiRequest = ()=>{
             toast.success(response.message)
             }
             }
-            if(String(response.message).toLowerCase().includes("invalid access"))
+            
+            if(String(response.message).toLowerCase().includes("invalid access") && props.path !== ROUTES.self_registered)
             {
+              console.log("logout:"+props.path);
               localStorage.clear();
               navigate.replace(ROUTES.login)
             }
             resolve(response)
         }).catch((error)=>{
             setLoading(false)
-            toast.error(error.message)  
+            if(!hideFailMessage)
+            {
+            toast.error("Failed to fetch. Please check your internet connectivity.")  
+            }
             resolve({
                 status:false,
-                message:error.message,
+                message:"Failed to fetch. Please check your internet connectivity.",
                 data:{}
             })
         })
@@ -307,4 +315,26 @@ export const MaskBalance = (balance:string, isVisible = false, options = {}) => 
 export function ReturnAllFloatNumbers(d: string) {
   d = String(d).trim();
   return d.replace(/[-+,&\/\\#()$~%;'":*?<>{}A-Z a-z]/g, '');
+}
+export const Base64Decode = (str: string) => {
+  try {
+    const normalized = String(str)
+      .replace(/-/g, "+")
+      .replace(/_/g, "/");
+    const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, "=");
+    const decoded = atob(padded);
+
+    try {
+      return decodeURIComponent(
+        decoded
+          .split("")
+          .map((char) => `%${char.charCodeAt(0).toString(16).padStart(2, "0")}`)
+          .join("")
+      );
+    } catch {
+      return decoded;
+    }
+  } catch {
+    return "";
+  }
 }

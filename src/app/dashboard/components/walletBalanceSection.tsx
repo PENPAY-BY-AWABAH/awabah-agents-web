@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client"
 import { GreenBackground } from "@/app/assets/green-background"
 import BaseButton from "@/app/components/baseButton";
@@ -11,7 +12,8 @@ import Link from "next/link";
 import { useEffect, useState } from "react"
 export interface WalletBalanceProps {
     balance: string;
-    earnings?: string;
+   total_commission_earned?: string;
+   total_commission_count?: string;
 }
 export const WalletBalance = () => {
     const { GetBalance } = useHttpHook();
@@ -19,7 +21,8 @@ export const WalletBalance = () => {
     const [showBalance, setShowBalance] = useState<boolean>(false)
     const [balance, setBalance] = useState<WalletBalanceProps>({
         balance: "0.00",
-        earnings: "0.00"
+        total_commission_count: "0.00",
+        total_commission_earned: "0.00"
     })
     const GetWalletInfo = () => {
         GetBalance().then((res) => {
@@ -44,7 +47,7 @@ export const WalletBalance = () => {
                     {showBalance ? <EyeOpen /> : <EyeClosed />}
                 </button></div>
                 <div className="text-white lg:font-normal font-bold text-[20px] lg:text-[38px] ">{MaskBalance(balance.balance, !showBalance)}</div>
-                <div className="text-[#FFD983] text-[12px] lg:text-[14px]">Total Earned: {MaskBalance((balance?.earnings || "0.00"), !showBalance)}<span></span></div>
+                <div className="text-[#FFD983] text-[12px] lg:text-[14px]">Total Earned: {MaskBalance((balance?.total_commission_earned || "0.00"), !showBalance)}<span></span></div>
             </div>
             <div className="lg:me-20 flex items-center">
                 <Link
@@ -142,7 +145,7 @@ export const WalletBalance = () => {
                         <path opacity="0.2" d="M47.1326 19.1032C47.062 19.0629 46.9788 19.0369 46.8909 19.0278C46.8394 19.0173 46.7852 19.0173 46.7338 19.0278C46.2181 19.1817 47.2051 19.8395 47.3582 19.4744C47.3792 19.4115 47.3692 19.3451 47.33 19.2873C47.2876 19.2137 47.2194 19.1501 47.1326 19.1032Z" fill="white" />
                     </svg>
                     <div className="text-[14px] text-center mt-5 mb-6" >Your last user onboarding was successful.
-                        <br />You’ve earned ₦300, which has been added to your wallet.
+                        <br />You’ve earned ₦100, which has been added to your wallet.
                     </div>
                     <BaseButton
                         text="Okay"

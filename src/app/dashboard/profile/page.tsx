@@ -2,13 +2,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
 "use client"
-import { useRouter } from "next/navigation";
-import { ApprovedIcon, PendingIcon, UsersSection } from "../components/users";
+import { ApprovedIcon, PendingIcon } from "../components/users";
 import { TabSection } from "./components/Tabs";
-import { ChangeEventHandler, FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import useHttpHook from "@/app/includes/useHttpHook";
 import { UserDetails } from "../page";
-import { placeHolderAvatar } from "@/app/includes/constants";
 import { CopyToClipboard } from "@/app/includes/functions";
 import { CopyIcon } from "@/app/assets/copy-icon";
 import BaseInput from "@/app/components/baseInput";
@@ -16,19 +14,18 @@ import BaseButton from "@/app/components/baseButton";
 import { ChangePasswordIcon } from "@/app/assets/change-password-icon";
 import { ChevronRightIcon } from "@/app/assets/chevron-right";
 import { ChangeTransactionPinIcon } from "@/app/assets/change-txt-pin";
-import BaseModal from "@/app/components/baseModal";
-import { OTPBaseInput } from "@/app/components/baseOTPInput";
 import { PasswordModal } from "./components/password-modal";
 import { TxtPINModal } from "./components/txt-pin-modal";
 import { LogoutModal } from "./components/logout-modal";
 import { SaveProfileModal } from "./components/save-profile-modal";
 import BaseSelect from "@/app/components/baseSelect";
 import { ItemProps } from "@/app/includes/types";
-import { BaseLoader } from "@/app/components/baseLoader";
+import { AvatarSection } from "./components/avatar-section";
+import { UserIcon } from "@/app/assets/user-p-icon";
+import { User2 } from "lucide-react";
 
 const Page = () => {
-    const navigate = useRouter();
-    const { getAgentProfile,updateAvatar } = useHttpHook();
+    const { getAgentProfile } = useHttpHook();
     const [formData, setFormData] = useState<UserDetails>({
         firstName: "",
         lastName: "",
@@ -43,7 +40,6 @@ const Page = () => {
         state: ""
     })
     const [showPasswordChange, setShowPasswordChange] = useState<boolean>(false);
-    const [uploading, setUploading] = useState<boolean>(false);
     const [showLogin, setShowLogin] = useState<boolean>(false);
     const [showSaveProfile, setShowSaveProfile] = useState<boolean>(false);
     const [showTransactionPINChange, setShowTransactionPINChange] = useState<boolean>(false);
@@ -87,77 +83,36 @@ const Page = () => {
         e.preventDefault()
         setShowSaveProfile(ifChanges)
     }
-const fileUploadInputRef = useRef<HTMLInputElement>(null)
 
-const handleFileChange = (e:any) => {
-    const files = e.target.files;
-    if (files && files.length > 0) {
-      const selectedFile = files[0];
-      console.log("Selected file:", selectedFile.name);
-      uploadFile(selectedFile);
-    }
-  };
-const uploadFile = (selectedFile:any)=>{
-    if(uploading)
-    {
-        return;
-    }
-    setUploading(true)
-    updateAvatar(selectedFile).then((res)=>{
-     setUploading(false) 
-     if(res.status) 
-     {
-       GetProfile(); 
-     }
-    })
-}
-  const triggerClick = () => {
-    // Safely trigger the hidden input
-    if (fileUploadInputRef.current) {
-      fileUploadInputRef.current?.click();
-    }
-  };
+
     return <div className="">
-        <input 
-        ref={fileUploadInputRef}
-        type="file"
-        onChange={handleFileChange}
-        className="absolute top-[0px] opacity-0"
-        accept="image/*"
-        />
         <div className="flex items-center gap-3">
             <UserIcon />
             <div className="text-[20px] font-medium lg:text-[32px]">Profile</div>
         </div>
         <div className="bg-[#C4C4C426] p-[16px] lg:p-[30px] rounded-[15px] my-[16px] lg:my-[20px]">
                 <div className="flex items-center gap-3 lg:gap-5">
-                        <div className="items-center text-center justify-center " >
-                            <div
-                            onClick={triggerClick}
-                            className="lh-[65px] w-[65px] lg:h-[150px] lg:w-[150px] relative cursor-pointer bg-[#C4C4C459] border-[0.5px] rounded-[150px] overflow-hidden" >
-                                <img src={details?.avatar ? details?.avatar : placeHolderAvatar.src}
-                                    alt={details.id}
-                                    className="h-full w-full" />
-                            {uploading &&<div className="h-full flex item-center text-center justify-center w-full absolute top-0 left-0 bg-[#00000061] " >
-                            <div className="m-auto">
-                            <BaseLoader color="green" size="lg" />
-                            </div>
-                            </div>}
-                            </div>
-                            <button
-                            onClick={triggerClick}
-                            className="underline cursor-pointer m-auto text-[14px] lg:text-[16px] text-[#1455E0] mt-3 "
-                            >
-                            Change Image
-                            </button>
-                        </div>
+                       <AvatarSection
+                        details={details}
+                        onReloadProfile={()=>{
+                            GetProfile()
+                        }}
+                        />
                         <div className="flex-glow text-[14px] lg:text-[16px]" >
-                            <div className="text-[#000000]  ">Agent Name: <span className="font-bold">{details.firstName} {details.lastName}</span></div>
-                            <div className="text-[#000000] mt-[5px] flex item-center gap-[2px]">Agent ID: <span className="font-bold flex item-center gap-[2px]">{details.agentId} <button
+                            <div className="text-[#000000]  ">Agent Name: <span className="font-bold hidden lg:block">{details.firstName} {details.lastName}</span></div>
+                            <div className="text-[#000000] font-bold lg:hidden ">{details.firstName} {details.lastName}</div>
+                            <div className="text-[#000000] mt-[5px] flex item-center gap-[2px]">Agent ID: <span className="font-bold flex item-center gap-[2px] hidden lg:block">{details.agentId} <button
                                 onClick={() => {
                                     CopyToClipboard(String(details?.agentId));
                                 }}
-                                className="cursor-pointer">
+                                className="cursor-pointer mt-[-10px]">
+                                <CopyIcon />
+                            </button></span></div>
+                            <div className="text-[#000000] mt-[0px] flex item-center gap-[2px] lg:hidden "><span className="font-bold flex item-center gap-[2px]">{details.agentId} <button
+                                onClick={() => {
+                                    CopyToClipboard(String(details?.agentId));
+                                }}
+                                className="cursor-pointer mt-[-5px] ms-[10px]">
                                 <CopyIcon />
                             </button></span></div>
                             <div className="flex mt-[5px] text-[#000000] gap-[4px] " >
@@ -169,6 +124,12 @@ const uploadFile = (selectedFile:any)=>{
                                     <PendingIcon />
                                     <div >Pending</div>
                                 </div>}
+                            </div>
+                            <div className="flex mt-[5px] gap-[4px] " >
+                                <div className="flex text-[10px] gap-1 items-center bg-[#a5000026] text-[#a50000] rounded-[30px] px-2 py-1" >
+                                    <User2 size={13} />
+                                    <div>{details?.accountType}</div>
+                                </div>
                             </div>
                         </div>
                 </div>
@@ -353,15 +314,16 @@ const uploadFile = (selectedFile:any)=>{
         <div className="bg-[#C4C4C426] p-[15px] rounded-[15px] my-[20px] mb-[120px]">
             <div className="text-[24px]">Log Out</div>
             <div
-                className="w-[150px] mt-[20px]"
+             className="w-[150px] mt-[20px]"
             >
-                <BaseButton
-                    type="button"
+                <button
+                    className="w-full h-[40px] bg-[#FF4D4F] text-white rounded-[12px] shadow-[0.5px] cursor-pointer"
                     onClick={() => {
                         setShowLogin(true)
                     }}
-                    text="Logout"
-                />
+                >
+                Logout
+                </button>
             </div>
             <div className="text-[16px] text-[#000000A6] mt-[20px]" >You’ll need your login details to sign in again.</div>
         </div>
@@ -384,9 +346,3 @@ const uploadFile = (selectedFile:any)=>{
     </div>
 }
 export default Page;
-export const UserIcon = () => {
-    return <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M18 15C21.3137 15 24 12.3137 24 9C24 5.68629 21.3137 3 18 3C14.6863 3 12 5.68629 12 9C12 12.3137 14.6863 15 18 15Z" fill="#009668" />
-        <path d="M30 26.25C30 29.9775 30 33 18 33C6 33 6 29.9775 6 26.25C6 22.5225 11.373 19.5 18 19.5C24.627 19.5 30 22.5225 30 26.25Z" fill="#009668" />
-    </svg>
-}

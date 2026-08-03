@@ -73,9 +73,9 @@ else
         [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
         
         # Source bashrc to load NVM
-        if [ -f ~/.bashrc ]; then
-            source ~/.bashrc 2>/dev/null || true
-        fi
+        # if [ -f ~/.bashrc ]; then
+        #     source ~/.bashrc 2>/dev/null || true
+        # fi
         
         # Load NVM for current session
         export NVM_DIR="$HOME/.nvm"

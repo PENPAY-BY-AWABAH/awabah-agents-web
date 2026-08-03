@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-empty-object-type */
 
 import { ReactNode } from "react";
 
@@ -47,3 +46,17 @@ import { ReactNode } from "react";
         bankCode?:string;
         createdAt?:string;
     }
+export interface LGAProps {
+  name?:string
+  code?:string;
+  id?: number;
+  postCode?: number;
+}
+export interface StateLGAProp {
+  Id: number;
+  CountryID:number;
+  StateName:string;
+  Code:string;
+  lgas:LGAProps[];
+  Alias?:string;
+}

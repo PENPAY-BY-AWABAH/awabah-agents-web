@@ -9,18 +9,16 @@ import { CONSTANT, ROUTES } from "../includes/constants";
 import Link from "next/link";
 import useHttpHook from "../includes/useHttpHook";
 import { LoginProps } from "../includes/types";
-import BaseModal from "../components/baseModal";
 import { SwitchAccount } from "./components/switch-account";
 import { HandleResetData } from "./components/handleReset";
-import BaseInputDate from "../components/baseInputDate";
-import dayjs from "dayjs";
 import { OtpSection } from "./components/otp-screen";
+import { ReturnAllNumbers } from "../includes/functions";
 
 const Page = () => {
-
     const [showAccountSwitch, setShowAccountSwitch] = useState<boolean>(false)
     const navigate = useRouter();
-    const { handleLogin, loading } = useHttpHook();
+    const { handleLogin,handleLoginWithNIN, loading } = useHttpHook();
+     
     const [formData, setFormData] = useState<LoginProps>({
         email: "",
         password: ""
@@ -28,10 +26,48 @@ const Page = () => {
     const [showOTP, setShowOTP] = useState<boolean>(false);
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault()
+        if(isNINInput)
+        {
+          return handleLoginWithNIN({
+            password: formData.password,
+            nin: formData.email
+        }).then((res) => {
+            if (res.message.includes("OTP")) {
+               return setShowOTP(true)
+            }
+             if (res?.data?.other_info_not_saved) {
+                localStorage.setItem(CONSTANT.LocalStore.registrationForm,JSON.stringify(res.data))
+                return navigate.replace(`${ROUTES.register}?step=2`)
+            }
+            
+             if (res.data?.transaction_pin_not_saved) {
+                 localStorage.setItem(CONSTANT.LocalStore.registrationForm,JSON.stringify(res.data))
+                return navigate.replace(`${ROUTES.register}?step=3`)
+            }
+          
+            if (res.status) {
+                navigate.replace(ROUTES.dashboard)
+            } else {
+                if (res.data?.switch_account) {
+                    setShowAccountSwitch(true)
+                }
+            }
+        })  
+        }
         handleLogin(formData).then((res) => {
             if (res.message.includes("OTP")) {
-                return setShowOTP(true)
+               return setShowOTP(true)
             }
+             if (res?.data?.other_info_not_saved) {
+                localStorage.setItem(CONSTANT.LocalStore.registrationForm,JSON.stringify(res.data))
+                return navigate.replace(`${ROUTES.register}?step=2`)
+            }
+            
+             if (res.data?.transaction_pin_not_saved) {
+                 localStorage.setItem(CONSTANT.LocalStore.registrationForm,JSON.stringify(res.data))
+                return navigate.replace(`${ROUTES.register}?step=3`)
+            }
+          
             if (res.status) {
                 navigate.replace(ROUTES.dashboard)
             } else {
@@ -46,9 +82,11 @@ const Page = () => {
     useEffect(() => {
         const token = localStorage.getItem(CONSTANT.LocalStore.token);
         if (token) {
-            // navigate.replace(ROUTES.dashboard) 
+           return navigate.replace(ROUTES.dashboard) 
         }
+      
     }, [])
+    const isNINInput = /^[0-9]/.test(formData.email ?? "")
     return <div className="bg-white min-h-full lg:px-[100px] p-[16px] lg:py-[60px] overflow-hidden">
         <div className="mb-6">
             <button
@@ -68,18 +106,27 @@ const Page = () => {
         <div className="m-auto items-center text-center overflow-scroll px-[8px] pb-[8px] ">
             <div className="m-auto items-center text-center rounded-[30px] lg:min-h-[400px] shadow lg:w-[500px] px-[16px]  lg:p-[30px] pb-[20px]  lg:pb-[60px]">
                 <div className="text-black text-[24px] font-bold text-center">Login</div>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} >
                     <BaseInput
-                        type="text"
-                        name="email"
+                        type={isNINInput?"text":"email"}
+                        name={"email"}
                         value={formData.email}
                         required
                         onValueChange={({ value }) => {
-                            setFormData({
-                                ...formData,
-                                email: String(value).trim().toLowerCase()
-                            })
+                            if(isNINInput)
+                            {
+                                setFormData({
+                                    ...formData,
+                                    email: ReturnAllNumbers(String(value).trim())
+                                })
+                            }else{
+                                setFormData({
+                                    ...formData,
+                                    email: String(value).trim().toLowerCase()
+                                })
+                            }
                         }}
+                        max={isNINInput?11:100}
                         label="Email"
                         placeholder="Enter Email."
                     />
@@ -106,7 +153,7 @@ const Page = () => {
                             value={true}
 
                         />
-                        <span className="text-[14px">Remember me</span>
+                        <span className="text-[14px]">Remember me</span>
                         <div className="flex items-center justify-end flex-1">
                             <Link
                                 href={ROUTES.forgotPassword}
@@ -121,6 +168,7 @@ const Page = () => {
                         text="Log in"
                         type="submit"
                     />
+                    
                     <div className="flex items-center justify-center mt-[30px] gap-1">
                         <span className="text-[14px] text-black">Don`t have an account?</span>
                         <Link
@@ -131,11 +179,34 @@ const Page = () => {
                         </Link>
                     </div>
                 </form>
+                <div className="mt-5" >
+                 <Link
+                  href={"https://onboarding.awabah.com/generate-rsa-pin"}
+                  className="text-[14px] text-[#009668] "
+                  >
+                I want to register myself
+                  </Link>
+                  </div>
+                <HandleResetData
+                />
             </div>
         </div>
         {showOTP && <OtpSection
             onClose={() => {
                 setShowOTP(false);
+                const user =  localStorage.getItem(CONSTANT.LocalStore.registrationForm);
+                if(user)
+                {
+                  const userData = JSON.parse(user)
+                  if(userData?.other_info_not_saved)
+                  {
+                   return navigate.replace(`${ROUTES.register}?step=2`)
+                  }
+                  if(userData?.transaction_pin_not_saved)
+                  {
+                   return navigate.replace(`${ROUTES.register}?step=3`)
+                  }
+                }
             }}
             email={formData.email!}
         />}

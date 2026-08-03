@@ -17,6 +17,7 @@ saveBankAccount:"/dashboard/save-bank-account",
 selectBankAccount:"/dashboard/select-bank-account",
 addAccount:"/dashboard/add-account",
 terms:"/terms-and-conditions",
+self_registered:"/self-registration"
 }
 export interface RouteItem {
 title:string;
@@ -31,10 +32,16 @@ export const CONSTANT = {
     LocalStore:{
         token:"token",
         baseUrl:"baseurl", 
+        referrer:"referrer",
         resetPassword:"resetPassword",
         remit:"remit",
         userFormFields:"userFormFields",
-        historySection:"historySection"
+        historySection:"historySection",
+        registrationForm:"registrationForm",
+        nextOfKin:"nextOfKin"
+    },
+    Event:{
+        showRegisterOptions:"showRegisterOptions"
     }
 }
 export const Currency = {

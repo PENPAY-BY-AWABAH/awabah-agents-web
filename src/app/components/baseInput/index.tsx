@@ -113,7 +113,7 @@ if(typeof props.value === "string")
     <Ban color="red" size={15} />
    </span>:props.type === "password" && <span
    onClick={()=>setToggleEye(!toggleEye)} className='input-icon pt-[5px]'>
-    {toggleEye?<EyeOpen />:<EyeIcon />} 
+    {toggleEye?<EyeOpen  />:<EyeIcon color='black' />} 
    </span>}
 </div>
 {props?.error?<div className='text-red-600' >{props.error}</div>:null}

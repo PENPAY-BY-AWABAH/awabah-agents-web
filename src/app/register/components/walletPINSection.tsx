@@ -1,18 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-hooks/set-state-in-effect */
-/* eslint-disable react/no-unescaped-entities */
 import BaseButton from "@/app/components/baseButton"
-import BaseInput from "@/app/components/baseInput"
 import { BaseLoader } from "@/app/components/baseLoader"
 import { OTPBaseInput } from "@/app/components/baseOTPInput"
-import { ROUTES } from "@/app/includes/constants"
+import { CONSTANT, ROUTES } from "@/app/includes/constants"
 import { LoginProps } from "@/app/includes/types"
 import useHttpHook from "@/app/includes/useHttpHook"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { SignUpProps } from "../page"
 
-export const WalletPINSection = ({signUpForm,onSuccess}:{signUpForm:SignUpProps;onSuccess:()=>void})=>{
+export const WalletPINSection = ({signUpForm}:{signUpForm:SignUpProps;onSuccess:()=>void})=>{
     const navigate = useRouter()
     const [success,setSuccess] = useState<boolean>(false)
     const [formData,setFormData] = useState<LoginProps>({
@@ -20,7 +17,6 @@ export const WalletPINSection = ({signUpForm,onSuccess}:{signUpForm:SignUpProps;
         password:"",
         confirmPassword:""
     })
-    const [counter,setCounter] = useState<number>(0);
     const [pin,setPin] = useState<string>("");
     const [confirmPin,setConfirmPin] = useState<string>("");
     const {handleUpdateWalletPIN,loading} = useHttpHook();
@@ -31,6 +27,7 @@ export const WalletPINSection = ({signUpForm,onSuccess}:{signUpForm:SignUpProps;
             pin:confirmPin
         }).then((res)=>{
             setSuccess(res.status)
+            localStorage.removeItem(CONSTANT.LocalStore.registrationForm)
         })
     }
    

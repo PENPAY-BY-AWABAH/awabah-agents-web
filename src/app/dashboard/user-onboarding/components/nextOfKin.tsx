@@ -1,11 +1,15 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
-import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 import useHttpHook from "@/app/includes/useHttpHook";
 import BaseInput from "@/app/components/baseInput";
 import BaseButton from "@/app/components/baseButton";
 import BaseSelect from "@/app/components/baseSelect";
 import { ItemProps } from "@/app/includes/types";
+import { BaseLoader } from "@/app/components/baseLoader";
+import { CONSTANT } from "@/app/includes/constants";
+import { SignUpProps } from "@/app/register/page";
 export interface NextOfKinProps {
   email?: string;
   firstName?: string;
@@ -18,10 +22,12 @@ export interface NextOfKinProps {
   trackingId?:string;
 }
 
-export const NextOfKinPage = ({onClose,onSuccess,trackingId}:{onClose:()=>void;onSuccess:()=>void;trackingId:string}) => {
-    const [index,setIndex] =  useState<number>(0)
-    const navigate = useRouter();
-    const { handleNextOfKin, loading } = useHttpHook();
+export const NextOfKinPage = ({onSuccess,trackingId,userIsMinor}:{onClose:()=>void;onSuccess:(data:any)=>void;trackingId:string;userIsMinor?:boolean;}) => {
+   
+    const { handleNextOfKin, loading,ShowMessage } = useHttpHook();
+    const [signUpForm, setSignUpForm] = useState<SignUpProps>({
+        phoneNumber:"",
+    })
     const [formData, setFormData] = useState<NextOfKinProps>({
         trackingId:"",
         firstName:"",
@@ -33,21 +39,56 @@ export const NextOfKinPage = ({onClose,onSuccess,trackingId}:{onClose:()=>void;o
         streetName:""
     })
     const handleSubmit = (e: FormEvent) => {
-        e.preventDefault()
+        e.preventDefault();
+         if(formData.phoneNumber === signUpForm.phoneNumber)
+        {
+          ShowMessage({message:"Next of kin phone number cannot be same as user phone number",position:"center",status:false,data:{}})
+          return;
+        }
         handleNextOfKin({
-        ...formData,
-        trackingId:trackingId
+        ...formData, 
+        trackingId,
+        minor:userIsMinor?1:0
     }).then((res) => {
+        localStorage.setItem(CONSTANT.LocalStore.nextOfKin,JSON.stringify(formData))
             if (res.status) {
-            onSuccess()
+            onSuccess(res.data)
             }
         })
     }
+    const unisex = ["COUSIN","SPOUSE","GUARDIAN","FRIEND","RELATIVES"].find((a)=>String(a).toLowerCase().includes(String(formData.relationShip).toLowerCase()))
+
     useEffect(()=>{ 
+        if(!unisex)
+        {
+        const isMale = ["BROTHER","BROTHER-IN-LAW","FATHER","FATHER-IN-LAW","GRANDFATHER","GRANDSON","HUSBAND","NEPHEW","SON","SON-IN-LAW","UNCLE","FIANCE"].find((a)=>String(a).toLowerCase().includes(String(formData.relationShip).toLowerCase()))
+        setFormData({
+            ...formData,
+            gender:isMale?"MALE":"FEMALE"
+        })
         
+        }else{
+          setFormData({
+            ...formData,
+            gender:""
+        })  
+        }
+        
+    },[formData.relationShip,unisex])
+    useEffect(()=>{
+        const nxt = localStorage.getItem(CONSTANT.LocalStore.nextOfKin);
+        if(nxt)
+        {
+           setFormData(JSON.parse(nxt))  
+        }
+        const user = localStorage.getItem(CONSTANT.LocalStore.userFormFields);
+        if(user)
+        {
+           setSignUpForm(JSON.parse(user))  
+        } 
     },[])
     return <div className="mt-[20px]">
-    <div >
+       <div >
             <div className="text-[#009668] text-[14px] text-left mt-4">Next of kin details</div>
                 <form onSubmit={handleSubmit}>
                         <BaseInput
@@ -137,7 +178,7 @@ export const NextOfKinPage = ({onClose,onSuccess,trackingId}:{onClose:()=>void;o
                             name="nin"
                             value={formData.streetName}
                             required
-                            max={11}
+                            max={150}
                             onValueChange={({ value }) => {
                                 setFormData({
                                     ...formData,
@@ -147,13 +188,13 @@ export const NextOfKinPage = ({onClose,onSuccess,trackingId}:{onClose:()=>void;o
                             label="Street Name"
                             placeholder="Enter street Name."
                         />
-                        <div className="text-left mb-3">
+                        {unisex &&<div className="text-left mb-3">
                          <BaseSelect
-                            name="bvn"
+                            name="gender"
                             left
                             list={[
-                                {title:"Male", description:"Male"},
-                                {title:"Female", description:"Female"}
+                                {title:"MALE", description:"Male"},
+                                {title:"FEMALE", description:"Female"}
                             ] as unknown as ItemProps[]}
                             required
                             custom
@@ -168,15 +209,15 @@ export const NextOfKinPage = ({onClose,onSuccess,trackingId}:{onClose:()=>void;o
                             placeholder="Enter gender."
                             className="mb-5"
                         />
-                        </div>
+                        </div> }
                         <div style={{zIndex:10}}>
                         <BaseButton
-                            loading={loading}
                             text="Next"
                             type="submit"
                         />
                         </div>
                 </form>
     </div>
+    {loading && <BaseLoader color="green" size="lg" modal  />}
     </div>
 }

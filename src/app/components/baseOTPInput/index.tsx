@@ -8,6 +8,8 @@ interface OTPBaseInputProps {
     onChange:(otp:string)=>void;
     isInputNum?:boolean;
     value:string;
+    required?:boolean;
+    label?:string;
 }
 export const OTPBaseInput = (props: OTPBaseInputProps) => {
     const [otp, setOtp] = useState<string>("")
@@ -20,6 +22,7 @@ export const OTPBaseInput = (props: OTPBaseInputProps) => {
     }, [props.value])
 
     return <div >
+        {props?.label && <label className="flex items-center text-md font-medium text-gray-700 mb-2" style={{position:"relative"}}><small ><b>{props?.label}</b></small>{props.required?<span className='text-red-600 text-[20px] ps-1'>*</span>:""}</label>}
         <OTPInput
             value={otp}
             onChange={(enteredOtp: string) => {

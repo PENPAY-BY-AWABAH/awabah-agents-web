@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client"
 import { useEffect, useState } from "react";
@@ -7,10 +8,10 @@ import { SlideItemProp } from "./includes/types";
 import { CardTwo } from "./dashboard/components/card2";
 import { CardThree } from "./dashboard/components/card3";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import Script from "next/script";
 
 export default function Home() {
-  const navigate = useRouter();
+  const gaMeasurementId = "G-H6CGQ8LXX8";
   const [slider,setSlider] = useState<SlideItemProp[]>([
     {
       graphics:<CardOne />,
@@ -25,35 +26,42 @@ export default function Home() {
     {
       graphics:<CardThree size={220} />,
       title:"Earn & Withdraw Commissions",
-      description:"Earn 300Naira per onboarding and Convert your earned commissions to cash and withdraw directly to your bank account when eligible."
+      description:"Earn 1000Naira per onboarding and Convert your earned commissions to cash and withdraw directly to your bank account when eligible."
     }
   ]);
   const [showOnboardingBtn,setShowOnboardingBtn] = useState<boolean>(false);
   const [selectedIndex,setSelectedIndex] = useState<number>(0);
-  const [stop,setStop] = useState<boolean>(false);
   useEffect(()=>{
-  //   const intervalTime = setInterval(()=>{
-  //     setSelectedIndex((count)=>{
-  //       if(count > slider.length - 2)
-  //       {
-  //         setShowOnboardingBtn(true)
-  //         return 0
-  //       }
-  //       return count + 1
-  //     })
-  //   },4000)
-  // return ()=>{
-  //   clearInterval(intervalTime);
-  // }
-  },[stop])
-  useEffect(()=>{
-    const token =localStorage.getItem(CONSTANT.LocalStore.token);
-       if(token)
-       {
-          navigate.replace(ROUTES.dashboard) 
-       }
-      },[])
-  return (<div className="lg:min-h-screen overflow-scroll lg:pb-[140px] items-center justify-center bg-white font-sans grid grid-cols-1 ">
+    const urlParams = new URLSearchParams(window.location.search);
+    const referrer = urlParams.get("referrer");
+    if(referrer)
+    {
+      localStorage.setItem(CONSTANT.LocalStore.referrer, referrer);
+      const login = localStorage.getItem(CONSTANT.LocalStore.token);
+      if(login)
+      {
+       window.location.href = `${window.location.origin}/${ROUTES.userOnboarding}`;
+       return;
+      }
+    window.location.href = `${window.location.origin}/${ROUTES.register}`;
+    }
+ },[])
+  return (<>
+    {gaMeasurementId ? <>
+      <Script
+        src={`https://www.googletagmanager.com/gtag/js?id=${gaMeasurementId}`}
+        strategy="afterInteractive"
+      />
+      <Script id="google-analytics" strategy="afterInteractive">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', '${gaMeasurementId}');
+        `}
+      </Script>
+    </> : null}
+    <div className="lg:min-h-screen overflow-scroll lg:pb-[140px] items-center justify-center bg-white font-sans grid grid-cols-1 ">
      <div className="m-auto items-center text-center  lg:h-[500px] ">
      {slider.filter((a,i)=>selectedIndex === i).map((item,index)=>{
       return <div key={index} className="m-auto items-center text-center  rounded-[30px] shadow lg:w-[400px] pt-[10px]  my-[60px] lg:p-[30px] pb-[60px]">
@@ -124,5 +132,6 @@ export default function Home() {
      </div>}
      </div>
     </div>
+  </>
   );
 }

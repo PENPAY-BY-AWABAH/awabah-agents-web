@@ -1,15 +1,15 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable react/no-unescaped-entities */
 import BaseButton from "@/app/components/baseButton"
 import { BaseLoader } from "@/app/components/baseLoader"
-import BaseModal from "@/app/components/baseModal"
 import { OTPBaseInput } from "@/app/components/baseOTPInput"
 import { LoginProps } from "@/app/includes/types"
 import useHttpHook from "@/app/includes/useHttpHook"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
-export const OtpSection = ({email,onClose,trackingId}:{email:string;onClose:()=>void;trackingId?:string})=>{
+export const OtpSection = ({email,onClose,trackingId,userIsMinor}:{email:string;onClose:()=>void;trackingId?:string;userIsMinor?:boolean})=>{
     const navigate = useRouter();
     const [success,setSuccess] = useState<boolean>(false)
     const [formData,setFormData] = useState<LoginProps>({
@@ -22,7 +22,7 @@ export const OtpSection = ({email,onClose,trackingId}:{email:string;onClose:()=>
     const [otp,setOtp] = useState<string>("");
     const {handleEmailOTPVerification,loading,handleSendOtp} = useHttpHook();
     const handleOTPSubmit = ()=>{
-        handleEmailOTPVerification({otp,email}).then((res)=>{
+        handleEmailOTPVerification({otp,email,minor:userIsMinor?1:0,trackingId}).then((res)=>{
             if(res.status)
             {
                 onClose();
