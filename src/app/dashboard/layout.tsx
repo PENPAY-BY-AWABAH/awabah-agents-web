@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-hooks/set-state-in-effect */
 "use client"
 import { useEffect, useState } from "react";
 import { Navbar } from "../components/Navbar";
@@ -13,24 +11,27 @@ function Layout({
     children: React.ReactNode;
   }>) {
     const navigate = useRouter();
-    const [isLogin,setLogin] = useState<boolean>(false)
+
     useEffect(()=>{
       const token = localStorage.getItem(CONSTANT.LocalStore.token);
       if(token)
       {
-        setLogin(true)
-      }else{
-        const urlParams = new URLSearchParams(window.location.search);
+        return;
+      }
+      const path = window.location.pathname;
+      if (path.includes(ROUTES.self_registered)) {
+        return;
+      }
+      const urlParams = new URLSearchParams(window.location.search);
       const referrer = urlParams.get("referrer");
       if(referrer)
       {
         localStorage.setItem(CONSTANT.LocalStore.referrer, referrer);
-        navigate.replace(ROUTES.register)
+        navigate.replace(ROUTES.register);
         return;
       }
-        // navigate.replace(ROUTES.login)
-      }
-    },[isLogin])
+      navigate.replace(ROUTES.login);
+    },[navigate])
 const [isIdle, setIsIdle] = useState(false);
 const [remaining, setRemaining] = useState(0);
 
@@ -66,25 +67,21 @@ useEffect(() => {
       setRemaining(Math.ceil(getRemainingTime() / 1000));
     }, 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [getRemainingTime]);
 useEffect(()=>{
   if(isIdle)
   {
   localStorage.clear();
   navigate.replace(ROUTES.login)
   }
-},[isIdle])
-    if(!isLogin)
-    {
-      return <div className="grid grid-cols-1 h-screen bg-white">
-        <BaseLoader modal size="lg" color="green" text="Authenticating user..."/>
-      </div>
-    }
+},[isIdle, navigate])
+
+   
     return <div className="grid grid-cols-1 h-screen overflow-hidden">
     <Navbar />
     <main className=" flex-1 h-screen overflow-scroll w-screen bg-white p-[16px] lg:pt-30 text-black lg:px-18 m-auto ">
     {children} 
     </main>
     </div>
-  }
-  export default Layout;
+}
+export default Layout;

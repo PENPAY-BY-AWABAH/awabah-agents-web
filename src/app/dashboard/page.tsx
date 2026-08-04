@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable @next/next/no-img-element */
 "use client";
 import { useEffect, useState } from "react";
@@ -8,11 +9,13 @@ import { ShareModal } from "./components/shareModal";
 import { WalletBalance } from "./components/walletBalanceSection";
 import useCommissionStore from "../includes/store";
 import useHttpHook from "../includes/useHttpHook";
-import { placeHolderAvatar } from "../includes/constants";
+import { CONSTANT, placeHolderAvatar, ROUTES } from "../includes/constants";
 import Link from "next/link";
 import { BellIcon } from "../assets/bell-icon";
 import { Share2Icon } from "lucide-react";
 import RegisterOptions from "./components/registerOptions";
+import { useRouter } from "next/navigation";
+import { BaseLoader } from "../components/baseLoader";
 export interface UserDetails {
     firstName?: string;
     lastName?: string;
@@ -53,11 +56,12 @@ export interface UserDetails {
     fullName?:string;
 }
 const Page = () => {
-    const { getAgentProfile } = useHttpHook()
+    const { getAgentProfile } = useHttpHook();
+    const navigate = useRouter();
+    const [isLogin,setLogin] = useState<boolean>(false)
     const { userDetails, update } = useCommissionStore()
     const details = userDetails as UserDetails
     const [showShareModal, setShowShareModal] = useState(false);
- 
     useEffect(() => {
         getAgentProfile().then((res) => {
             if (res.status) {
@@ -71,6 +75,22 @@ const Page = () => {
             }
         })
     }, [update])
+    useEffect(() => {
+            const token = localStorage.getItem(CONSTANT.LocalStore.token);
+            if (token) {
+                setLogin(true);
+                return navigate.replace(ROUTES.dashboard);
+            }else{
+              localStorage.clear();
+              return navigate.replace(ROUTES.login);
+            }
+        }, [navigate]);
+     if(!isLogin)
+        {
+          return <div className="grid grid-cols-1 h-screen bg-white">
+            <BaseLoader modal size="lg" color="green" text="Authenticating user..."/>
+          </div>
+        }
     return <div >
         <div className="flex item-center gap-2">
          <div className="lg:hidden h-[55px] w-[55px] bg-[#C4C4C459] border-[0.5px] rounded-[55px] overflow-hidden" >
