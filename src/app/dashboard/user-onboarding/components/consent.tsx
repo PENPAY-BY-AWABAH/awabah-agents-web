@@ -141,15 +141,15 @@ export const ConsentPage = ({onClose,onSuccess,trackingId,email,userData}:{onClo
     }
 
     .header .org {
-      font-size: 18px;
-      font-weight: bold;
+      fontSize: 18px;
+      fontWeight: bold;
       color: #003366;
       text-transform: uppercase;
       letter-spacing: 1px;
     }
 
     .header .plan {
-      font-size: 14px;
+      fontSize: 14px;
       color: #444;
       margin-top: 4px;
       text-transform: uppercase;
@@ -157,8 +157,8 @@ export const ConsentPage = ({onClose,onSuccess,trackingId,email,userData}:{onClo
     }
 
     .header .form-title {
-      font-size: 20px;
-      font-weight: bold;
+      fontSize: 20px;
+      fontWeight: bold;
       color: #1a1a1a;
       margin-top: 12px;
       text-transform: uppercase;
@@ -171,8 +171,8 @@ export const ConsentPage = ({onClose,onSuccess,trackingId,email,userData}:{onClo
     }
 
     .section-title {
-      font-size: 14px;
-      font-weight: bold;
+      fontSize: 14px;
+      fontWeight: bold;
       color: #003366;
       margin-bottom: 10px;
       text-transform: uppercase;
@@ -180,7 +180,7 @@ export const ConsentPage = ({onClose,onSuccess,trackingId,email,userData}:{onClo
     }
 
     .section p {
-      font-size: 13.5px;
+      fontSize: 13.5px;
       line-height: 1.75;
       color: #333;
       margin-bottom: 6px;
@@ -193,7 +193,7 @@ export const ConsentPage = ({onClose,onSuccess,trackingId,email,userData}:{onClo
     }
 
     ul.data-list li {
-      font-size: 13.5px;
+      fontSize: 13.5px;
       line-height: 1.75;
       color: #333;
       padding-left: 16px;
@@ -226,8 +226,8 @@ export const ConsentPage = ({onClose,onSuccess,trackingId,email,userData}:{onClo
     }
 
     .field label {
-      font-size: 13.5px;
-      font-weight: bold;
+      fontSize: 13.5px;
+      fontWeight: bold;
       color: #333;
       white-space: nowrap;
       min-width: 140px;
