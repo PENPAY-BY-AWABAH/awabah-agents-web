@@ -28,7 +28,7 @@ selected?:boolean;
 value?:string;
 } 
 export const CONSTANT = {
-    BaseURL:process.env.NEXT_PUBLIC_BASEURL,
+    BaseURL:"https://staging.awabah.com/v1/",
     LocalStore:{
         token:"token",
         baseUrl:"baseurl", 
