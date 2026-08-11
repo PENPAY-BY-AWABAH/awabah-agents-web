@@ -68,7 +68,7 @@ const total = useMemo(() => calculateExcessCharge(Number(amount || 0)), [amount]
           <div className="flex items-start justify-between text-[16px] md:text-[18px] text-[#64748b]">
             <div>Amount</div>
             <div className="font-semibold text-[#0f172a] text-[16px] ">
-              {formatCurrency(parseFloat(amount))}
+              {formatCurrency(parseFloat(amount))} 
             </div>
           </div>
           <div className="mt-6 flex items-start justify-between text-[16px] md:text-[18px] text-[#64748b]">
