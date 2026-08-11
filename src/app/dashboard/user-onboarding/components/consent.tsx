@@ -10,9 +10,9 @@ import { BaseLoader } from "@/app/components/baseLoader";
 import { SignUpProps } from "../page";
 import moment from "moment";
 import html2canvas from "html2canvas";
-import { useRouter } from "next/navigation";
 import { CONSTANT, ROUTES } from "@/app/includes/constants";
 import { toast } from "react-toastify";
+import { Base64Decode } from "@/app/includes/functions";
 export interface BankProps {
   accountN?: string;
   firstName?: string;
@@ -35,10 +35,11 @@ export const ConsentPage = ({onClose,onSuccess,trackingId,email,userData}:{onClo
               }
             if(res.status)
             {
-              if(res.data?.rsaPin)
+              if(res.data?.spin)
               {
+                const rsaPin =  Base64Decode(res.data?.spin);
                 localStorage.setItem(CONSTANT.LocalStore.remit, JSON.stringify({
-                    rsaPin: res.data.rsaPin,
+                    rsaPin: rsaPin,
                     pfaName: userData?.pfaName,
                     providerId: userData?.pfaCode,
                     phoneNumber: String(userData?.phoneNumber).replace("undefined", "").replace("+234", "0"),

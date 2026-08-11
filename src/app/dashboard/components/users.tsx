@@ -5,14 +5,13 @@ import BaseButton from "@/app/components/baseButton";
 import BaseCard from "@/app/components/baseCard";
 import BaseInputSearch from "@/app/components/baseInputSearch";
 import {BaseLoader} from "@/app/components/baseLoader";
-import BaseModal from "@/app/components/baseModal";
 import { COLOURS, CONSTANT, NairaSymbol, placeHolderAvatar, ROUTES } from "@/app/includes/constants"
 import useHttpHook from "@/app/includes/useHttpHook";
 import { DatabaseIcon } from "lucide-react";
 import moment from "moment";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react"
+import { useEffect, useCallback, useState } from "react"
 import { CheckRSAStatusComponent } from "./checkRSAStatusComponent";
 export interface UserItemProp {
   id?: string;
@@ -34,6 +33,7 @@ export interface UserItemProp {
   pfaCode?:string;
   resend_rsa_request?:boolean;
   trackingId?:string;
+  funded?:boolean;
 }
 
 export const UsersSection = ({page}:{page?:boolean})=>{
@@ -163,11 +163,11 @@ export const UsersSection = ({page}:{page?:boolean})=>{
             <div className="font-normal text-[12px] text-[#000000A6]">Commission Earned:</div>
             <div className="font-normal text-[12px]"> {NairaSymbol}{item?.commission}</div>
         </div>
-         {item?.rsaNumber &&<div className="flex items-center gap-[2px] h-[20px]">
+         {item?.rsaNumber && item?.funded &&<div className="flex items-center gap-[2px] h-[20px]">
             <div className="font-normal text-[12px] text-[#000000A6]">RSA PIN:</div>
             <div className="font-normal text-[12px]"> {item?.rsaNumber}</div>
         </div>}
-        {item?.pfaName &&<div className="flex items-center gap-[2px] h-[20px]">
+        {item?.pfaName && item?.funded &&<div className="flex items-center gap-[2px] h-[20px]">
             <div className="font-normal text-[12px] text-[#000000A6]">PFA NAME:</div>
             <div className="font-normal text-[12px]"> {item?.pfaName}</div>
         </div>}
@@ -181,11 +181,22 @@ export const UsersSection = ({page}:{page?:boolean})=>{
         </div>
         </div>
         <BaseButton 
-        text={!item.rsaNumber?item?.resend_rsa_request?"Check RSA PIN status":"Complete Registration":"Pay Now"}
+        text={!item.rsaNumber?!item?.funded?"Get RSA PIN":"Complete Registration":"Pay Now"}
         onClick={()=>{
-        if(item?.resend_rsa_request)
+        if(!item?.funded)
         {
-        return setCheckRSAPINStatus(item);
+                        localStorage.setItem(CONSTANT.LocalStore.remit, JSON.stringify({
+                            rsaPin: item.rsaNumber,
+                            pfaName: item?.pfaName,
+                            providerId: item?.pfaCode,
+                            phoneNumber: String(item?.phoneNumber).replace("undefined", "").replace("+234", "0"),
+                            amount: 3000,
+                            fullName: item?.firstName + " " + item?.lastName,
+                            isValid: true,
+                            firstTransaction: true
+                        }))
+                        window.location.href = ROUTES.remit;
+                    return;
         }
         if(!item.rsaNumber)
         {
