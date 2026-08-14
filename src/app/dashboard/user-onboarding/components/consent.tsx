@@ -28,7 +28,7 @@ export const ConsentPage = ({onClose,onSuccess,trackingId,email,userData}:{onClo
     const handleSaveConsent = () => {
         Download().then((res)=>{
         RequestForRSAPIN({email,trackingId,consentForm:res}).then((res)=>{
-          if(res.data?.pushedLater)
+          if(res.data?.processed)
               {
                 ShowMessage({message:res.message,position:"center",status:true,data:{}})
                 return setProcessed(res.message);   

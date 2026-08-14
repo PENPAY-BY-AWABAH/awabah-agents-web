@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { CONSTANT, ROUTES } from "./constants";
+import { CONSTANT, ErrorMap, ROUTES } from "./constants";
 import {name} from "../../../package.json"
 import { useRouter } from "next/navigation";
 interface ApiResponse {
@@ -15,6 +15,26 @@ interface PayloadProps {
    method:"POST"|"GET";
    body:UnknownKeyPair,
    path:"admin-sign-in"|"transactions"|"admin-sign-otp"|"admin-all-transactions" | string;
+}
+
+const ReturnError = (message:string)=>{
+  if(message.includes("blocked"))
+  {
+    return ErrorMap["nin blocked"] || message;
+  }
+  if(message.includes("registered"))
+  {
+    return ErrorMap["nin already registered"] || message;
+  }
+  if(message.includes("down"))
+  {
+    return ErrorMap["prembly down"] || message;
+  }
+  if(message.includes("not") && message.includes("found"))
+  {
+    return ErrorMap["Record not found"] || message;
+  }
+  return ErrorMap[message] || message;
 }
 export interface UnknownKeyPair {
     [key: string]: any; 
@@ -51,6 +71,7 @@ export const useApiRequest = ()=>{
         console.log(options)
         fetch(`${CONSTANT.BaseURL}${props.path}`,options).then((response)=>response.json()).then((response)=>{
             setLoading(false)
+            response.message = ReturnError(response.message)
             console.log(response);
             if(response.message.includes("Failed"))
             {
