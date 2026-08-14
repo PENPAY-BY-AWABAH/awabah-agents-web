@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { LoginProps } from "./types";
@@ -44,10 +43,15 @@ const useHttpHook = () => {
     const handleGetSchedules = () => {
         return new Promise<ApiResponse>((resolve) => {
             setLoading(true);
-            // PostRequest("subscriptions", {}).then((res) => {
-            //     setLoading(false);
-            //     resolve(res);
-            // })
+            call({
+                path:"subscriptions",
+                body:{},
+                method:"POST",
+                requestType:"json",
+            }).then((res) => {
+                setLoading(false);
+                resolve(res);
+            })
         })
     }
    
@@ -116,10 +120,15 @@ const useHttpHook = () => {
     const handleGetProviders = () => {
         return new Promise<ApiResponse>((resolve) => {
             setLoading(true);
-            // PostRequest("get:get-providers", {}, false).then((res) => {
-            //     setLoading(false);
-            //     resolve(res);
-            // })
+            call({
+                path:"get-providers",
+                body:{},
+                method:"GET",
+                requestType:"json",
+            }).then((res) => {
+                setLoading(false);
+                resolve(res);
+            })
         })
     }
   
@@ -718,7 +727,7 @@ const handleEmploymentDetails =(data:any)=>{
         return new Promise<ApiResponse>((resolve) => {
          setLoading(true);
            call({
-                path:`agent-save-parent-information`,
+                path:`agent-save-user-password`,
                 body:data,
                 method:"POST",
                 requestType:"json"
@@ -994,6 +1003,7 @@ const GetListOfPFA = ()=>{
                 method:"GET",
                 requestType:"json"
             }).then((res) => {
+                setLoading(false);
                 resolve(res);
             })
         })
@@ -1045,6 +1055,7 @@ const GetListOfStates = ()=>{
                 method:"GET",
                 requestType:"json"
             }).then((res) => {
+                setLoading(false);
                 resolve(res);
             })
         })

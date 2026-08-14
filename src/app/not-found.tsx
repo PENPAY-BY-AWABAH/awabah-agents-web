@@ -25,13 +25,13 @@ export default function Page() {
                     <path d="M30 65 Q50 45 70 65 L70 75 Q50 65 30 75 Z" fill="#1e293b" />
                     <circle cx="45" cy="80" r="1.5" fill="#1e293b" />
                     <circle cx="55" cy="80" r="1.5" fill="#1e293b" />
-                    <path d="M48 90 Q50 93 52 90" fill="none" stroke="#1e293b" stroke-width="1" />
+                    <path d="M48 90 Q50 93 52 90" fill="none" stroke="#1e293b" strokeWidth="1" />
                 </g>
-                <text x="50" y="100" font-weight="900" font-size="64" fill="#e2e8f0">4</text>
-                <text x="210" y="100" font-weight="900" font-size="64" fill="#e2e8f0">4</text>
+                <text x="50" y="100" fontWeight="900" fontSize="64" fill="#e2e8f0">4</text>
+                <text x="210" y="100" fontWeight="900" fontSize="64" fill="#e2e8f0">4</text>
                 <g transform="translate(125, 75)">
-                    <circle cx="25" cy="25" r="28" fill="white" stroke="#4CAF50" stroke-width="8" />
-                    <line x1="45" y1="45" x2="65" y2="65" stroke="#4CAF50" stroke-width="8" stroke-linecap="round" />
+                    <circle cx="25" cy="25" r="28" fill="white" stroke="#4CAF50" strokeWidth="8" />
+                    <line x1="45" y1="45" x2="65" y2="65" stroke="#4CAF50" strokeWidth="8" strokeLinecap="round" />
                 </g>
             </svg>
         </div>

@@ -27,8 +27,16 @@ route?:string;
 selected?:boolean;
 value?:string;
 } 
+
+export const ErrorMap:Record<string,string> = {
+    "Record not found":"There seems to be some inconsistency with your NIN, kindly visit the nearest NIMC office to resolve this",
+    "prembly down":"Your details have been submitted successfully. AWABAH will contact you with your PIN within 24 hours.",
+    "nin blocked":"There seems to be some inconsistency with your NIN, kindly visit the nearest NIMC office to resolve this.",
+    "nin already registered":"Welcome back! It looks like this NIN is already registered with us. Try logging in to your existing account, or reset your password if you've forgotten it.",
+}
+
 export const CONSTANT = {
-    BaseURL:process.env.NODE_ENV === "development"?"http://localhost/awabah-api/v1/":"https://api.awabah.com/v1/",
+    BaseURL:"http://localhost/awabah-api/v1/",
     LocalStore:{
         token:"token",
         baseUrl:"baseurl", 

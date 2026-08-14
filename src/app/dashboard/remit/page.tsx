@@ -12,10 +12,11 @@ import { ItemProps } from "@/app/includes/types";
 import { ReturnAllFloatNumbers, ReturnAllNumbers } from "@/app/includes/functions";
 import BaseButton from "@/app/components/baseButton";
 import { PaymentVericationModal } from "./components/payment_verification_modal";
-import { CONSTANT } from "@/app/includes/constants";
+import { CONSTANT, ROUTES } from "@/app/includes/constants";
 import { BaseLoader } from "@/app/components/baseLoader";
 import { PaymentOptionsModal } from "./components/payment_option_modal";
 import BaseModal from "@/app/components/baseModal";
+import ConfirmPaymentAmountModal from "../components/confirmPaymentAmountModal";
 interface PaymentProp {
     rsaPin?: string;
     pfaName?: string;
@@ -121,10 +122,11 @@ const Page = () => {
 
         }
     }, []);
+const [showPreview,setShowPreview] = useState<boolean>(false);
 const [listValidation,setListValidation] = useState<ValidationProp[]>([]);
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
-        if (!formData.isValid) {
+  if (!formData.isValid) {
             setLoading(true)
             localStorage.setItem(CONSTANT.LocalStore.remit,JSON.stringify(formData))
             validateRSA({
@@ -151,10 +153,10 @@ const [listValidation,setListValidation] = useState<ValidationProp[]>([]);
             {
                 // return ShowMessage({status:false,message:"Oops! the minimum amount is N3,000",data:null,position:"center"})
             }
-            setShowPaymentOption(true)
+            setConfirmPaymentOpen(true)
         }
     }
-
+    const [confirmPaymentOpen,setConfirmPaymentOpen] = useState<boolean>(false);
     useEffect(()=>{
      const data = localStorage.getItem(CONSTANT.LocalStore.remit);
      if(data)
@@ -162,7 +164,7 @@ const [listValidation,setListValidation] = useState<ValidationProp[]>([]);
         setFormData(JSON.parse(data))
      }
     },[]);
-
+    
     const handlePayNow = (value:string)=>{
         if(String(formData.phoneNumber).length !== 11)
           {
@@ -193,7 +195,7 @@ const [listValidation,setListValidation] = useState<ValidationProp[]>([]);
         <div className="mb-6">
             <button
                 onClick={() => {
-                 navigate.back();
+                 navigate.push(ROUTES.dashboard);
                 }}
                 className="flex items-center gap-2 cursor-pointer">
                  <span className="hidden lg:block" >
@@ -376,6 +378,17 @@ const [listValidation,setListValidation] = useState<ValidationProp[]>([]);
         })}
         </div>
         </BaseModal>}
+        <ConfirmPaymentAmountModal
+          open={confirmPaymentOpen}
+          onClose={() => setConfirmPaymentOpen(false)}
+          amount={formData.amount!}
+          charges={60}
+          onReview={() => setConfirmPaymentOpen(false)}
+          onConfirmPay={() => {
+            setConfirmPaymentOpen(false)
+            setShowPaymentOption(true)
+          }}
+        />
         {loading && <BaseLoader modal color="green" size="lg" />}
     </div>
 }

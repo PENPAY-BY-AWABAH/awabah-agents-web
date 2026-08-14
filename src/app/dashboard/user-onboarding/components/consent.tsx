@@ -10,9 +10,9 @@ import { BaseLoader } from "@/app/components/baseLoader";
 import { SignUpProps } from "../page";
 import moment from "moment";
 import html2canvas from "html2canvas";
-import { useRouter } from "next/navigation";
 import { CONSTANT, ROUTES } from "@/app/includes/constants";
 import { toast } from "react-toastify";
+import { Base64Decode } from "@/app/includes/functions";
 export interface BankProps {
   accountN?: string;
   firstName?: string;
@@ -28,17 +28,18 @@ export const ConsentPage = ({onClose,onSuccess,trackingId,email,userData}:{onClo
     const handleSaveConsent = () => {
         Download().then((res)=>{
         RequestForRSAPIN({email,trackingId,consentForm:res}).then((res)=>{
-          if(res.data?.pushedLater)
+          if(res.data?.processed)
               {
                 ShowMessage({message:res.message,position:"center",status:true,data:{}})
                 return setProcessed(res.message);   
               }
             if(res.status)
             {
-              if(res.data?.rsaPin)
+              if(res.data?.spin)
               {
+                const rsaPin =  Base64Decode(res.data?.spin);
                 localStorage.setItem(CONSTANT.LocalStore.remit, JSON.stringify({
-                    rsaPin: res.data.rsaPin,
+                    rsaPin: rsaPin,
                     pfaName: userData?.pfaName,
                     providerId: userData?.pfaCode,
                     phoneNumber: String(userData?.phoneNumber).replace("undefined", "").replace("+234", "0"),
@@ -141,15 +142,15 @@ export const ConsentPage = ({onClose,onSuccess,trackingId,email,userData}:{onClo
     }
 
     .header .org {
-      font-size: 18px;
-      font-weight: bold;
+      fontSize: 18px;
+      fontWeight: bold;
       color: #003366;
       text-transform: uppercase;
       letter-spacing: 1px;
     }
 
     .header .plan {
-      font-size: 14px;
+      fontSize: 14px;
       color: #444;
       margin-top: 4px;
       text-transform: uppercase;
@@ -157,8 +158,8 @@ export const ConsentPage = ({onClose,onSuccess,trackingId,email,userData}:{onClo
     }
 
     .header .form-title {
-      font-size: 20px;
-      font-weight: bold;
+      fontSize: 20px;
+      fontWeight: bold;
       color: #1a1a1a;
       margin-top: 12px;
       text-transform: uppercase;
@@ -171,8 +172,8 @@ export const ConsentPage = ({onClose,onSuccess,trackingId,email,userData}:{onClo
     }
 
     .section-title {
-      font-size: 14px;
-      font-weight: bold;
+      fontSize: 14px;
+      fontWeight: bold;
       color: #003366;
       margin-bottom: 10px;
       text-transform: uppercase;
@@ -180,7 +181,7 @@ export const ConsentPage = ({onClose,onSuccess,trackingId,email,userData}:{onClo
     }
 
     .section p {
-      font-size: 13.5px;
+      fontSize: 13.5px;
       line-height: 1.75;
       color: #333;
       margin-bottom: 6px;
@@ -193,7 +194,7 @@ export const ConsentPage = ({onClose,onSuccess,trackingId,email,userData}:{onClo
     }
 
     ul.data-list li {
-      font-size: 13.5px;
+      fontSize: 13.5px;
       line-height: 1.75;
       color: #333;
       padding-left: 16px;
@@ -226,8 +227,8 @@ export const ConsentPage = ({onClose,onSuccess,trackingId,email,userData}:{onClo
     }
 
     .field label {
-      font-size: 13.5px;
-      font-weight: bold;
+      fontSize: 13.5px;
+      fontWeight: bold;
       color: #333;
       white-space: nowrap;
       min-width: 140px;

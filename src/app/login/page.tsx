@@ -14,79 +14,85 @@ import { HandleResetData } from "./components/handleReset";
 import { OtpSection } from "./components/otp-screen";
 import { ReturnAllNumbers } from "../includes/functions";
 
+const REMEMBER_ME_KEY = `${CONSTANT.LocalStore.token || "awabah"}_remember_me`;
+
+const readInitialRemember = (): { email: string; remember: boolean } => {
+    if (typeof window === "undefined") return { email: "", remember: false };
+    try {
+        const raw = localStorage.getItem(REMEMBER_ME_KEY);
+        if (!raw) return { email: "", remember: false };
+        const parsed = JSON.parse(raw);
+        return {
+            email: typeof parsed?.email === "string" ? parsed.email : "",
+            remember: Boolean(parsed?.remember),
+        };
+    } catch {
+        return { email: "", remember: false };
+    }
+};
+
 const Page = () => {
     const [showAccountSwitch, setShowAccountSwitch] = useState<boolean>(false)
     const navigate = useRouter();
     const { handleLogin,handleLoginWithNIN, loading } = useHttpHook();
+
+    const initial = readInitialRemember();
      
     const [formData, setFormData] = useState<LoginProps>({
-        email: "",
+        email: initial.email,
         password: ""
     })
     const [showOTP, setShowOTP] = useState<boolean>(false);
-    const handleSubmit = (e: FormEvent) => {
-        e.preventDefault()
-        if(isNINInput)
-        {
-          return handleLoginWithNIN({
-            password: formData.password,
-            nin: formData.email
-        }).then((res) => {
-            if (res.message.includes("OTP")) {
-               return setShowOTP(true)
-            }
-             if (res?.data?.other_info_not_saved) {
-                localStorage.setItem(CONSTANT.LocalStore.registrationForm,JSON.stringify(res.data))
-                return navigate.replace(`${ROUTES.register}?step=2`)
-            }
-            
-             if (res.data?.transaction_pin_not_saved) {
-                 localStorage.setItem(CONSTANT.LocalStore.registrationForm,JSON.stringify(res.data))
-                return navigate.replace(`${ROUTES.register}?step=3`)
-            }
-          
-            if (res.status) {
-                navigate.replace(ROUTES.dashboard)
-            } else {
-                if (res.data?.switch_account) {
-                    setShowAccountSwitch(true)
-                }
-            }
-        })  
+    const [rememberMe, setRememberMe] = useState<boolean>(initial.remember);
+    const isNINInput = /^[0-9]/.test(formData.email ?? "")
+
+    const handlePostLogin = (res: Awaited<ReturnType<typeof handleLogin>>) => {
+        if (res.message.includes("OTP")) {
+            return setShowOTP(true);
         }
-        handleLogin(formData).then((res) => {
-            if (res.message.includes("OTP")) {
-               return setShowOTP(true)
-            }
-             if (res?.data?.other_info_not_saved) {
-                localStorage.setItem(CONSTANT.LocalStore.registrationForm,JSON.stringify(res.data))
-                return navigate.replace(`${ROUTES.register}?step=2`)
-            }
-            
-             if (res.data?.transaction_pin_not_saved) {
-                 localStorage.setItem(CONSTANT.LocalStore.registrationForm,JSON.stringify(res.data))
-                return navigate.replace(`${ROUTES.register}?step=3`)
-            }
-          
-            if (res.status) {
-                navigate.replace(ROUTES.dashboard)
+        if (res?.data?.other_info_not_saved) {
+            localStorage.setItem(CONSTANT.LocalStore.registrationForm, JSON.stringify(res.data));
+            return navigate.replace(`${ROUTES.register}?step=2`);
+        }
+        if (res.data?.transaction_pin_not_saved) {
+            localStorage.setItem(CONSTANT.LocalStore.registrationForm, JSON.stringify(res.data));
+            return navigate.replace(`${ROUTES.register}?step=3`);
+        }
+        if (res.status) {
+            if (rememberMe) {
+                localStorage.setItem(
+                    REMEMBER_ME_KEY,
+                    JSON.stringify({ email: formData.email, remember: true })
+                );
             } else {
-
-                if (res.data?.switch_account) {
-                    setShowAccountSwitch(true)
-                }
-
+                localStorage.removeItem(REMEMBER_ME_KEY);
             }
-        })
-    }
+            navigate.replace(ROUTES.dashboard);
+        } else {
+            if (res.data?.switch_account) {
+                setShowAccountSwitch(true);
+            }
+        }
+    };
+
+    const handleSubmit = (e: FormEvent) => {
+        e.preventDefault();
+        if (isNINInput) {
+            return handleLoginWithNIN({
+                password: formData.password,
+                nin: formData.email,
+            }).then(handlePostLogin);
+        }
+        handleLogin(formData).then(handlePostLogin);
+    };
+
     useEffect(() => {
         const token = localStorage.getItem(CONSTANT.LocalStore.token);
         if (token) {
-           return navigate.replace(ROUTES.dashboard) 
+            return navigate.replace(ROUTES.dashboard);
         }
-      
-    }, [])
-    const isNINInput = /^[0-9]/.test(formData.email ?? "")
+    }, [navigate]);
+
     return <div className="bg-white min-h-full lg:px-[100px] p-[16px] lg:py-[60px] overflow-hidden">
         <div className="mb-6">
             <button
@@ -109,7 +115,7 @@ const Page = () => {
                 <form onSubmit={handleSubmit} >
                     <BaseInput
                         type={isNINInput?"text":"email"}
-                        name={"email"}
+                        name={isNINInput ? "nin" : "email"}
                         value={formData.email}
                         required
                         onValueChange={({ value }) => {
@@ -127,8 +133,8 @@ const Page = () => {
                             }
                         }}
                         max={isNINInput?11:100}
-                        label="Email"
-                        placeholder="Enter Email."
+                        label={isNINInput ? "NIN" : "Email"}
+                        placeholder={isNINInput ? "Enter your 11-digit NIN." : "Enter Email."}
                     />
                     <BaseInput
                         required
@@ -147,11 +153,10 @@ const Page = () => {
                     <div className="flex items-center gap-3 text-black mb-[30px]">
                         <BaseToggleBtn
                             onChange={() => {
-
+                                setRememberMe((prev) => !prev);
                             }}
                             type="checkbox"
-                            value={true}
-
+                            value={rememberMe}
                         />
                         <span className="text-[14px]">Remember me</span>
                         <div className="flex items-center justify-end flex-1">
@@ -170,7 +175,7 @@ const Page = () => {
                     />
                     
                     <div className="flex items-center justify-center mt-[30px] gap-1">
-                        <span className="text-[14px] text-black">Don`t have an account?</span>
+                        <span className="text-[14px] text-black">Don&apos;t have an account?</span>
                         <Link
                             href={ROUTES.register}
                             className="text-[14px] text-[#009668]"
