@@ -27,6 +27,10 @@ export const ConsentPage = ({onClose,onSuccess,trackingId,email,userData}:{onClo
     const {RequestForRSAPIN,loading,ShowMessage} = useHttpHook()
     const handleSaveConsent = () => {
         Download().then((res)=>{
+          if(res === "") {
+            ShowMessage({message:"Failed to create consent form,please try again.",position:"center",status:false,data:{}})
+            return;
+          };
         RequestForRSAPIN({email,trackingId,consentForm:res}).then((res)=>{
           if(res.data?.processed)
               {
