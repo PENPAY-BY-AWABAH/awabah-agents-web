@@ -23,7 +23,7 @@ export async function POST(req: Request) {
         secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
       },
       requestChecksumCalculation: "WHEN_REQUIRED",
-      responseChecksumValidation: "WHEN_REQUIRED"
+      responseChecksumValidation: "WHEN_REQUIRED",
     });
 
     const key = `${process.env.R2_ACCESS_FOLDER}/${trackingId}.png`;
