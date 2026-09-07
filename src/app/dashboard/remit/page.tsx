@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-no-duplicate-props */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
@@ -122,7 +121,7 @@ const Page = () => {
 
         }
     }, []);
-const [showPreview,setShowPreview] = useState<boolean>(false);
+const [_showPreview,_setShowPreview] = useState<boolean>(false);
 const [listValidation,setListValidation] = useState<ValidationProp[]>([]);
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
@@ -334,7 +333,7 @@ const [listValidation,setListValidation] = useState<ValidationProp[]>([]);
                         name="name"
                         disabled
                         value={formData.fullName}
-                        onValueChange={({ value }) => {
+                        onValueChange={({ value: _value }) => {
 
                         }}
                     /></div>}

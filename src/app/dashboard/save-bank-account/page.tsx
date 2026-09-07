@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
-/* eslint-disable react-hooks/set-state-in-effect */
 "use client"
 import { BackIcon } from "@/app/assets/back-icon";
 import { BankIcon } from "@/app/assets/bank-icon";
@@ -17,7 +16,7 @@ const Page = () => {
     const [listOfBanks, setListOfBanks] = useState<SavedAccountProps[]>([]);
     const [selectedOption, setSelectedOption] = useState<SavedAccountProps | null>(null)
     const [addNewAccount, setAddNewAccount] = useState<boolean>(false);
-    const [txtPin, setTxtPin] = useState<string>("");
+    const [txtPin, _setTxtPin] = useState<string>("");
     const [addNewAccountDetails, setAddNewAccountDetails] = useState<BankItemProps | null>(null);
     const [showTxtPin, setShowTxtPin] = useState<boolean>(false);
 
@@ -34,6 +33,8 @@ const Page = () => {
             }
         })
     }
+    /* eslint-disable react-hooks/exhaustive-deps */
+    // intent: mounted-only load saved banks + read newly-added from localStorage
     useEffect(() => {
         ListOfBanks();
         const newAccount = localStorage.getItem("newlyAddedAccount");
@@ -43,10 +44,10 @@ const Page = () => {
             localStorage.removeItem("newlyAddedAccount");
         }
     }, []);
-const handleWithdrawal = ()=>{
+const _handleWithdrawal = ()=>{
 handleWithdrawalToAccount({
     pin:txtPin
-}).then((res)=>{
+}).then((_res)=>{
 
 })
 }

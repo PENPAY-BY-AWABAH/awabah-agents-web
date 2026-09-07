@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable react/no-unescaped-entities */
 import BaseButton from "@/app/components/baseButton"
 import { BaseLoader } from "@/app/components/baseLoader"
@@ -34,6 +33,8 @@ export const OtpSection = ({email,onClose,trackingId,userIsMinor}:{email:string;
         handleSendOtp(email).then((res)=>{
         })
     }
+    /* eslint-disable react-hooks/exhaustive-deps */
+    // intent: sync email into formData without re-running on every formData change
     useEffect(()=>{
         setFormData({
             ...formData,

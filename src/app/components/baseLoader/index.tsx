@@ -1,4 +1,4 @@
-export const BaseLoader = ({size,color,modal,text}:{size:"sm"|"md"|"lg"; color:"green"|"white";modal?:boolean;text?:string})=>{
+export const BaseLoader = ({size,color: _color,modal,text}:{size:"sm"|"md"|"lg"; color:"green"|"white";modal?:boolean;text?:string})=>{
 if(modal)
 {
     return <div className="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] h-full w-full bg-opacity-50" style={{zIndex:10}}>

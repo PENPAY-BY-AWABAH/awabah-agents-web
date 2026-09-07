@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable @next/next/no-img-element */
 "use client";
 import { useEffect, useState } from "react";
@@ -62,6 +61,8 @@ const Page = () => {
     const { userDetails, update } = useCommissionStore()
     const details = userDetails as UserDetails
     const [showShareModal, setShowShareModal] = useState(false);
+    /* eslint-disable react-hooks/exhaustive-deps */
+    // intent: mounted-only refresh agent profile
     useEffect(() => {
         getAgentProfile().then((res) => {
             if (res.status) {

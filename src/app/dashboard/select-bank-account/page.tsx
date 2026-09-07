@@ -1,6 +1,5 @@
 "use client"
 import { BackIcon } from "@/app/assets/back-icon";
-import { HistorySection } from "../components/history";
 import { useRouter } from "next/navigation";
 import { BankIcon } from "@/app/assets/bank-icon";
 import { SaveIcon } from "@/app/assets/save-icon";
@@ -9,7 +8,7 @@ import BaseButton from "@/app/components/baseButton";
 
 const Page = ()=>{
     const [selectedOption,setSelectedOption] = useState<string>("")
-    const [showForm,setShowForm] = useState<boolean>(false)
+    const [_showForm,_setShowForm] = useState<boolean>(false)
     const navigate = useRouter()
     return <div className="fixed top-0 left-0 w-full h-full bg-white p-6 z-10">
         <div className="mb-6">

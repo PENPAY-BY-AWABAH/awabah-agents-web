@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { CONSTANT, ErrorMap, ROUTES } from "./constants";
-import {name} from "../../../package.json"
 import { useRouter } from "next/navigation";
 interface ApiResponse {
     status:boolean;
@@ -96,7 +95,7 @@ export const useApiRequest = ()=>{
               navigate.replace(ROUTES.login)
             }
             resolve(response)
-        }).catch((error)=>{
+        }).catch((_error)=>{
             setLoading(false)
             if(!hideFailMessage)
             {

@@ -1,5 +1,4 @@
 /* eslint-disable @next/next/no-img-element */
-/* eslint-disable react-hooks/set-state-in-effect */
 "use client"
 import { COLOURS, NairaSymbol, placeHolderAvatar, ROUTES } from "@/app/includes/constants"
 import moment from "moment";
@@ -37,6 +36,8 @@ export const CommissionSection = ({page}:{page?:boolean})=>{
    
     const [activeTab,ActiveTab] = useState("commission")
    
+    /* eslint-disable react-hooks/exhaustive-deps */
+    // intent: switch commission/withdrawal data on tab change
     useEffect(()=>{
         if(activeTab === "commission")
         {

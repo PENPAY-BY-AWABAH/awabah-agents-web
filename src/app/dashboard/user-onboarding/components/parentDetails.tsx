@@ -1,12 +1,8 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 "use client"
-import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 import useHttpHook from "@/app/includes/useHttpHook";
 import BaseInput from "@/app/components/baseInput";
 import BaseButton from "@/app/components/baseButton";
-import BaseToggleBtn from "@/app/components/baseCheckBox";
-
 export interface ParentProps {
   trackingId?: string;
   firstName?: string;
@@ -15,8 +11,7 @@ export interface ParentProps {
   isFather?: string;
 }
 
-export const ParentDetailPage = ({onClose,onSuccess,trackingId,isFather}:{onClose:()=>void;onSuccess:()=>void;trackingId:string;isFather:boolean}) => {
-    const navigate = useRouter();
+export const ParentDetailPage = ({onSuccess,trackingId,isFather}:{onClose:()=>void;onSuccess:()=>void;trackingId:string;isFather:boolean}) => {
     const { handleParentDetails, loading } = useHttpHook();
     const [formData, setFormData] = useState<ParentProps>({
         trackingId:"",

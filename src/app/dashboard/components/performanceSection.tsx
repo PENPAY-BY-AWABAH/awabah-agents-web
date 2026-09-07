@@ -1,12 +1,8 @@
 "use client"
-import { RemitIcon } from "@/app/assets/remite-icon"
 import { UserCheckIcon } from "@/app/assets/user-check-icon"
-import { UserIcon } from "@/app/assets/user-icon"
 import { UserPendingIcon } from "@/app/assets/user-pending-icon"
 import { UserRejectIcon } from "@/app/assets/user-reject-icon"
 import { UsersIcon } from "@/app/assets/users-icon"
-import { WithdrawalIcon } from "@/app/assets/withdrawal-icon"
-import { RouteItem, ROUTES } from "@/app/includes/constants"
 import useHttpHook from "@/app/includes/useHttpHook"
 import { useEffect, useState } from "react"
 import { TabSectionProp, UsersStatsProps } from "../users/components/Tabs"
@@ -20,7 +16,7 @@ export const PerformanceSection = ()=>{
         withdrawal:0
     });
       
-      const [btns,setBtns] = useState<TabSectionProp[]>([
+      const [btns,_setBtns] = useState<TabSectionProp[]>([
             {
             title:"Users Onboarded",
             icon:<UsersIcon size={40} />,
@@ -55,6 +51,8 @@ export const PerformanceSection = ()=>{
             }
         ])
        
+    /* eslint-disable react-hooks/exhaustive-deps */
+    // intent: mounted-only fetch performance stats
       useEffect(()=>{
         getAllUserStats().then((res)=>{
             if(res.status)

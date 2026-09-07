@@ -11,7 +11,7 @@ import { DatabaseIcon } from "lucide-react";
 import moment from "moment";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useCallback, useState } from "react"
+import { useEffect, useState } from "react"
 import { CheckRSAStatusComponent } from "./checkRSAStatusComponent";
 export interface UserItemProp {
   id?: string;
@@ -53,6 +53,8 @@ export const UsersSection = ({page}:{page?:boolean})=>{
     })
     }
    
+    /* eslint-disable react-hooks/exhaustive-deps */
+    // intent: mounted-only fetch first page of users
     useEffect(()=>{
         GetAllUsers(1);
     },[])

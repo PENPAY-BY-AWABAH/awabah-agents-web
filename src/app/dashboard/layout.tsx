@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { Navbar } from "../components/Navbar";
 import { CONSTANT, ROUTES } from "../includes/constants";
 import { useRouter } from "next/navigation";
-import { BaseLoader } from "../components/baseLoader";
 import { useIdleTimer } from 'react-idle-timer';
 function Layout({
     children,
@@ -33,7 +32,7 @@ function Layout({
       navigate.replace(ROUTES.login);
     },[navigate])
 const [isIdle, setIsIdle] = useState(false);
-const [remaining, setRemaining] = useState(0);
+const [_remaining, setRemaining] = useState(0);
 
   const onIdle = () => {
     // setIsIdle(true);
@@ -43,7 +42,7 @@ const [remaining, setRemaining] = useState(0);
     setIsIdle(false);
     console.log('User is active');
   };
-const { getRemainingTime, activate } = useIdleTimer({
+const { getRemainingTime, activate: _activate } = useIdleTimer({
     onIdle,
     onActive,
     timeout: 3 * 60 * 1000, // 3 minutes

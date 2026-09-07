@@ -27,6 +27,8 @@ const Page = () => {
         })
     }
     const navigate = useRouter();
+    /* eslint-disable react-hooks/exhaustive-deps */
+    // intent: mounted-only load of banks list
     useEffect(() => {
         ListOfBanks();
     }, []);
@@ -133,7 +135,7 @@ const Page = () => {
                                 disabled
                                 name={"bankName"}
                                 value={selectedOption?.name}
-                                onValueChange={({ value }) => {
+                                onValueChange={({ value: _value }) => {
 
                                 }}
                             />

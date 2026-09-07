@@ -155,7 +155,7 @@ export const NextOfKinPage = ({onSuccess,trackingId,userIsMinor}:{onClose:()=>vo
                         <div className="text-left">
                     <BaseSelect
                     name="bvn"
-                    list={["AUNTY", "BROTHER", "BROTHER-IN-LAW", "COUSIN", "DAUGHTER", "DAUGHTER-IN-LAW", "FATHER", "FATHER-IN-LAW", "FIANCE", "FIANCEE", "GRANDFATHER", "GRANDDAUGHTER", "GRANDMOTHER", "GRANDSON", "HUSBAND", "MOTHER", "MOTHER-IN-LAW", "NEPHEW", "NIECE", "SISTER", "SISTER-IN-LAW", "SON", "SON-IN-LAW", "SPOUSE", "UNCLE", "WIFE", "Guardian", "FRIEND", "RELATIVES"].map((item, index) => {
+                    list={["AUNTY", "BROTHER", "BROTHER-IN-LAW", "COUSIN", "DAUGHTER", "DAUGHTER-IN-LAW", "FATHER", "FATHER-IN-LAW", "FIANCE", "FIANCEE", "GRANDFATHER", "GRANDDAUGHTER", "GRANDMOTHER", "GRANDSON", "HUSBAND", "MOTHER", "MOTHER-IN-LAW", "NEPHEW", "NIECE", "SISTER", "SISTER-IN-LAW", "SON", "SON-IN-LAW", "SPOUSE", "UNCLE", "WIFE", "Guardian", "FRIEND", "RELATIVES"].map((item, _index) => {
                         return { title: item, description: item };
                     }) as unknown as ItemProps[]}
                     required

@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @next/next/no-img-element */
 "use client"
 import { ApprovedIcon, PendingIcon } from "../components/users";
 import { TabSection } from "./components/Tabs";

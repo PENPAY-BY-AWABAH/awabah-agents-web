@@ -23,7 +23,7 @@ export const FeaturesBtnSection =()=>{
     
     type FeatureBtn = RouteItem & { key: string; action?: () => void }
     const [showValidateModal, setShowValidateModal] = useState(false)
-    const { getProviders, validateRSA } = useHttpHook()
+    const { getProviders: _getProviders, validateRSA: _validateRSA } = useHttpHook()
     const [btns,setBtns] = useState<FeatureBtn[]>([
         {
         key:"onboard_user",

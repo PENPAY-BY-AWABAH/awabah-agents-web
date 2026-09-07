@@ -7,6 +7,8 @@ import { UserItemProp } from "./users";
 export const CheckRSAStatusComponent = ({onClose,user}:{onClose:()=>void;user:UserItemProp})=>{
      const {pushToPencom,pushToPFA,pushToPFC,loading} = useHttpHook()
     const [response,setResponse] = useState<ApiResponse | null>(null);
+    /* eslint-disable react-hooks/exhaustive-deps */
+    // intent: mounted-only trigger RSA status check; user + callbacks captured in closure
     useEffect(()=>{
         pushToPencom(user).then((res)=>{
          setResponse(res);

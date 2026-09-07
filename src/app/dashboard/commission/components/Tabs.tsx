@@ -32,7 +32,7 @@ export const TabSection = ()=>{
         balance:0,
         total_commission_earned:"0",
     });
-      const [btns,setBtns] = useState<TabSectionProp[]>([
+      const [btns,_setBtns] = useState<TabSectionProp[]>([
             {
             title:"Available Balance",
             icon:<OpenWalletIcon />,
@@ -63,6 +63,8 @@ export const TabSection = ()=>{
             value:"withdrawals"
             }
         ])
+    /* eslint-disable react-hooks/exhaustive-deps */
+    // intent: mounted-only fetch commission stats
     useEffect(()=>{
         getAllCommisionStats().then((res)=>{
             if(res.status)

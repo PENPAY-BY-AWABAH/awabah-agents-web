@@ -19,7 +19,7 @@ interface BaseSelectProps {
  const BaseSelect = (props:BaseSelectProps)=>{
 const [searchTxt,setSearchText] = useState<string>("");
 const [selected,setSelected] = useState<string | null>("");
-const [list,setList] = useState<ItemProps[]>([]);
+const [_list,_setList] = useState<ItemProps[]>([]);
 const [show,setShow] = useState<boolean>(false);
 
 useEffect(()=>{

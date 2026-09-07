@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable react-hooks/set-state-in-effect */
 "use client"
 import { FormEvent, useEffect, useState } from "react";
 import useHttpHook from "@/app/includes/useHttpHook";
@@ -26,9 +25,9 @@ export interface EmploymentProps {
     employerStreetName?: string;
 }
 
-export const EmploymentPage = ({ onClose, onSuccess, trackingId }: { onClose: () => void; onSuccess: (tempPIN: string) => void; trackingId: string }) => {
+export const EmploymentPage = ({ onClose: _onClose, onSuccess, trackingId }: { onClose: () => void; onSuccess: (tempPIN: string) => void; trackingId: string }) => {
     const [listOfConsent, setListOfConsent] = useState<ItemProps[]>([]);
-    const [selectedOption, setSelectedOption] = useState<ItemProps | null>(null)
+    const [_selectedOption, _setSelectedOption] = useState<ItemProps | null>(null)
     const [showConsent, setConsent] = useState<boolean>(false);
     const { GetListOfSectors, handleEmploymentDetails, loading } = useHttpHook()
     const ListOfConsent = () => {
@@ -46,6 +45,8 @@ export const EmploymentPage = ({ onClose, onSuccess, trackingId }: { onClose: ()
             }
         })
     }
+    /* eslint-disable react-hooks/exhaustive-deps */
+    // intent: mounted-only fetch employment sectors list
     useEffect(() => {
         ListOfConsent();
     }, []);
@@ -198,7 +199,7 @@ export const EmploymentPage = ({ onClose, onSuccess, trackingId }: { onClose: ()
                         })
                     }}
                     required
-                    onValueChange={({ value }) => {
+                    onValueChange={({ value: _value }) => {
 
                     }}
                     max={30}

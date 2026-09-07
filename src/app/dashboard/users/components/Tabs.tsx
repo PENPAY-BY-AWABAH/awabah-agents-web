@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+"use client"
 import { UserCheckIcon } from "@/app/assets/user-check-icon"
 import { UserPendingIcon } from "@/app/assets/user-pending-icon"
 import { UserRejectIcon } from "@/app/assets/user-reject-icon"
@@ -31,7 +31,7 @@ export const TabSection = ()=>{
         usersOnboarded:0,
         withdrawal:0
     });
-      const [btns,setBtns] = useState<TabSectionProp[]>([
+      const btns:TabSectionProp[] = [
             {
             title:"Users Onboarded",
             icon:<UsersIcon size={40} />,
@@ -71,7 +71,10 @@ export const TabSection = ()=>{
             description:"0",
             value:"rejected"
             }
-        ])
+        ];
+
+    /* eslint-disable react-hooks/exhaustive-deps */
+    // intent: mounted-only fetch users dashboard stats
     useEffect(()=>{
         getAllUserStats().then((res)=>{
             if(res.status)

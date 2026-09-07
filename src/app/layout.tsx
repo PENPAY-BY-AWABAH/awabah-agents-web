@@ -4,8 +4,6 @@ import "./globals.css";
 import { Suspense, useEffect } from "react";
 import { BaseLoader } from "./components/baseLoader";
 import { CONSTANT } from "./includes/constants";
-import useHttpHook from './includes/useHttpHook';
-import useCommissionStore from './includes/store';
 
 export default function RootLayout({
   children,

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 
 export const BaseHorizontalIndicator = ({count = 3,selectedIndex=0,onClick}:{count?:number;selectedIndex:number;onClick?:(index:number)=>void;})=>{
     const [itemIndex,setItemIndex] = useState<number>(0);
-    const [list,setList] = useState(Array.from({length:count}).map((item,i)=>{
+    const [list,_setList] = useState(Array.from({length:count}).map((item,i)=>{
         return {
             selected:i === itemIndex
         }

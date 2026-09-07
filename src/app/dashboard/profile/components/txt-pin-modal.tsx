@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 import BaseModal from "@/app/components/baseModal"
 import { OTPBaseInput } from "@/app/components/baseOTPInput"
 import { useEffect, useState } from "react"
@@ -15,7 +14,7 @@ const [changePIN,setChangePIN] = useState<{otp?:string;pin?:string}>({
             pin:""
         })
 const [sending,setSending] = useState<boolean>(false);
-const [loading,setLoading] = useState<boolean>(false);
+const [_loading,setLoading] = useState<boolean>(false);
 const {updatePIN,handleSendOtp} = useHttpHook();
 const handleChangePIN = ()=>{
 setLoading(true)
@@ -27,11 +26,13 @@ setLoading(true)
         }
     })
 }
+/* eslint-disable react-hooks/exhaustive-deps */
+// intent: mounted-only send OTP once for PIN change flow
  useEffect(()=>{
         if(!sending)
         {
         setSending(true)
-        handleSendOtp(details.email!).then((res)=>{
+        handleSendOtp(details.email!).then((_res)=>{
         setSending(false);
         })
         }

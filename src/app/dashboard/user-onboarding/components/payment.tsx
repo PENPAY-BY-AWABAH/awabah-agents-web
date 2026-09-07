@@ -40,6 +40,8 @@ export const PaymentComponent = ({onSuccess,userdata}:{onSuccess:()=>void;userda
         })
     }
 
+    /* eslint-disable react-hooks/exhaustive-deps */
+    // intent: mounted-only hydrate payment fields via getRSAPIN
     useEffect(()=>{ 
         const payload: any = {};
         if (userdata.email) payload.email = userdata.email;

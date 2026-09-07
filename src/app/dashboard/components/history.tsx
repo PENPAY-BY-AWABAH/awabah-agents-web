@@ -45,7 +45,7 @@ const GetRemittance  = (page: number) => {
         getAllTransactions(page).then((res) => {
             if (res.status) {
                 setList(res.data.list)
-                setFilteredList(res.data.list.filter((a:any,i:number)=>a.status === "success"))
+                setFilteredList(res.data.list.filter((a:any,_i:number)=>a.status === "success"))
             }else{
                 setFilteredList([])
             }

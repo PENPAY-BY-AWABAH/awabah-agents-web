@@ -1,10 +1,10 @@
 import { SlideItemProp } from "@/app/includes/types"
 
 export const SlideItem = ({
-    id,
-    description,
-    graphics,
-    title
+    id: _id,
+    description: _description,
+    graphics: _graphics,
+    title: _title
 }:SlideItemProp)=>{
     return <div >
 

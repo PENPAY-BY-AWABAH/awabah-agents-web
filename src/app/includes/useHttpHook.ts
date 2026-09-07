@@ -3,7 +3,8 @@ import { useState } from "react";
 import { LoginProps } from "./types";
 import { toast } from "react-toastify";
 import { useApiRequest } from "./functions";
-import {name}  from "../../../package.json";
+import pkg from "../../../package.json";
+const { name } = pkg;
 import { UserItemProp } from "../dashboard/components/users";
 export interface ApiResponse {
     status:boolean;

@@ -1,13 +1,12 @@
 /* eslint-disable react/no-unescaped-entities */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import BaseButton from "@/app/components/baseButton";
-import { useState } from "react";
 type ReviewStateProps = "request"|"done"| null
-export const SuccessComponent = ({onPay,trackingId,email,pfaName,firstCommissionAmount,rsaPin,userIsAgent}:{onPay:()=>void;trackingId:string;email:string;userIsAgent?:boolean;rsaPin?:string;pfaName?:string;firstCommissionAmount?:number})=>{
-    const [reviewState,setReviewState] = useState<ReviewStateProps>("done");
-  
+export const SuccessComponent = ({onPay,trackingId,pfaName,rsaPin,userIsAgent}:{onPay:()=>void;trackingId:string;email:string;userIsAgent?:boolean;rsaPin?:string;pfaName?:string;firstCommissionAmount?:number})=>{
+    const reviewState:ReviewStateProps = "done";
     return <div className={`${reviewState === "done"?"fixed top-0 left-0 w-full z-10 bg-white top-[0px] lg:pt-[50px]":""} m-auto pt-20`}>
-    <div className={`m-auto items-center text-center  rounded-[30px] lg:min-h-[400px] shadow lg:w-[500px] p-[16px] lg:p-[30px] pb-[60px] `} >
-        <div className="text-black text-[24px] font-bold text-center lg:mb-[20px] ">{reviewState === "done"?userIsAgent?"RSA PIN Request Status":rsaPin?"RSA PIN Generated":"Onboarding Status":"Request for RSA PIN"}</div>
+ <div className={`m-auto items-center text-center  rounded-[30px] lg:min-h-[400px] shadow lg:w-[500px] p-[16px] lg:p-[30px] pb-[60px] `} >
+<div className="text-black text-[24px] font-bold text-center lg:mb-[20px] ">{reviewState === "done"?userIsAgent?"RSA PIN Request Status":rsaPin?"RSA PIN Generated":"Onboarding Status":"Request for RSA PIN"}</div>
 <div className="flex m-auto items-center justify-center lg:my-4">
   {reviewState !== "done"?<svg  width="230" height="163" viewBox="0 0 230 163" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M230 142.559H0V142.668H230V142.559Z" fill="#EBEBEB"/>

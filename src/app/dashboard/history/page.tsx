@@ -2,8 +2,6 @@
 import { BackIcon } from "@/app/assets/back-icon";
 import { HistorySection } from "../components/history";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import useHttpHook from "@/app/includes/useHttpHook";
 export interface TransactionItem {
     title?:string
 }

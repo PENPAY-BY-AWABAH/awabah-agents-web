@@ -38,10 +38,13 @@ export const CommissionWalletBalance =()=>{
             }
         })
     }
+    /* eslint-disable react-hooks/exhaustive-deps */
+    // intent: mounted-only fetch wallet balance
     useEffect(()=>{
         GetWalletInfo();
     },[])
 
+    // intent: mounted-only fetch commission stats
     useEffect(()=>{
         getAllCommisionStats().then((res)=>{
             if(res.status)

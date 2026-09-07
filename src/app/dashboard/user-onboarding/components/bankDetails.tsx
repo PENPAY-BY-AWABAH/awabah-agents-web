@@ -17,7 +17,7 @@ export interface BankProps {
   isFather?: string;
 }
 
-export const BankDetailPage = ({onClose,onSuccess,trackingId}:{onClose:()=>void;onSuccess:()=>void;trackingId:string;}) => {
+export const BankDetailPage = ({onClose:_onClose,onSuccess,trackingId}:{onClose:()=>void;onSuccess:()=>void;trackingId:string;}) => {
     const [showAddAccountNumber, setShowAddAccountNumber] = useState<boolean>(false);
     const [searchText, setSearchText] = useState<string>("");
     const [listOfBanks, setListOfBanks] = useState<BankItemProps[]>([]);
@@ -34,7 +34,9 @@ export const BankDetailPage = ({onClose,onSuccess,trackingId}:{onClose:()=>void;
             }
         })
     }
-    const navigate = useRouter();
+    const _navigate = useRouter();
+    /* eslint-disable react-hooks/exhaustive-deps */
+    // intent: mounted-only load banks during onboarding
     useEffect(() => {
         ListOfBanks();
     }, []);
@@ -127,7 +129,7 @@ export const BankDetailPage = ({onClose,onSuccess,trackingId}:{onClose:()=>void;
                                 disabled
                                 name={"bankName"}
                                 value={selectedOption?.name}
-                                onValueChange={({ value }) => {
+                                onValueChange={({ value: _value }) => {
 
                                 }}
                             />

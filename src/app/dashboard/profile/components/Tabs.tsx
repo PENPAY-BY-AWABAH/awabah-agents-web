@@ -2,7 +2,6 @@ import { UserCheckIcon } from "@/app/assets/user-check-icon"
 import { UserPendingIcon } from "@/app/assets/user-pending-icon"
 import { UserRejectIcon } from "@/app/assets/user-reject-icon"
 import { UsersIcon } from "@/app/assets/users-icon"
-import { RouteItem } from "@/app/includes/constants"
 import useHttpHook from "@/app/includes/useHttpHook"
 import { ReactElement, useEffect, useState } from "react"
 interface TabSectionProp {
@@ -31,7 +30,7 @@ export const TabSection = ()=>{
         usersOnboarded:0,
         pendingVerification:0
     });
-      const [btns,setBtns] = useState<TabSectionProp[]>([
+      const [btns,_setBtns] = useState<TabSectionProp[]>([
             {
             title:"Users Onboarded",
             icon:<UsersIcon size={40} />,
@@ -72,6 +71,8 @@ export const TabSection = ()=>{
             value:"rejected"
             }
         ])
+    /* eslint-disable react-hooks/exhaustive-deps */
+    // intent: mounted-only fetch profile user stats
     useEffect(()=>{
         getAllUserStats().then((res)=>{
             if(res.status)

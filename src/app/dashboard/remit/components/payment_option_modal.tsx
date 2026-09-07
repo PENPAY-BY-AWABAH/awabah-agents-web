@@ -1,10 +1,8 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable @next/next/no-img-element */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import BaseModal from "@/app/components/baseModal"
 import { PaymentResponseProp } from "../page"
 import BaseButton from "@/app/components/baseButton"
-import { JSX, useEffect, useState } from "react";
+import { JSX, useState } from "react";
 import { MonnifyLogo, PaystackIcon } from "@/app/includes/payment-gateways";
 import { TickIcon } from "@/app/assets/tick-icon";
 interface ListItemPros {
@@ -14,7 +12,7 @@ interface ListItemPros {
     selected?:boolean;
     action:string;
 }
-export const PaymentOptionsModal = ({onClose,details,onPayment}:{onClose:()=>void;details:PaymentResponseProp;onPayment:(gateway:string)=>void})=>{
+export const PaymentOptionsModal = ({onClose,details:_details,onPayment}:{onClose:()=>void;details:PaymentResponseProp;onPayment:(gateway:string)=>void})=>{
     const [List,setList] = useState<ListItemPros[]>([
     {
         icon:<MonnifyLogo />,

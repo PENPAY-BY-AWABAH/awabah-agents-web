@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-hooks/set-state-in-effect */
 import BaseModal from "@/app/components/baseModal"
 import { OTPBaseInput } from "@/app/components/baseOTPInput"
 import { useEffect, useState } from "react"
@@ -27,11 +25,13 @@ export const PasswordModal = ({onClose,details}:{onClose:()=>void;details:UserDe
         }
     })
     }
+    /* eslint-disable react-hooks/exhaustive-deps */
+    // intent: mounted-only send OTP once for password change flow
     useEffect(()=>{
         if(!sending)
         {
         setSending(true)
-        handleSendOtp(details.email!).then((res)=>{
+        handleSendOtp(details.email!).then((_res)=>{
         setSending(false);
         })
         }

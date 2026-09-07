@@ -2,7 +2,6 @@ import BaseModal from "@/app/components/baseModal";
 import { CameraIcon, ImageIcon } from "lucide-react";
 import { isMobile } from "./cameraView";
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
 export const ImagePickerOption = ({onSelect,onClose}:{onSelect:(data:string)=>void;onClose:()=>void})=>{
     return <BaseModal 
     onClose={()=>{
