@@ -41,6 +41,7 @@ export const ConsentPage = ({onClose,onSuccess,trackingId,email,userData}:{onClo
       try {
         const canvas = await html2canvas(divRef.current!);
         const dataURL = canvas.toDataURL("image/png");
+        const buffer = base64ToBuffer(dataURL);
         const presignRes = await fetch("/api/upload-consent", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -51,7 +52,6 @@ export const ConsentPage = ({onClose,onSuccess,trackingId,email,userData}:{onClo
           return "";
         }
 
-        const buffer = base64ToBuffer(dataURL);
         const upload = await fetch(presign.data.signedUrl, {
           method: "PUT",
           headers: {
