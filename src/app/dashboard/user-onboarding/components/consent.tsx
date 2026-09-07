@@ -24,56 +24,45 @@ export interface BankProps {
 export const ConsentPage = ({onClose,onSuccess,trackingId,email,userData}:{onClose:()=>void;onSuccess:(data:{rsaPin:string})=>void;trackingId:string;email:string;userData?:SignUpProps}) => {
   const divRef = useRef<HTMLDivElement>(null);
   const [agree,setAgree] = useState<boolean>(false);
+  const [loading,setLoading] = useState<boolean>(false);
     const [processed,setProcessed] = useState<string>("");
-    const {RequestForRSAPIN,loading,ShowMessage} = useHttpHook()
-    const base64ToBuffer = (base64Data: string): ArrayBuffer => {
-      const comma = base64Data.indexOf(",");
-      const b64 = comma !== -1 ? base64Data.slice(comma + 1) : base64Data;
-      const bstr = atob(b64);
-      const n = bstr.length;
-      const u8arr = new Uint8Array(n);
-      for (let i = 0; i < n; i++) {
-        u8arr[i] = bstr.charCodeAt(i);
-      }
-      return u8arr.buffer;
-    };
+    const {RequestForRSAPIN,ShowMessage} = useHttpHook()
+   
     const Download = async () => {
       try {
         const canvas = await html2canvas(divRef.current!);
-        const dataURL = canvas.toDataURL("image/png");
-        const buffer = base64ToBuffer(dataURL);
-        const presignRes = await fetch("/api/upload-consent", {
+        const base64String = canvas.toDataURL("image/png");
+        const base64Data = base64String.includes(",")
+          ? base64String.split(",")[1]
+          : base64String;
+        const trackingId = `consent-form-${userData?.nin}`;
+
+        const form = new FormData();
+        form.append("trackingId", trackingId);
+        form.append("base64", base64Data);
+
+        const uploadRes = await fetch("/api/upload-consent", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ trackingId: `consent-form-${userData?.nin}` }),
+          body: form
         });
-        const presign = await presignRes.json();
-        if (!presign?.status || !presign?.data?.signedUrl) {
+        const upload = await uploadRes.json();
+        if (!upload?.status || !upload?.data?.key) {
           return "";
         }
-
-        const upload = await fetch(presign.data.signedUrl, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "image/png",
-          },
-          body: buffer,
-        });
-
-        if (!upload.ok) {
-          return "";
-        }
-        return presign.data.key || "";
+        return upload.data.key;
       } catch (e) {
         return "";
       }
     };
     const handleSaveConsent = () => {
+      setLoading(true);
         Download().then((res)=>{
           if(!res){
+            setLoading(false);
             return ShowMessage({message:"Failed to upload consent form",position:"center",status:false,data:{}});
           }
-        RequestForRSAPIN({email,trackingId,consentForm:res}).then((res)=>{
+        RequestForRSAPIN({email,trackingId,consentForm:`https://pub-29983edc20e94bc3b1a81705aa08f9d5.r2.dev/${res}`}).then((res)=>{
+           setLoading(false);
           if(res.data?.processed || res.data?.pushedLater)
               {
                 ShowMessage({message:res.message,position:"center",status:true,data:{}})
@@ -392,9 +381,9 @@ export const ConsentPage = ({onClose,onSuccess,trackingId,email,userData}:{onClo
                             onClick={()=>handleSaveConsent()}
                             />
                         </div>
-                    </div>
-                </div>
+        </div>
+      </div>
     </div>
-    {loading && <BaseLoader color="green" size="lg" modal />}
+    {loading && <BaseLoader text="Proccessing..." color="green" size="lg" modal />}
     </div>
 }

@@ -25,6 +25,7 @@ import { ConsentPage } from "./components/consent";
 import BaseModal from "@/app/components/baseModal";
 import useCommissionStore from "@/app/includes/store";
 import { Base64Decode } from "@/app/includes/functions";
+import { toast } from "react-toastify";
 type RegisterProps = "User Details" | "Verify Email" | "Next Of Kin" | "Success" | "Pay" | "Employment Details" | "Parent / Guardian Details" | "Bank Details" | "Consent Agreement";
 export interface SignUpProps {
     referralCode?: string;
@@ -61,6 +62,7 @@ const Page = () => {
     const signatueInputRef = useRef<HTMLInputElement>(null);
     const [listOfConsent, setListOfConsent] = useState<ItemProps[]>([]);
     const [index, setIndex] = useState<number>(0)
+    const [uploading, setUploading] = useState<boolean>(false)
     const [showCamera, setShowCamera] = useState<boolean>(false);
     const [userIsAgent] = useState<boolean>(false);
     const [showOption, setShowOption] = useState<boolean>(false);
@@ -95,6 +97,27 @@ const Page = () => {
         gender: "",
         firstCommissionAmount: 100
     })
+
+ const handleR2Upload = async (trackingId: string,base64String: string) => {
+    setUploading(true);
+    const base64Data = base64String.includes(",")
+          ? base64String.split(",")[1]
+          : base64String;
+
+        const form = new FormData();
+        form.append("trackingId", trackingId);
+        form.append("base64", base64Data);
+
+        const uploadRes = await fetch("/api/upload-consent", {
+          method: "POST",
+          body: form
+        });
+        const upload = await uploadRes.json();
+        if (!upload?.status || !upload?.data?.key) {
+          return "";
+        }
+        return upload.data.key;
+    };
 
     const handleSubmit = (e?: FormEvent) => {
         if(e)
@@ -134,9 +157,41 @@ const Page = () => {
         {
             return setShowAddress(true)
         }
+        if (!formData?.photo) {
+            return toast.error("Photo is required.");
+        }
+        if (!formData?.signature) {
+            return toast.error("signature is required.");
+        }
+        const trackingNin = formData.nin ?? "";
         setShowState(false);
         setShowAddress(false);
-        handleRegisterUser(data).then((res) => {
+        setUploading(true);
+        handleR2Upload(`photo-${trackingNin}`, formData.photo).then((photo) => {
+
+         if(photo === "")
+        {
+          return toast.error("Photo is required.");
+        }
+             if(photo)
+            {
+                data.photo = `https://pub-29983edc20e94bc3b1a81705aa08f9d5.r2.dev/${photo}`;
+            }
+
+        handleR2Upload(`signature-${trackingNin}`, formData.signature!).then((signature) => {
+
+        if(signature === "")
+        {
+          return toast.error("signature is required.");
+        }
+
+             if(signature)
+            {
+                data.signature = `https://pub-29983edc20e94bc3b1a81705aa08f9d5.r2.dev/${signature}`;
+            }
+            
+            handleRegisterUser(data).then((res) => {
+            setUploading(false);
             if (res.status) {
                 const data = {
                     ...formData,
@@ -172,8 +227,11 @@ const Page = () => {
                   setShowAddress(true);
                 }
             }
+            })
         })
-    }
+        })
+        }
+
     const [listOfStates, setListOfStates] = useState<StateLGAProp[]>([]);
     const searchParams = useSearchParams()
     const email = searchParams.get('email');
@@ -950,37 +1008,6 @@ const GetStates = ()=>{
                         userData={formData}
                     />
                 </div>}
-                {/* 
-                {section === "Employment Details" && <div >
-                    <EmploymentPage
-                        onSuccess={(tempPIN) => {
-                        update({showCommissionBalance:true});
-                        setFormData({
-                            ...formData,
-                            tempPIN
-                        })
-                        setSection("Success")
-                        }}
-                        onClose={() => {
-
-                        }}
-                        trackingId={formData.trackingId!}
-                    />
-                </div>} 
-                */}
-                {/* {section === "Parent / Guardian Details" && <div >
-                    <ParentDetailPage
-                        onSuccess={() => {
-                        setSection("Pay")
-                        }}
-                        isFather={true}
-                        onClose={() => {
-
-                        }}
-                        trackingId={formData.trackingId!}
-                    />
-                </div>}
-                */}
             </div>
         </div> : <SuccessComponent
             onPay={() => {
@@ -1031,6 +1058,7 @@ const GetStates = ()=>{
                 setShowCamera(false);
             }}
         />}
+        {uploading && <BaseLoader text="Proccessing..." modal size={"lg"} color={"green"} />}
     </div>
 }
 export default Page;

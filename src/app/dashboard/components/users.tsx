@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client"
 import { SliderIcon } from "@/app/assets/slider-filter";
 import BaseButton from "@/app/components/baseButton";
@@ -53,8 +54,7 @@ export const UsersSection = ({page}:{page?:boolean})=>{
     })
     }
    
-    /* eslint-disable react-hooks/exhaustive-deps */
-    // intent: mounted-only fetch first page of users
+   
     useEffect(()=>{
         GetAllUsers(1);
     },[])

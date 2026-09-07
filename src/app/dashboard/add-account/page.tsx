@@ -1,3 +1,5 @@
+ /* eslint-disable react-hooks/exhaustive-deps */
+
 "use client"
 import { BackIcon } from "@/app/assets/back-icon";
 import { BankIcon } from "@/app/assets/bank-icon";
@@ -27,8 +29,6 @@ const Page = () => {
         })
     }
     const navigate = useRouter();
-    /* eslint-disable react-hooks/exhaustive-deps */
-    // intent: mounted-only load of banks list
     useEffect(() => {
         ListOfBanks();
     }, []);
