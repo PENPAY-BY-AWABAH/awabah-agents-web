@@ -11,6 +11,8 @@
     "scan": "npx fix-react2shell-next"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1127.0",
+    "@aws-sdk/s3-request-presigner": "^3.1127.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@mediapipe/face_mesh": "^0.4.1633559619",

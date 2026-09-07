@@ -22,11 +22,57 @@ export interface BankProps {
 }
 
 export const ConsentPage = ({onClose,onSuccess,trackingId,email,userData}:{onClose:()=>void;onSuccess:(data:{rsaPin:string})=>void;trackingId:string;email:string;userData?:SignUpProps}) => {
-    const [agree,setAgree] = useState<boolean>(false);
+  const divRef = useRef<HTMLDivElement>(null);
+  const [agree,setAgree] = useState<boolean>(false);
     const [processed,setProcessed] = useState<string>("");
     const {RequestForRSAPIN,loading,ShowMessage} = useHttpHook()
+    const base64ToBuffer = (base64Data: string): ArrayBuffer => {
+      const comma = base64Data.indexOf(",");
+      const b64 = comma !== -1 ? base64Data.slice(comma + 1) : base64Data;
+      const bstr = atob(b64);
+      const n = bstr.length;
+      const u8arr = new Uint8Array(n);
+      for (let i = 0; i < n; i++) {
+        u8arr[i] = bstr.charCodeAt(i);
+      }
+      return u8arr.buffer;
+    };
+    const Download = async () => {
+      try {
+        const canvas = await html2canvas(divRef.current!);
+        const dataURL = canvas.toDataURL("image/png");
+        const presignRes = await fetch("/api/upload-consent", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ trackingId: `consent-form-${userData?.nin}` }),
+        });
+        const presign = await presignRes.json();
+        if (!presign?.status || !presign?.data?.signedUrl) {
+          return "";
+        }
+
+        const buffer = base64ToBuffer(dataURL);
+        const upload = await fetch(presign.data.signedUrl, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "image/png",
+          },
+          body: buffer,
+        });
+
+        if (!upload.ok) {
+          return "";
+        }
+        return presign.data.key || "";
+      } catch (e) {
+        return "";
+      }
+    };
     const handleSaveConsent = () => {
         Download().then((res)=>{
+          if(!res){
+            return ShowMessage({message:"Failed to upload consent form",position:"center",status:false,data:{}});
+          }
         RequestForRSAPIN({email,trackingId,consentForm:res}).then((res)=>{
           if(res.data?.processed || res.data?.pushedLater)
               {
@@ -54,22 +100,7 @@ export const ConsentPage = ({onClose,onSuccess,trackingId,email,userData}:{onClo
         })
         });
     }
-    const divRef = useRef<HTMLDivElement>(null);
-    const Download = async()=>{
-      let dataURL = "";
-      try {
-      const canvas = await html2canvas(divRef.current!);
-      dataURL = canvas.toDataURL('image/png');
-      } catch (e) {
-        // fallback: return empty string if html2canvas fails
-      }
-      return dataURL;
-    // Create a temporary link to trigger download
-    // const link = document.createElement('a');
-    // link.href = dataURL;
-    // link.download = `consent-form`;
-    // link.click();
-    }
+
     if(processed){
       return <div className="mt-[0px] flex justify-center items-center h-full px-[40px] absolute top-[0px] left-[0px] right-[0px]  bg-white">
         <div className="lg:w-[400px] h-full pt-[55%]  lg:pt-[60px]">
