@@ -433,6 +433,9 @@ const GetStates = ()=>{
                     const compressedBase64 = await reduceImageSize(base64String, 0.7, 100, 100)
                     setFormData({
                         ...formData,
+                         address:"",
+                                            state:"",
+                                            lga:"",
                         signature: compressedBase64
                     })
                 };
@@ -520,6 +523,9 @@ const GetStates = ()=>{
                             onValueChange={({ value }) => {
                                 setFormData({
                                     ...formData,
+                                     address:"",
+                                            state:"",
+                                            lga:"",
                                     email: value
                                 })
                             }}
@@ -597,6 +603,9 @@ const GetStates = ()=>{
                                                     return {
                                                         ...prev,
                                                         pfaCode: value,
+                                                         address:"",
+                                                            state:"",
+                                                            lga:"",
                                                         pfaName: foundItem?.title
                                                     }
                                                 })
@@ -717,6 +726,9 @@ const GetStates = ()=>{
                                     onValueChange={({ value }) => {
                                         setFormData({
                                             ...formData,
+                                             address:"",
+                                            state:"",
+                                            lga:"",
                                             nin: value
                                         })
                                     }}
@@ -769,6 +781,9 @@ const GetStates = ()=>{
                             onValueChange={({ value }) => {
                                 setFormData({
                                     ...formData,
+                                     address:"",
+                                            state:"",
+                                            lga:"",
                                     phoneNumber: value
                                 })
                             }}
@@ -872,6 +887,9 @@ const GetStates = ()=>{
                                                 setFormData({
                                                     ...formData,
                                                     serviceNo: value,
+                                                     address:"",
+                                            state:"",
+                                            lga:"",
                                                     serviceTitle: foundItem?.title
                                                 })
                                             }
@@ -900,6 +918,9 @@ const GetStates = ()=>{
                                                 setFormData({
                                                     ...formData,
                                                     serviceNo: value,
+                                                     address:"",
+                                            state:"",
+                                            lga:"",
                                                     serviceTitle: foundItem?.title
                                                 })
                                             }

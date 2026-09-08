@@ -36,7 +36,7 @@ export const ErrorMap:Record<string,string> = {
 }
 
 export const CONSTANT = {
-    BaseURL:"http://localhost/awabah-api/v1/",
+    BaseURL:process.env.NEXT_PUBLIC_BASEURL,
     LocalStore:{
         token:"token",
         baseUrl:"baseurl", 
