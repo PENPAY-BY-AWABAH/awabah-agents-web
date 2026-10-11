@@ -7,7 +7,7 @@ return <svg  className="w-full h-full" height="151" viewBox="0 0 369 151" fill="
 <rect x="2.60156" y="2.59998" className="w-full" height="145" rx="20" fill="#009668"/>
 </g>
 <defs>
-<filter id="filter0_g_915_7949" x="0.0015626" y="-2.43187e-05" width="1265.2" height="150.2" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<filter id="filter0_g_915_7949" x="0.0015626" y="-2.43187e-05" width="1265.2" height="150.2" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
 <feFlood floodOpacity="0" result="BackgroundImageFix"/>
 <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
 <feTurbulence type="fractalNoise" baseFrequency="0.1428571492433548 0.1428571492433548" numOctaves="3" seed="8656" />
@@ -24,7 +24,7 @@ return <svg  className="w-full h-full" height="151" viewBox="0 0 369 151" fill="
 <rect x="2.60156" y="2.59998" width="1260" height="145" rx="20" fill="#009668"/>
 </g>
 <defs>
-<filter id="filter0_g_915_7949" x="0.0015626" y="-2.43187e-05" width="1265.2" height="150.2" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<filter id="filter0_g_915_7949" x="0.0015626" y="-2.43187e-05" width="1265.2" height="150.2" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
 <feFlood floodOpacity="0" result="BackgroundImageFix"/>
 <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
 <feTurbulence type="fractalNoise" baseFrequency="0.1428571492433548 0.1428571492433548" numOctaves="3" seed="8656" />
