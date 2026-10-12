@@ -5,7 +5,8 @@
   "scripts": {
     "prestart": "fuser -k 8003/tcp || true",
     "dev": "next dev",
-    "build": "next build && pm2 reload  awabah-agent-demo",
+    "build": "next build",
+    "reload": "pm2 reload awabah-agent-demo",
     "start": "next start -p 8003",
     "lint": "eslint",
     "scan": "npx fix-react2shell-next"
