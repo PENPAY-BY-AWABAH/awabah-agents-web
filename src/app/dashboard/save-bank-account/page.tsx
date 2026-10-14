@@ -9,6 +9,7 @@ import useHttpHook from "@/app/includes/useHttpHook";
 import { ROUTES } from "@/app/includes/constants";
 import { LinkBankModal } from "./components/link-modal";
 import { TransactionPINModal } from "../withdrawal/components/transaction-PIN";
+import { AgentWithdrawalGateway, PaymentGatewayModal } from "../withdrawal/components/payment-gateway-modal";
 import { useRouter } from "next/navigation";
 
 const Page = () => {
@@ -16,12 +17,13 @@ const Page = () => {
     const [listOfBanks, setListOfBanks] = useState<SavedAccountProps[]>([]);
     const [selectedOption, setSelectedOption] = useState<SavedAccountProps | null>(null)
     const [addNewAccount, setAddNewAccount] = useState<boolean>(false);
-    const [txtPin, _setTxtPin] = useState<string>("");
     const [addNewAccountDetails, setAddNewAccountDetails] = useState<BankItemProps | null>(null);
+    const [showGatewayModal, setShowGatewayModal] = useState<boolean>(false);
     const [showTxtPin, setShowTxtPin] = useState<boolean>(false);
+    const [paymentGateway, setPaymentGateway] = useState<AgentWithdrawalGateway>("monnify");
 
     const navigate = useRouter();
-    const { getMyBanks, removeAcount, loading,handleWithdrawalToAccount } = useHttpHook()
+    const { getMyBanks, removeAcount, loading } = useHttpHook()
     const ListOfBanks = () => {
         getMyBanks().then((res) => {
             if (res.status) {
@@ -44,13 +46,6 @@ const Page = () => {
             localStorage.removeItem("newlyAddedAccount");
         }
     }, []);
-const _handleWithdrawal = ()=>{
-handleWithdrawalToAccount({
-    pin:txtPin
-}).then((_res)=>{
-
-})
-}
     return <div className="fixed top-0 left-0 w-full h-full bg-white p-[16px] lg:p-6 z-10">
         <div className="mb-6">
             <button
@@ -126,7 +121,7 @@ handleWithdrawalToAccount({
                                 <BaseButton
                                     disabled={selectedOption === null}
                                     onClick={()=>{
-                                        setShowTxtPin(true)
+                                        setShowGatewayModal(true)
                                     }}
                                     text="Withdraw to this Account"
                                     type="button"
@@ -179,13 +174,26 @@ handleWithdrawalToAccount({
             onClose={() => { }}
             text={listOfBanks.length > 0 ? "Linking your bank account..." : "Loading your bank accounts..."}
         />}
-        {showTxtPin &&<TransactionPINModal
-        onClose={()=>{
-            setShowTxtPin(false)
-        }}
-        account_number={selectedOption?.accountNumber!}
-        bankName={selectedOption?.bankName!}
-        />}
+        {showGatewayModal && selectedOption && (
+            <PaymentGatewayModal
+                onClose={() => setShowGatewayModal(false)}
+                onContinue={(gateway) => {
+                    setPaymentGateway(gateway);
+                    setShowGatewayModal(false);
+                    setShowTxtPin(true);
+                }}
+            />
+        )}
+        {showTxtPin && selectedOption && (
+            <TransactionPINModal
+                onClose={() => {
+                    setShowTxtPin(false);
+                }}
+                account_number={selectedOption.accountNumber}
+                bankName={selectedOption.bankName}
+                paymentGateway={paymentGateway}
+            />
+        )}
     </div>
 }
 export default Page;

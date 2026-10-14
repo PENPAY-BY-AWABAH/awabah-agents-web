@@ -7,8 +7,9 @@ import { useEffect, useState } from "react"
 import { CommissionStatsProps } from "../../commission/components/Tabs"
 import { WithdrawalSuccessScreen } from "./success"
 import { ForgotPINView } from "./forgotPin"
+import { AgentWithdrawalGateway } from "./payment-gateway-modal"
 
-export const TransactionPINModal = ({onClose,account_number,bankName}:{onClose:()=>void;account_number:string;bankName:string})=>{
+export const TransactionPINModal = ({onClose,account_number,bankName,paymentGateway}:{onClose:()=>void;account_number:string;bankName:string;paymentGateway:AgentWithdrawalGateway})=>{
     const [pin,setPIN] = useState<string>("");
     const [showForgotPin,setShowForgotPin] = useState<boolean>(false);
     const {handleWithdrawalToAccount,loading,getAllCommisionStats} = useHttpHook();
@@ -31,7 +32,7 @@ export const TransactionPINModal = ({onClose,account_number,bankName}:{onClose:(
       handleWithdrawalToAccount({
             pin,
             account_number,
-            monnify:true
+            ...(paymentGateway === "monnify" ? { monnify: true } : { payonus: true }),
         }).then((res)=>{
             if(res.status)
             {
