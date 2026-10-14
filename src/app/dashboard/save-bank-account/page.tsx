@@ -184,7 +184,7 @@ const Page = () => {
                 }}
             />
         )}
-        {showTxtPin && selectedOption && (
+        {showTxtPin && selectedOption?.accountNumber && selectedOption?.bankName && (
             <TransactionPINModal
                 onClose={() => {
                     setShowTxtPin(false);
