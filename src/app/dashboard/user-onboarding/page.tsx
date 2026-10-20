@@ -128,8 +128,17 @@ const Page = () => {
         if (e) {
             e.preventDefault();
         }
+        if (!formData.firstName?.trim() || !formData.lastName?.trim()) {
+            ShowMessage({ position: "center", status: false, data: null, message: "Enter the applicant’s registered first and last names." });
+            return;
+        }
+        const selectedState = listOfStates.find(state => state.StateName === formData.state);
+        const selectedLga = (selectedState?.lgas as unknown as { name: string; Code: string }[] | undefined)
+            ?.find(lga => lga.name === formData.lga);
         const data = {
             ...formData,
+            stateCode: selectedState?.Code ?? "",
+            lgaCode: selectedLga?.Code ?? "",
             userType: userIsMinor ? "MINOR" : "ADULT",
             referralCode,
         };
@@ -137,10 +146,15 @@ const Page = () => {
         if (userIsMinor) {
             data.dob = dayjs(data.dob).format("DD-MM-YYYY")
         }
-
-        if (data.userType === "MINOR") {
-            if (formData?.state === "" || formData?.lga === "") {
-                return setShowState(true)
+        
+        if (!data.stateCode || !data.lgaCode) {
+            return setShowState(true);
+        }
+        if(data.userType === "MINOR")
+        {
+            if(formData?.state === "" || formData?.lga === "")
+            {
+            return setShowState(true)
             }
             if (formData?.address === "") {
                 return setShowAddress(true)
@@ -608,6 +622,7 @@ const Page = () => {
                                         custom
                                     />
                                 </div>
+<<<<<<< HEAD
                                 {/* {userDetails.accountType === "Agent" && !userDetails?.isAgentAsignedToSuperAgent && <BaseInput
                                     type="text"
                                     disabled={disableReferralCode}
@@ -626,6 +641,30 @@ const Page = () => {
                                 {showState && <BaseModal
                                     title="State and Local Goverment Area"
                                     onClose={() => setShowState(false)}
+=======
+                            {userDetails.accountType === "Agent" && !userDetails?.isAgentAsignedToSuperAgent && <BaseInput
+                            type="text"
+                            disabled={disableReferralCode}
+                            name="referralCode"
+                            value={referralCode}
+                            onValueChange={({ value }) => {
+                               setReferralCode(value);
+                            }}
+                            max={60}
+                            label={`Referral Code`}
+                            placeholder="Enter Referral Code."
+                        />}
+                                
+
+                                <p className="mb-3 text-left text-sm text-gray-500">Enter the applicant’s names exactly as registered on their identity document.</p>
+                                <BaseInput type="text" name="firstName" label="First name" placeholder="Registered first name" value={formData.firstName} required max={60}
+                                    onValueChange={({ value }) => setFormData((prev) => ({ ...prev, firstName: value }))} />
+                                <BaseInput type="text" name="lastName" label="Last name" placeholder="Registered last name" value={formData.lastName} required max={60}
+                                    onValueChange={({ value }) => setFormData((prev) => ({ ...prev, lastName: value }))} />
+                                {showState && <BaseModal 
+                                title="State and Local Goverment Area"
+                                onClose={()=>setShowState(false)}
+>>>>>>> origin/nasir/bah-3-qore-id-integration
                                 >
                                     <div >
                                         <div className="text-left mb-4" >
