@@ -12,7 +12,6 @@ import { CONSTANT, placeHolderAvatar, ROUTES } from "../includes/constants";
 import Link from "next/link";
 import { BellIcon } from "../assets/bell-icon";
 import { Share2Icon } from "lucide-react";
-import RegisterOptions from "./components/registerOptions";
 import { useRouter } from "next/navigation";
 import { BaseLoader } from "../components/baseLoader";
 export interface UserDetails {
@@ -125,7 +124,6 @@ const Page = () => {
         <FeaturesBtnSection />
         <PerformanceSection />
         <HistorySection />
-        <RegisterOptions />
         {showShareModal && <ShareModal
             onClose={() => setShowShareModal(false)}
         />}

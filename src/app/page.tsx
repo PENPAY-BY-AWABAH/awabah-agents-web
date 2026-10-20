@@ -60,7 +60,7 @@ export default function Home() {
         `}
       </Script>
     </> : null}
-    <div className="lg:min-h-screen overflow-scroll lg:pb-[140px] items-center justify-center bg-white font-sans grid grid-cols-1 ">
+    <div className="lg:min-h-screen overflow-scroll lg:pb-[140px] items-center justify-center bg-white font-sans grid grid-cols-1 h-full">
      <div className="m-auto items-center text-center  lg:h-[500px] ">
      {slider.filter((a,i)=>selectedIndex === i).map((item,index)=>{
       return <div key={index} className="m-auto items-center text-center  rounded-[30px] shadow lg:w-[400px] pt-[10px]  my-[60px] lg:p-[30px] pb-[60px]">

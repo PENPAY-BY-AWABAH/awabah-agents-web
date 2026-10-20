@@ -35,9 +35,9 @@ const BaseModal = (props:BaseModalProps)=>{
             }
         }
     `}</style>
-    <div className={`bg-white p-4 rounded-lg shadow-lg ${sizeClass} ${bottomSheetClass}`}>
+    <div className={`bg-white p-4 mx-auto rounded-lg shadow-lg ${sizeClass} ${bottomSheetClass}`}>
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-2xl font-semibold text-gray-800">{props.title}</h3>
+        <h5 className="text-xl font-semibold text-gray-800">{props.title}</h5>
         <button 
         onClick={props.onClose}
         className="text-gray-600 hover:text-gray-900 cursor-pointer">

@@ -4,8 +4,8 @@ import { UserIcon } from "@/app/assets/user-icon";
 import { WithdrawalIcon } from "@/app/assets/withdrawal-icon";
 import { COLOURS, CONSTANT, RouteItem, ROUTES } from "@/app/includes/constants"
 import useHttpHook from "@/app/includes/useHttpHook";
-import { useRouter } from "next/navigation";
-import { useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react"
 import { ValidateRSAPinModal } from "./validateRSAPinModal";
 export interface WalletBalanceProps {
 balance:string;
@@ -56,8 +56,18 @@ export const FeaturesBtnSection =()=>{
         }
         },
     ])
-    const navigation = useRouter()
-    return  <div className="my-[10px] lg:my-10 lg:mt-20">
+    const navigation = useRouter();
+    const query = useSearchParams();
+    const c = query.get("c");
+   useEffect(()=>{
+    if(c)
+    {
+     window.dispatchEvent(new CustomEvent(CONSTANT.Event.showRegisterOptions,{detail:{email:c}}));
+    }
+   },[c])
+   
+       
+       return  <div className="my-[10px] lg:my-10 lg:mt-20">
             <div className="flex items-center gap-10 text-center">
                 {btns.map((btn,i)=><div 
                 key={i}

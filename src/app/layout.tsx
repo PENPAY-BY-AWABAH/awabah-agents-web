@@ -4,6 +4,7 @@ import "./globals.css";
 import { Suspense, useEffect } from "react";
 import { BaseLoader } from "./components/baseLoader";
 import { CONSTANT } from "./includes/constants";
+import RegisterOptions from './dashboard/components/registerOptions';
 
 export default function RootLayout({
   children,
@@ -56,6 +57,7 @@ useEffect(() => {
         >
       {children}
       </Suspense>
+      <RegisterOptions />
       <ToastContainer />
       </body>
     </html>

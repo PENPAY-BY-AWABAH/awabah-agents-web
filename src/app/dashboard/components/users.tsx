@@ -14,6 +14,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react"
 import { CheckRSAStatusComponent } from "./checkRSAStatusComponent";
+import { SendWindowMessage } from "@/app/includes/functions";
 export interface UserItemProp {
   id?: string;
   firstName?: string;
@@ -185,7 +186,7 @@ export const UsersSection = ({page}:{page?:boolean})=>{
         <BaseButton 
         text={!item.rsaNumber?!item?.funded?"Get RSA PIN":"Complete Registration":"Pay Now"}
         onClick={()=>{
-        if(!item?.funded)
+        if(!item?.funded && item?.rsaNumber)
         {
                         localStorage.setItem(CONSTANT.LocalStore.remit, JSON.stringify({
                             rsaPin: item.rsaNumber,
@@ -197,12 +198,13 @@ export const UsersSection = ({page}:{page?:boolean})=>{
                             isValid: true,
                             firstTransaction: true
                         }))
-                        window.location.href = ROUTES.remit;
-                    return;
+            window.location.href = ROUTES.remit;
+            return;
         }
+
         if(!item.rsaNumber)
         {
-          navigate.push(`${ROUTES.userOnboarding}?email=${item.email}`) 
+         SendWindowMessage(CONSTANT.Event.showRegisterOptions,item);
         }else{
             localStorage.setItem(CONSTANT.LocalStore.remit,JSON.stringify({
             rsaPin: item.rsaNumber,
@@ -216,6 +218,7 @@ export const UsersSection = ({page}:{page?:boolean})=>{
             }))
             navigate.push(ROUTES.remit)
         }
+
         }}
         white
         type="button"
@@ -225,8 +228,8 @@ export const UsersSection = ({page}:{page?:boolean})=>{
         {checkRSAPINStatus && <CheckRSAStatusComponent
         onClose={()=>setCheckRSAPINStatus(null)}
        user={checkRSAPINStatus}
-
         />}
+        
         </div>
 }
 export const ApprovedIcon = ()=>{

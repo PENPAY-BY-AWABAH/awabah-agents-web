@@ -1,8 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { ItemProps } from "@/app/includes/types";
-import {Ban, ChevronDown } from "lucide-react";
+import {Ban, ChevronDown, InfoIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import BaseInput from "../baseInput";
+import Tooltip from "@mui/material/Tooltip";
 interface BaseSelectProps {
     list:ItemProps[];
     onValueChange:(data:ItemProps)=>void;
@@ -15,6 +16,8 @@ interface BaseSelectProps {
     value:string;
     disabled?:boolean;
     left?:boolean;
+    tooltip?:string;
+    placement?:"top"|"bottom"|"left"|"right";
  }
  const BaseSelect = (props:BaseSelectProps)=>{
 const [searchTxt,setSearchText] = useState<string>("");
@@ -52,7 +55,12 @@ onChange={()=>{
 }}
 style={{zIndex:0,height:1,width:1}}
 />
+<div className='flex items-center gap-2 ' >
+{props?.tooltip && <Tooltip  title={props.tooltip} placement={props.placement?props.placement:"top"}>
+  <InfoIcon className="text-black/50 cursor-pointer" size={15}/>
+</Tooltip>}
 {props?.label && <label htmlFor={props.name} className="flex items-center text-md font-medium text-gray-700" style={{position:"relative"}}><small ><b>{props?.label}</b></small>{props.required?<span className='text-red-600 text-[20px] ps-1'>*</span>:""}</label>}
+</div>
 <div className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm sm:text-sm relative ${props.custom?"":"p-3"}  ${props.className?props.className:""}`}>
 {props.custom?<div 
 onClick={()=>{
@@ -81,7 +89,6 @@ onChange={({target})=>{
  {
     props.onValueChange(found);
  }
-
 }}
 className="form-select w-full border-0 outline-0" aria-label="Select an option">
 <option 

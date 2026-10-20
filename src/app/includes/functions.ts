@@ -99,11 +99,11 @@ export const useApiRequest = ()=>{
             setLoading(false)
             if(!hideFailMessage)
             {
-            toast.error("Failed to fetch. Please check your internet connectivity.")  
+            toast.error("Sorry, we hit a snag. Please check back later.")  
             }
             resolve({
                 status:false,
-                message:"Failed to fetch. Please check your internet connectivity.",
+                message:"Sorry, we hit a snag. Please check back later.",
                 data:{}
             })
         })
@@ -289,6 +289,7 @@ export const ExportJSONFile = (list:any[],fileName:string = "excelfile")=>{
     }
   ]
  }
+ 
  export const SendWindowMessage = (name:string,data:any)=>{
  const CustomMessage = new CustomEvent(name, {
   detail:data
@@ -336,6 +337,7 @@ export function ReturnAllFloatNumbers(d: string) {
   d = String(d).trim();
   return d.replace(/[-+,&\/\\#()$~%;'":*?<>{}A-Z a-z]/g, '');
 }
+
 export const Base64Decode = (str: string) => {
   try {
     const normalized = String(str)

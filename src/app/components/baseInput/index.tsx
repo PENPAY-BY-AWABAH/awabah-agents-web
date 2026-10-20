@@ -5,8 +5,9 @@ import React, { ChangeEvent, useState } from 'react'
 import './style.css';
 import { FieldChangePayload } from '@/app/includes/types';
 import { ValidateEmail } from '@/app/includes/functions';
-import { Ban, BlocksIcon, EyeClosed, EyeIcon } from 'lucide-react';
+import { Ban, BlocksIcon, EyeClosed, EyeIcon, InfoIcon } from 'lucide-react';
 import { EyeOpen } from '@/app/assets/eyes';
+import Tooltip from '@mui/material/Tooltip';
 
 interface BaseInputProps {
     arrayList?:boolean;
@@ -27,6 +28,8 @@ interface BaseInputProps {
     onValueChange:(payload: FieldChangePayload) => void | null;
     options?:{value:string;name:string;}[];
     onBlur?:(value:string)=>void;
+    tooltip?:string;
+    placement?:"top"|"bottom"|"left"|"right";
 }
 export default function BaseInput(props:BaseInputProps) {
  const [toggleEye,setToggleEye] = useState(false);
@@ -52,7 +55,12 @@ if(typeof props.value === "string")
 })
 }
  return (<div className="grid grid-cols-1 mb-3">
+<div className='flex items-center gap-2' >
+{props?.tooltip && <Tooltip title={props.tooltip} placement={props.placement?props.placement:"top"}>
+  <InfoIcon className="text-black/50 cursor-pointer" size={15}/>
+</Tooltip>}
   {props?.label && <label htmlFor={props.name} className="flex items-center text-md font-medium text-gray-700" style={{position:"relative"}}><small ><b>{props?.label}</b></small>{props.required?<span className='text-red-600 text-[20px] ps-1'>*</span>:""}</label>}
+ </div>
  <div className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm sm:text-sm relative ${props.className?props.className:""}`}>
   {props.arrayList && <div className='emailContainer'>
     {stringList.map((a:string,i:number,self:string[])=>{
@@ -116,7 +124,9 @@ if(typeof props.value === "string")
     {toggleEye?<EyeOpen  />:<EyeIcon color='black' />} 
    </span>}
 </div>
+<div className='mt-1 flex items-center justify-between'>
 {props?.error?<div className='text-red-600' >{props.error}</div>:null}
+</div>
 </div>
   )
 }

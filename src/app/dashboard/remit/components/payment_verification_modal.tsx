@@ -31,6 +31,21 @@ useEffect(()=>{
    localStorage.removeItem(CONSTANT.LocalStore.remit);
    localStorage.removeItem(CONSTANT.LocalStore.userFormFields);
 },[])
+const NotifyPfa =(refNo:string)=>{
+const url = window.location.href.includes("demo")?`https://sandbox.penpay.com.ng/v1/all-ppp-transaction-notification?txnRef=${refNo}`:window.location.href.includes("localhost")?`http://localhost/penpay-api/v1/all-ppp-transaction-notification?txnRef=${refNo}`:`https://prod.penpay.com.ng/v1/all-ppp-transaction-notification?txnRef=${refNo}`;
+fetch(url,{
+  method:"GET",
+  headers:{
+    "Content-Type":"application/json"
+  }
+  })
+}
+useEffect(()=>{
+if(details.reference)
+{
+  NotifyPfa(details.reference)
+}
+},[details.reference])
     return <BaseModal 
         title={details?.loading || !details?.createdAt || details?.firstTransaction?"":"Payment Receipt"}
         onClose={()=>{

@@ -29,6 +29,7 @@ import { ReactNode } from "react";
         description?:string;
         route?:string;
         selected?:boolean;
+        code?:string;
     }
     export interface BankItemProps {
         id?:string;

@@ -17,7 +17,7 @@ import { PaymentComponent } from "./components/payment";
 import { BaseLoader } from "@/app/components/baseLoader";
 import BaseSelect from "@/app/components/baseSelect";
 import { ItemProps, StateLGAProp } from "@/app/includes/types";
-import { CameraIcon, CheckCircle, UploadIcon } from "lucide-react";
+import { CameraIcon, CheckCircle, InfoIcon, UploadIcon } from "lucide-react";
 import { ImagePickerOption } from "./components/imagePickerOption";
 import { CameraView } from "./components/cameraView";
 import dayjs from "dayjs";
@@ -26,6 +26,7 @@ import BaseModal from "@/app/components/baseModal";
 import useCommissionStore from "@/app/includes/store";
 import { Base64Decode } from "@/app/includes/functions";
 import { toast } from "react-toastify";
+import Tooltip from "@mui/material/Tooltip";
 type RegisterProps = "User Details" | "Verify Email" | "Next Of Kin" | "Success" | "Pay" | "Employment Details" | "Parent / Guardian Details" | "Bank Details" | "Consent Agreement";
 export interface SignUpProps {
     referralCode?: string;
@@ -55,6 +56,8 @@ export interface SignUpProps {
     gender?: string;
     firstCommissionAmount?: number;
     secondCommissionAmount?: number;
+    stateCode?: string;
+    lgaCode?: string;
 }
 
 const Page = () => {
@@ -72,7 +75,7 @@ const Page = () => {
     const [listOfLGA, setListOfLGA] = useState<string[]>([]);
     const [section, setSection] = useState<RegisterProps>("User Details")
     const navigate = useRouter();
-    const { handleRegisterUser, ShowMessage, getUserByEmail, loading, GetListOfPFA, RequestForRSAPIN, GetListOfSectors,GetListOfStates } = useHttpHook();
+    const { handleRegisterUser, ShowMessage, getUserByEmail, loading, GetListOfPFA, RequestForRSAPIN, GetListOfSectors, GetListOfStates } = useHttpHook();
     const [formData, setFormData] = useState<SignUpProps>({
         email: "",
         firstName: "",
@@ -93,68 +96,63 @@ const Page = () => {
         country: "Nigeria",
         state: "",
         lga: "",
+        lgaCode: "",
+        stateCode: "",
         signature: "",
         gender: "",
         firstCommissionAmount: 100
     })
 
- const handleR2Upload = async (trackingId: string,base64String: string) => {
-    setUploading(true);
-    const base64Data = base64String.includes(",")
-          ? base64String.split(",")[1]
-          : base64String;
+    const handleR2Upload = async (trackingId: string, base64String: string) => {
+        setUploading(true);
+        const base64Data = base64String.includes(",")
+            ? base64String.split(",")[1]
+            : base64String;
 
         const form = new FormData();
         form.append("trackingId", trackingId);
         form.append("base64", base64Data);
 
         const uploadRes = await fetch("/api/upload-consent", {
-          method: "POST",
-          body: form
+            method: "POST",
+            body: form
         });
         const upload = await uploadRes.json();
         if (!upload?.status || !upload?.data?.key) {
-          return "";
+            return "";
         }
         return upload.data.key;
     };
 
     const handleSubmit = (e?: FormEvent) => {
-        if(e)
-        {
-        e.preventDefault();
+        if (e) {
+            e.preventDefault();
         }
         const data = {
             ...formData,
             userType: userIsMinor ? "MINOR" : "ADULT",
             referralCode,
         };
-          
+
         if (userIsMinor) {
             data.dob = dayjs(data.dob).format("DD-MM-YYYY")
         }
-        
-        if(data.userType === "MINOR")
-        {
-            if(formData?.state === "" || formData?.lga === "")
-            {
-            return setShowState(true)
+
+        if (data.userType === "MINOR") {
+            if (formData?.state === "" || formData?.lga === "") {
+                return setShowState(true)
             }
-            if(formData?.address === "")
-            {
-            return setShowAddress(true)
+            if (formData?.address === "") {
+                return setShowAddress(true)
             }
         }
-        if(formData?.state === "")
-        {
+        if (formData?.state === "") {
             return setShowState(true)
         }
-        if(formData?.lga === "")
-        {
+        if (formData?.lga === "") {
             return setShowState(true)
         }
-        if(formData?.address === "")
-        {
+        if (formData?.address === "") {
             return setShowAddress(true)
         }
         if (!formData?.photo) {
@@ -169,73 +167,65 @@ const Page = () => {
         setUploading(true);
         handleR2Upload(`photo-${trackingNin}`, formData.photo).then((photo) => {
 
-         if(photo === "")
-        {
-          return toast.error("Photo is required.");
-        }
-             if(photo)
-            {
+            if (photo === "") {
+                return toast.error("Photo is required.");
+            }
+            if (photo) {
                 data.photo = `https://pub-29983edc20e94bc3b1a81705aa08f9d5.r2.dev/${photo}`;
             }
 
-        handleR2Upload(`signature-${trackingNin}`, formData.signature!).then((signature) => {
+            handleR2Upload(`signature-${trackingNin}`, formData.signature!).then((signature) => {
 
-        if(signature === "")
-        {
-          return toast.error("signature is required.");
-        }
+                if (signature === "") {
+                    return toast.error("signature is required.");
+                }
 
-             if(signature)
-            {
-                data.signature = `https://pub-29983edc20e94bc3b1a81705aa08f9d5.r2.dev/${signature}`;
-            }
-            
-            handleRegisterUser(data).then((res) => {
-            setUploading(false);
-            if (res.status) {
-                const data = {
-                    ...formData,
-                    ...res.data
+                if (signature) {
+                    data.signature = `https://pub-29983edc20e94bc3b1a81705aa08f9d5.r2.dev/${signature}`;
                 }
-                setFormData(data);
-                if(res.data?.firstTransaction === true)
-                {
-                    const rsaPin = Base64Decode(res.data?.spin);
-                    localStorage.setItem(CONSTANT.LocalStore.remit, JSON.stringify({
-                    rsaPin,
-                    pfaName: res.data?.pfaName,
-                    providerId: res.data?.providerId,
-                    phoneNumber: String(formData.phoneNumber).replace("undefined", "").replace("+234", "0"),
-                    amount: 3000,
-                    fullName: res.data?.firstName + " " + res.data?.lastName,
-                    isValid: true,
-                    firstTransaction: true
-                }))
-                 return navigate.push(ROUTES.remit)
-                }
-                if(res.data?.rsaPin)
-                {
-                    return setSection("Success")
-                }
-                return setSection("Next Of Kin")
-            }else{
-                if(res.data?.lgaNotFound === true || res.data?.stateNotFound === true || res.data?.countryNotFound === true)
-                {
-                  setShowState(true);
-                }else if(res.data?.addressNotFound === true)
-                {
-                  setShowAddress(true);
-                }
-            }
+
+                handleRegisterUser(data).then((res) => {
+                    setUploading(false);
+                    if (res.status) {
+                        const data = {
+                            ...formData,
+                            ...res.data
+                        }
+                        setFormData(data);
+                        if (res.data?.firstTransaction === true) {
+                            const rsaPin = Base64Decode(res.data?.spin);
+                            localStorage.setItem(CONSTANT.LocalStore.remit, JSON.stringify({
+                                rsaPin,
+                                pfaName: res.data?.pfaName,
+                                providerId: res.data?.providerId,
+                                phoneNumber: String(formData.phoneNumber).replace("undefined", "").replace("+234", "0"),
+                                amount: 3000,
+                                fullName: res.data?.firstName + " " + res.data?.lastName,
+                                isValid: true,
+                                firstTransaction: true
+                            }))
+                            return navigate.push(ROUTES.remit)
+                        }
+                        if (res.data?.rsaPin) {
+                            return setSection("Success")
+                        }
+                        return setSection("Next Of Kin")
+                    } else {
+                        if (res.data?.lgaNotFound === true || res.data?.stateNotFound === true || res.data?.countryNotFound === true) {
+                            setShowState(true);
+                        } else if (res.data?.addressNotFound === true) {
+                            setShowAddress(true);
+                        }
+                    }
+                })
             })
         })
-        })
-        }
+    }
 
     const [listOfStates, setListOfStates] = useState<StateLGAProp[]>([]);
     const searchParams = useSearchParams()
     const email = searchParams.get('email');
-    const [referralCode,setReferralCode] = useState<string>("");
+    const [referralCode, setReferralCode] = useState<string>("");
     const { userDetails } = useCommissionStore()
     useEffect(() => {
         if (section === "User Details") {
@@ -250,7 +240,7 @@ const Page = () => {
         if (section === "Pay") {
             // localStorage.setItem(CONSTANT.LocalStore.remit, JSON.stringify({...formData,firstTransaction: true,isValid: true,fullName: formData.firstName + " " + formData.lastName,providerId: formData.pfaCode}));
             // window.location.href = ROUTES.remit;
-             setIndex(3)
+            setIndex(3)
         }
         if (section === "Success") {
             setIndex(4)
@@ -272,15 +262,13 @@ const Page = () => {
         }
     }, [email])
 
-    useEffect(()=>{
+    useEffect(() => {
         const referrer = localStorage.getItem(CONSTANT.LocalStore.referrer);
-        if(referrer)
-        {
-        setReferralCode(referrer);
-        setDisableReferralCode(true);
-        localStorage.removeItem(CONSTANT.LocalStore.referrer);
+        if (referrer) {
+            setReferralCode(referrer);
+            localStorage.removeItem(CONSTANT.LocalStore.referrer);
         }
-    },[userDetails])
+    }, [userDetails])
 
     const handleRSAPIN = (e: FormEvent) => {
         e.preventDefault()
@@ -302,9 +290,9 @@ const Page = () => {
             ShowMessage({ ...res, message: String(res.message).replace("NIN and ", ""), position: "center" })
         })
     }
-   
-    const [pfaList,setPfaList] = useState<ItemProps[]>([]);
-    
+
+    const [pfaList, setPfaList] = useState<ItemProps[]>([]);
+
     const ListOfSectors = () => {
         GetListOfSectors().then((res) => {
             if (res.status) {
@@ -320,13 +308,13 @@ const Page = () => {
             }
         })
     }
-     const GetPFAList = () => {
+    const GetPFAList = () => {
         GetListOfPFA().then((res) => {
             if (res.status) {
-                setPfaList(res.data.map((a:any)=>{
+                setPfaList(res.data.map((a: any) => {
                     return {
                         ...a,
-                        value:a.code
+                        value: a.code
                     }
                 }));
             }
@@ -344,23 +332,24 @@ const Page = () => {
         }
     };
 
-const GetStates = ()=>{
-    GetListOfStates().then((res) => {
-        if (res.status) {
-            setListOfStates(res.data);
-            if (res.data.length !== 0) {
-            const state = res.data[0];
-            setListOfLGA(state.lgas.map((a: any) => {
-                return a.name
-            }))
-            setFormData({
-                ...formData,
-                state: state.StateName
-            })
-        }
-        }
-    })
-}
+    const GetStates = () => {
+        GetListOfStates().then((res) => {
+            if (res.status) {
+                setListOfStates(res.data);
+                if (res.data.length !== 0) {
+                    const state = res.data[0];
+                    setListOfLGA(state.lgas.map((a: any) => {
+                        return a.name
+                    }))
+                    setFormData({
+                        ...formData,
+                        state: state.StateName,
+                        stateCode:state.StateCode,
+                    })
+                }
+            }
+        })
+    }
 
     const reduceImageSize = (base64String: string, quality: number = 0.7, maxWidth: number = 1000, maxHeight: number = 1000): Promise<string> => {
         return new Promise((resolve) => {
@@ -433,9 +422,9 @@ const GetStates = ()=>{
                     const compressedBase64 = await reduceImageSize(base64String, 0.7, 100, 100)
                     setFormData({
                         ...formData,
-                         address:"",
-                                            state:"",
-                                            lga:"",
+                        address: "",
+                        state: "",
+                        lga: "",
                         signature: compressedBase64
                     })
                 };
@@ -458,7 +447,7 @@ const GetStates = ()=>{
     useEffect(() => {
         GetStates();
     }, [])
-    const [disableReferralCode, setDisableReferralCode] = useState(false);
+
     return <div className="bg-white h-full lg:px-[100px] lg:py-[60px] overflow-none relative">
         {section !== "Success" && <div className="mb-6">
             <button
@@ -494,7 +483,6 @@ const GetStates = ()=>{
             </button>
         </div>}
         {section !== "Success" ? <div className="m-auto items-center text-center h-full overflow-x-scroll">
-            
             <div className="m-auto items-center text-center  rounded-[30px] min-h-[400px] py-[16px] shadow lg:w-[500px] lg:p-[30px] pb-[180px] lg:pb-[60px]">
                 <div className="text-black text-[24px] font-bold text-center mb-[20px] ">{section}</div>
                 <div className="w-[200px]">
@@ -503,13 +491,8 @@ const GetStates = ()=>{
                         selectedIndex={index}
                     />
                 </div>
-                {/* {userDetails.accountType === "Agent" && userDetails?.isAgentAsignedToSuperAgent && <div 
-            className="w-full text-center p-2"
-            >
-             <div className="text-[#FF4D4F] text-[14px] font-bold">{`You've already been assigned to a super agent`}<b></b></div>
-            </div>} */}
                 {section === "User Details" && <div className="mt-[20px]">
-                {userIsAgent ? <form
+                    {userIsAgent ? <form
                         className="mt-5"
                         onSubmit={handleRSAPIN}
                     >
@@ -523,9 +506,9 @@ const GetStates = ()=>{
                             onValueChange={({ value }) => {
                                 setFormData({
                                     ...formData,
-                                     address:"",
-                                            state:"",
-                                            lga:"",
+                                    address: "",
+                                    state: "",
+                                    lga: "",
                                     email: value
                                 })
                             }}
@@ -535,6 +518,7 @@ const GetStates = ()=>{
                             onBlur={() => {
                                 // HandleCheckEmail(String(formData.email).trim())
                             }}
+                            
                         />
                         <div className="mt-5" >
                             <BaseButton
@@ -570,12 +554,12 @@ const GetStates = ()=>{
                                     style={{ opacity: 0, position: "absolute", bottom: 70, width: 10, height: 10 }}
                                     accept="image/*"
                                 />}
-                                {formData.photo?<img
+                                {formData.photo ? <img
                                     className="w-full object-cover cursor-pointer m-auto h-full bg-gray-100 rounded-[120px] "
                                     alt="avatar"
                                     src={formData.photo}
                                     onClick={() => setShowCamera(true)}
-                                />:<img
+                                /> : <img
                                     className="w-full object-cover cursor-pointer m-auto h-full bg-gray-100 rounded-[120px] "
                                     alt="avatar"
                                     src={placeHolderAvatar.src}
@@ -584,12 +568,20 @@ const GetStates = ()=>{
                                 <CameraIcon className="absolute bottom-[-10px] right-[-10px]"
                                     onClick={() => setShowCamera(true)}
                                 />
+                                <Tooltip 
+                                placement="bottom"
+                                title="Take your photo in a well-lit environment. Make sure your face is clearly visible.">
+                                    <div className="absolute bottom-[-10px] left-[-10px]">
+                                        <InfoIcon className="text-[12px] text-[#2d2f2ea6]" />
+                                    </div>
+                                </Tooltip>
                             </div>
                             <div
                                 className={`px-[16px] mt-[20px]`}
                             >
                                 <div className="text-left mb-4" >
                                     <BaseSelect
+                                    placement="right"
                                         label="Pension Fund Administrator (PFA)"
                                         list={pfaList}
                                         placeholder="Select a Pension Fund Administrator"
@@ -603,9 +595,9 @@ const GetStates = ()=>{
                                                     return {
                                                         ...prev,
                                                         pfaCode: value,
-                                                         address:"",
-                                                            state:"",
-                                                            lga:"",
+                                                        address: "",
+                                                        state: "",
+                                                        lga: "",
                                                         pfaName: foundItem?.title
                                                     }
                                                 })
@@ -616,107 +608,118 @@ const GetStates = ()=>{
                                         custom
                                     />
                                 </div>
-                            {userDetails.accountType === "Agent" && !userDetails?.isAgentAsignedToSuperAgent && <BaseInput
-                            type="text"
-                            disabled={disableReferralCode}
-                            name="referralCode"
-                            value={referralCode}
-                            onValueChange={({ value }) => {
-                               setReferralCode(value);
-                            }}
-                            max={60}
-                            label={`Referral Code`}
-                            placeholder="Enter Referral Code."
-                        />}
-                                
-                                {showState && <BaseModal 
-                                title="State and Local Goverment Area"
-                                onClose={()=>setShowState(false)}
+                                {/* {userDetails.accountType === "Agent" && !userDetails?.isAgentAsignedToSuperAgent && <BaseInput
+                                    type="text"
+                                    disabled={disableReferralCode}
+                                    name="referralCode"
+                                    value={referralCode}
+                                    onValueChange={({ value }) => {
+                                        setReferralCode(value);
+                                    }}
+                                    max={60}
+                                    label={`Referral Code`}
+                                    placeholder="Enter Referral Code."
+                                    tooltip="Enter a referral code if you were referred by an agent."
+                                    placement="right"
+                                />} */}
+
+                                {showState && <BaseModal
+                                    title="State and Local Goverment Area"
+                                    onClose={() => setShowState(false)}
                                 >
-                                <div >
-                                <div className="text-left mb-4" >
-                                    <BaseSelect
-                                        label="State"
-                                        list={listOfStates.map((a: StateLGAProp) => {
-                                            return {
-                                                name: a.StateName,
-                                                title: a.StateName,
-                                                value: a.StateName
-                                            }
-                                        }) as ItemProps[]}
-                                        placeholder="Select a state"
-                                        name="state"
-                                        required
-                                        left
-                                        onValueChange={({ value }) => {
-                                            setFormData({
-                                                ...formData,
-                                                state: value,
-                                                lga: ""
-                                            })
-                                            const foundItem = listOfStates.find((a) => a.StateName === value);
-                                            if (foundItem) {
-                                                setListOfLGA(foundItem.lgas.map((a: any) => {
-                                                    return a.name
-                                                }))
-                                            }
-                                        }}
-                                        value={formData.state!}
-                                        custom
-                                    />
-                                </div>
-                                <div className="text-left mb-4" >
-                                    <BaseSelect
-                                        label="LGA"
-                                        list={listOfLGA.map((a) => {
-                                            return {
-                                                title: a,
-                                                name: a,
-                                                value: a
-                                            }
-                                        }) as ItemProps[]}
-                                        placeholder="Select a LGA"
-                                        name="lga"
-                                        required
-                                        left
-                                        onValueChange={({ value }) => {
-                                            setFormData({
-                                                ...formData,
-                                                lga: value
-                                            })
-                                        }}
-                                        value={formData.lga!}
-                                        className=""
-                                        custom
-                                    />
-                                </div>
-                                <BaseButton 
-                                text="Continue"
-                                disabled={!formData.state || !formData.lga}
-                                onClick={()=>{
-                                    handleSubmit()
-                                }}
-                                type="button"
-                                />
-                                </div>
+                                    <div >
+                                        <div className="text-left mb-4" >
+                                            <BaseSelect
+                                                label="State"
+                                                list={listOfStates.map((a: StateLGAProp) => {
+                                                    return {
+                                                        name: a.StateName,
+                                                        title: a.StateName,
+                                                        value: a.StateName,
+                                                        code: a.Code,
+                                                    }
+                                                }) as ItemProps[]}
+                                                placeholder="Select a state"
+                                                name="state"
+                                                required
+                                                left
+                                                onValueChange={({ value, code }) => {
+                                                    setFormData({
+                                                        ...formData,
+                                                        state: value,
+                                                        stateCode: code,
+                                                        lga: ""
+                                                    })
+                                                    const foundItem = listOfStates.find((a) => a.StateName === value);
+                                                    if (foundItem) {
+                                                        setListOfLGA(foundItem.lgas.map((a: any) => {
+                                                            return a.name
+                                                        }))
+                                                    }
+                                                }}
+                                                value={formData.state!}
+                                                custom
+                                            />
+                                        </div>
+                                        <div className="text-left mb-4" >
+                                            <BaseSelect
+                                                label="LGA"
+                                                list={listOfLGA.map((a) => {
+                                                    return {
+                                                        title: a,
+                                                        name: a,
+                                                        value: a
+                                                    }
+                                                }) as ItemProps[]}
+                                                placeholder="Select a LGA"
+                                                name="lga"
+                                                required
+                                                left
+                                                onValueChange={({ value }) => {
+                                                    const findState = listOfStates.find((a: StateLGAProp) => a.StateName === formData.state);
+                                                    if(findState)
+                                                    {
+                                                    const findLGA = findState.lgas.find((a:any) => a.name === value) as any;
+                                                    setFormData({
+                                                        ...formData,
+                                                        lgaCode: findLGA?.Code,
+                                                        lga: value
+                                                    })
+                                                }
+                                                }}
+                                                value={formData.lga!}
+                                                className=""
+                                                custom
+                                            />
+                                        </div>
+                                        <BaseButton
+                                            text="Continue"
+                                            disabled={!formData.state || !formData.lga}
+                                            onClick={() => {
+                                                handleSubmit()
+                                            }}
+                                            type="button"
+                                        />
+                                    </div>
                                 </BaseModal>}
-                        {!userIsMinor &&<BaseInput
-                        disabled={formData.hasBVN}
-                            type="text"
-                            name="phoneNumber"
-                            value={formData.phoneNumber}
-                            required
-                            onValueChange={({ value }) => {
-                                setFormData({
-                                    ...formData,
-                                    phoneNumber: value
-                                })
-                            }}
-                            max={11}
-                            label="Phone Number"
-                            placeholder="Enter phone number."
-                        />}
-                        <BaseInput
+                                {!userIsMinor && <BaseInput
+                                    disabled={formData.hasBVN}
+                                    type="text"
+                                    name="phoneNumber"
+                                    value={formData.phoneNumber}
+                                    required
+                                    onValueChange={({ value }) => {
+                                        setFormData({
+                                            ...formData,
+                                            phoneNumber: value
+                                        })
+                                    }}
+                                    max={11}
+                                    label="Phone Number"
+                                    placeholder="Enter phone number."
+
+                                />}
+                                <BaseInput
                                     type="text"
                                     name="nin"
                                     className="bg-white"
@@ -726,120 +729,74 @@ const GetStates = ()=>{
                                     onValueChange={({ value }) => {
                                         setFormData({
                                             ...formData,
-                                             address:"",
-                                            state:"",
-                                            lga:"",
+                                            address: "",
+                                            state: "",
+                                            lga: "",
                                             nin: value
                                         })
                                     }}
                                     label="NIN (National Identification Number)"
                                     placeholder="Enter NIN."
+                                    tooltip="Your NIN is used to verify your identity"
+                                    placement="right"
                                 />
-                        {showAddress && <BaseModal
-                        title="Postal address"
-                        onClose={()=>setShowAddress(false)}
-                        >
-                        <div>
-                        <BaseInput
-                            type="text"
-                            name="address"
-                            value={formData.address}
-                            required
-                            onValueChange={({ value }) => {
-                                setFormData({
-                                    ...formData,
-                                    address: value
-                                })
-                            }}
-                            onBlur={()=>{
-                               
-                            }}
-                            max={140}
-                            label="Address"
-                            placeholder="Enter address."
-                        />
-                        <BaseButton 
-                        text="Continue"
-                        type="button"
-                        disabled={!formData.address}
-                        onClick={()=>{
-                          handleSubmit()
-                        }}
-                        />
-                        </div>
-                        </BaseModal>}
+                                {showAddress && <BaseModal
+                                    title="Postal address"
+                                    onClose={() => setShowAddress(false)}
+                                >
+                                    <div>
+                                        <BaseInput
+                                            type="text"
+                                            name="address"
+                                            value={formData.address}
+                                            required
+                                            onValueChange={({ value }) => {
+                                                setFormData({
+                                                    ...formData,
+                                                    address: value
+                                                })
+                                            }}
+                                            onBlur={() => {
+
+                                            }}
+                                            max={140}
+                                            label="Address"
+                                            placeholder="Enter address."
+                                        />
+                                        <BaseButton
+                                            text="Continue"
+                                            type="button"
+                                            disabled={!formData.address}
+                                            onClick={() => {
+                                                handleSubmit()
+                                            }}
+                                        />
+                                    </div>
+                                </BaseModal>}
                             </div>
                             <div className={`w-full ${userIsMinor ? "bg-green-200 p-3 rounded-[20px] mb-2 " : "px-[16px]"}`} >
                                 {userIsMinor && <div className="w-full text-left text-green-700 mb-2 font-bold">Parent / Guardian Details</div>}
-                        {userIsMinor &&<BaseInput
-                        disabled={formData.hasBVN}
-                            type="text"
-                            name="phoneNumber"
-                            className="bg-white"
-                            value={formData.phoneNumber}
-                            required
-                            onValueChange={({ value }) => {
-                                setFormData({
-                                    ...formData,
-                                     address:"",
-                                            state:"",
-                                            lga:"",
-                                    phoneNumber: value
-                                })
-                            }}
-                            max={11}
-                            label="Phone Number"
-                            placeholder="Enter phone number."
-                        />} 
-                        {/* {userIsMinor &&<BaseInput
-                            type="text"
-                            name="email"
-                            value={formData.email}
-                            required
-                            onValueChange={({ value }) => {
-                                setFormData({
-                                    ...formData,
-                                    email: value
-                                })
-                              
-                            }}
-                            className="bg-white"
-                            max={140}
-                            label="Email"
-                            placeholder="Enter Email."
-                            onBlur={()=>{
-                              
-                            }}
-                        />} */}
-
-                                {/* {userIsMinor &&<BaseInput
-                            type="text"
-                            name="address"
-                            className="bg-white"
-                            value={formData.address}
-                            required
-                            onValueChange={({ value }) => {
-                                setFormData({
-                                    ...formData,
-                                    address: value
-                                })
-                            }}
-
-                           onBlur={()=>{
-                                const splitAddress = String(formData.address).trim().split(" ");
-                                if(splitAddress.length == 1)
-                                {
-                                     setFormData({
-                                    ...formData,
-                                    address: ""
-                                })
-                                ShowMessage({status:false,message:"Invalid postal address",position:"center",data:null})
-                                }
-                            }} 
-                            max={140}
-                            label="Address"
-                            placeholder="Enter address."
-                        />} */}
+                                {userIsMinor && <BaseInput
+                                    disabled={formData.hasBVN}
+                                    type="text"
+                                    name="phoneNumber"
+                                    className="bg-white"
+                                    value={formData.phoneNumber}
+                                    required
+                                    onValueChange={({ value }) => {
+                                        setFormData({
+                                            ...formData,
+                                            address: "",
+                                            state: "",
+                                            lga: "",
+                                            phoneNumber: value
+                                        })
+                                    }}
+                                    max={11}
+                                    label="Phone Number"
+                                    placeholder="Enter phone number."
+                                />}
+                               
                                 {userIsMinor ? <BaseInput
                                     type="text"
                                     name="rsaPin"
@@ -855,8 +812,10 @@ const GetStates = ()=>{
                                     }}
                                     label="RSA PIN"
                                     placeholder="Enter RSA PIN."
-                                /> :null}
-                        {/* {!formData.hasBVN && !userIsMinor &&<BaseInput
+                                    tooltip="Enter the guardian's RSA PIN to link the minor's registration to the guardian."
+                                    placement="right"
+                                /> : null}
+                                {/* {!formData.hasBVN && !userIsMinor &&<BaseInput
                             type="text"
                             name="bvn"
                             className="bg-white"
@@ -872,7 +831,7 @@ const GetStates = ()=>{
                             label="BVN (Bank Verification Number)"
                             placeholder="Enter BVN."
                         />} */}
-                       
+
                                 {userIsMinor && <div className="text-left mb-4 " >
                                     <BaseSelect
                                         custom
@@ -887,9 +846,9 @@ const GetStates = ()=>{
                                                 setFormData({
                                                     ...formData,
                                                     serviceNo: value,
-                                                     address:"",
-                                            state:"",
-                                            lga:"",
+                                                    address: "",
+                                                    state: "",
+                                                    lga: "",
                                                     serviceTitle: foundItem?.title
                                                 })
                                             }
@@ -903,7 +862,7 @@ const GetStates = ()=>{
                             <div
                                 className={`px-[16px]`}
                             >
-                           
+
                                 {!userIsMinor && <div className="text-left mb-4 mt-3" >
                                     <BaseSelect
                                         custom
@@ -918,9 +877,9 @@ const GetStates = ()=>{
                                                 setFormData({
                                                     ...formData,
                                                     serviceNo: value,
-                                                     address:"",
-                                            state:"",
-                                            lga:"",
+                                                    address: "",
+                                                    state: "",
+                                                    lga: "",
                                                     serviceTitle: foundItem?.title
                                                 })
                                             }
@@ -957,7 +916,7 @@ const GetStates = ()=>{
                             </div>
                         </form>
                     </div>}
-                {loading && <BaseLoader modal color="green" size="lg" />}
+                    {loading && <BaseLoader modal color="green" size="lg" />}
                 </div>}
                 {section === "Verify Email" && <div >
                     <OtpSection
@@ -999,27 +958,26 @@ const GetStates = ()=>{
                 {section === "Consent Agreement" && <div >
                     <ConsentPage
                         onSuccess={({ rsaPin }) => {
-                          setFormData({
-                            ...formData,
-                            rsaPin
-                          })
-                          
-                    if(!formData.rsaPin)
-                    {
-                      return setSection("Success");
-                    }
-                    localStorage.setItem(CONSTANT.LocalStore.remit, JSON.stringify({
-                    rsaPin: formData.rsaPin,
-                    pfaName: formData.pfaName,
-                    providerId: formData?.pfaCode,
-                    phoneNumber: String(formData.phoneNumber).replace("undefined", "").replace("+234", "0"),
-                    amount: 3000,
-                    fullName: formData.firstName + " " + formData.lastName,
-                    isValid: true,
-                    firstTransaction: true
-                }))
-                navigate.push(ROUTES.remit);
-                        //   setSection("Success");
+                            setFormData({
+                                ...formData,
+                                rsaPin
+                            })
+
+                            if (!formData.rsaPin) {
+                                return setSection("Success");
+                            }
+                            localStorage.setItem(CONSTANT.LocalStore.remit, JSON.stringify({
+                                rsaPin: formData.rsaPin,
+                                pfaName: formData.pfaName,
+                                providerId: formData?.pfaCode,
+                                phoneNumber: String(formData.phoneNumber).replace("undefined", "").replace("+234", "0"),
+                                amount: 3000,
+                                fullName: formData.firstName + " " + formData.lastName,
+                                isValid: true,
+                                firstTransaction: true
+                            }))
+                            navigate.push(ROUTES.remit);
+                            //   setSection("Success");
                         }}
                         onClose={() => {
 

@@ -13,6 +13,7 @@ import html2canvas from "html2canvas";
 import { CONSTANT, ROUTES } from "@/app/includes/constants";
 import { toast } from "react-toastify";
 import { Base64Decode } from "@/app/includes/functions";
+import { InfoIcon } from "lucide-react";
 export interface BankProps {
   accountN?: string;
   firstName?: string;
@@ -47,21 +48,21 @@ export const ConsentPage = ({onClose,onSuccess,trackingId,email,userData}:{onClo
         });
         const upload = await uploadRes.json();
         if (!upload?.status || !upload?.data?.key) {
-          return "";
+          return null;
         }
         return upload.data.key;
-      } catch (e) {
-        return "";
+      } catch (e){
+        return null;
       }
     };
     const handleSaveConsent = () => {
       setLoading(true);
-        Download().then((res)=>{
-          if(!res){
+        Download().then((key)=>{
+        if(String(key) !== `rsa-pin-registration/consent-form-${userData?.nin}.png`){
             setLoading(false);
             return ShowMessage({message:"Failed to upload consent form",position:"center",status:false,data:{}});
-          }
-        RequestForRSAPIN({email,trackingId,consentForm:`https://pub-29983edc20e94bc3b1a81705aa08f9d5.r2.dev/${res}`}).then((res)=>{
+        }
+        RequestForRSAPIN({email,trackingId,consentForm:`https://pub-29983edc20e94bc3b1a81705aa08f9d5.r2.dev/${key}`}).then((res)=>{
            setLoading(false);
           if(res.data?.processed || res.data?.pushedLater)
               {
@@ -362,6 +363,7 @@ export const ConsentPage = ({onClose,onSuccess,trackingId,email,userData}:{onClo
     </div>
   </div>
     </div>
+   
                         <div
                         className="w-full pb-[16px] text-left">
                             <div className="items-left mb-4 flex gap-2 items-center mt-0">
@@ -374,8 +376,14 @@ export const ConsentPage = ({onClose,onSuccess,trackingId,email,userData}:{onClo
                             I agree to the terms and conditions
                         </div>
                             </div>
+    <div className="rounded-md bg-red-50 p-4 mb-4">
+    <div className="flex text-red-600 text-[12px] ms-3 gap-2">
+      <InfoIcon className="text-red-600 " size={15}/>
+      Please read the consent document before confirming your agreement.
+    </div>
+    </div>
                             <BaseButton
-                            disabled={!agree}
+                            disabled={agree === false}
                             text={"Request for RSA PIN"}
                             type={"submit"}
                             onClick={()=>handleSaveConsent()}

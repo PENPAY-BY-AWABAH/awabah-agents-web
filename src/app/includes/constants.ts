@@ -46,10 +46,12 @@ export const CONSTANT = {
         userFormFields:"userFormFields",
         historySection:"historySection",
         registrationForm:"registrationForm",
-        nextOfKin:"nextOfKin"
+        nextOfKin:"nextOfKin",
+        showPrimer:"showPrimer"
     },
     Event:{
-        showRegisterOptions:"showRegisterOptions"
+        showRegisterOptions:"showRegisterOptions",
+        getRSAPIN:"getRSAPIN"
     }
 }
 export const Currency = {
