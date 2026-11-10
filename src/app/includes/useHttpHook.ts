@@ -6,6 +6,7 @@ import { useApiRequest } from "./functions";
 import pkg from "../../../package.json";
 const { name } = pkg;
 import { UserItemProp } from "../dashboard/components/users";
+import { CONSTANT } from "./constants";
 export interface ApiResponse {
     status:boolean;
     message:string;
@@ -75,7 +76,7 @@ const useHttpHook = () => {
             }
                 if(res.status && res.data?.accessToken)
                 {
-                    window.localStorage.setItem(name,res.data.accessToken);
+                    window.localStorage.setItem(CONSTANT.LocalStore.token,res.data.accessToken);
                 } 
                 resolve(res);
             })
@@ -857,6 +858,20 @@ const handleRSAPINRequest =(data:any)=>{
             })
         })
     }
+    const getUserByUserID  =(id:string)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`agent-get-user-by-id`,
+                body:{id},
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                resolve(res);
+            })
+        })
+    }
     const ResetTestData =(email:string)=>{
         return new Promise<ApiResponse>((resolve) => {
          setLoading(true);
@@ -1085,7 +1100,7 @@ const pushToPFC= (user:UserItemProp)=>{
                 body:{trackingId:user.trackingId},
                 method:"POST",
                 requestType:"json"
-            },false,true).then((res) => {
+            },false).then((res) => {
                 setLoading(false);
                 resolve(res);
             },)
@@ -1100,7 +1115,7 @@ const pushToPFA= (user:UserItemProp)=>{
                 body:{trackingId:user.trackingId},
                 method:"POST",
                 requestType:"json"
-            },false,true).then((res) => {
+            },false).then((res) => {
                 setLoading(false);
                 resolve(res);
             })
@@ -1116,6 +1131,49 @@ const ConfirmRegistration = (nin:any)=>{
                 requestType:"json"
             }).then((res) => {
                 setLoading(false);
+                resolve(res);
+            })
+        })
+    }
+
+    const handleSendOTPToOga  = (accesstoken:string)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`create-pension-oga-create-password-otp`,
+                body:{accesstoken},
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                     ShowMessage({
+                        position:"center",
+                        ...res
+                    })
+                resolve(res);
+            })
+        })
+    }
+
+     const handleCreateOgaPassword  = (data:{
+    otp:string;
+    accesstoken:string;
+    password:string;
+    confirmPassword:string;
+     })=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`create-pension-oga-create-password`,
+                body:data,
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                     ShowMessage({
+                        position:"center",
+                        ...res
+                    })
                 resolve(res);
             })
         })
@@ -1185,7 +1243,10 @@ const ConfirmRegistration = (nin:any)=>{
         pushToPencom,
         pushToPFC,
         pushToPFA,
-        ConfirmRegistration
+        ConfirmRegistration,
+        getUserByUserID,
+        handleSendOTPToOga,
+        handleCreateOgaPassword
     }
 }
 export default useHttpHook;

@@ -5,6 +5,7 @@ import { Suspense, useEffect } from "react";
 import { BaseLoader } from "./components/baseLoader";
 import { CONSTANT } from "./includes/constants";
 import RegisterOptions from './dashboard/components/registerOptions';
+import PensionOgaCreatePassword from './pension-oga';
 
 export default function RootLayout({
   children,
@@ -56,9 +57,10 @@ useEffect(() => {
           </div>}
         >
       {children}
-      </Suspense>
       <RegisterOptions />
       <ToastContainer />
+      <PensionOgaCreatePassword />
+      </Suspense>
       </body>
     </html>
   );

@@ -41,7 +41,7 @@ export interface UnknownKeyPair {
 export const useApiRequest = ()=>{
   const navigate = useRouter()
     const [loading,setLoading] = useState<boolean>(false);
-    const call = async(props:PayloadProps,showMessage?:boolean,hideFailMessage?:boolean)=>{
+    const call = async(props:PayloadProps,showMessage?:boolean)=>{
     return new Promise<ApiResponse>(async (resolve)=>{
         const body = new FormData();
         const accessToken = await localStorage.getItem(CONSTANT.LocalStore.token)
@@ -96,11 +96,6 @@ export const useApiRequest = ()=>{
             }
             resolve(response)
         }).catch((_error)=>{
-            setLoading(false)
-            if(!hideFailMessage)
-            {
-            toast.error("Sorry, we hit a snag. Please check back later.")  
-            }
             resolve({
                 status:false,
                 message:"Sorry, we hit a snag. Please check back later.",

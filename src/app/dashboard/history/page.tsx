@@ -2,6 +2,7 @@
 import { BackIcon } from "@/app/assets/back-icon";
 import { HistorySection } from "../components/history";
 import { useRouter } from "next/navigation";
+import { Suspense } from "react";
 export interface TransactionItem {
     title?:string
 }
@@ -9,7 +10,10 @@ const Page = ()=>{
     
     const navigate = useRouter();
     
-    return <div >
+    return <Suspense 
+    fallback={<div ></div>}
+    >
+    <div >
         <div className="mb-6">
         <button 
         onClick={()=>{
@@ -27,5 +31,6 @@ const Page = ()=>{
         </div>
         <HistorySection page={true} />
     </div>
+    </Suspense>
 }
 export default Page;

@@ -14,6 +14,7 @@ import { RSAPinSection } from "./components/rsaPINRequest";
 import { CreatAccounContinue } from "./components/create_account_continue";
 import { SuccessSection } from "./components/success";
 import { WalletPINSection } from "./components/walletPINSection";
+
 type RegisterProps = "Create Account" | "Verify Email" | "RSA PIN Request" | "Account" | "Wallet Pin" | "Confirm Pin" ;
 export interface SignUpProps {
 email?:string;
@@ -29,11 +30,11 @@ state?:string;
 howDoYouFindUs?:string;
 address?:string;
 agentId?:string;
-isSuperAgent?:string;
 referralCode?:string;
 pfaCode?:string;
 pfaName?:string;
 trackingId?:string;
+accountType?:string;
 }
 const Page = () => {
     const [section, setSection] = useState<RegisterProps>("Create Account")
@@ -45,7 +46,7 @@ const Page = () => {
         email: "",
         password: "",
         agentId:"",
-        isSuperAgent:"Agent",
+        accountType:"Agent",
         referralCode:""
     })
     const handleSubmit = (e: FormEvent) => {
@@ -247,33 +248,6 @@ const Page = () => {
                             label="Password"
                             placeholder="Enter Password."
                         />}
-            {/* <BaseSelect 
-            className="text-left"
-            name="isSuperAgent"
-            value={formData?.isSuperAgent || "Agent"}
-            onValueChange={({ value }) => {
-                setFormData({
-                    ...formData,
-                    isSuperAgent: value
-                })
-            }}
-            list={[
-                {
-                    title: "Agent",
-                    value: "Agent",
-                    name: "Agent"
-                },
-                {
-                    title: "Super Agent",
-                    value: "Agent",
-                    name: "Super Agent"
-                }
-            ]}
-            required
-            custom
-            label="Account Type"
-            placeholder="Select your account type."
-            />      */}
             <div className="text-[#009668] mb-5 text-[14px] text-left mt-4">Minimum of 8 letters and a special character ( *#&)</div>
              <div className="flex items-center gap-3 text-black mb-[30px]">
              <div className="w-[30px] h-[30px]">

@@ -14,9 +14,9 @@ export default function RegisterOptions() {
     const [nin, setNIN] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
     const [fetchingDetails, setFetchingDetails] = useState<boolean>(false);
-    const { ConfirmRegistration, ShowMessage,getUserByEmail } = useHttpHook();
+    const { ConfirmRegistration, ShowMessage,getUserByUserID } = useHttpHook();
     const [showOptions, setShowOptions] = useState(false);
-    const [email, setEmail] = useState<string>("");
+    const [userId, setUserId] = useState<string>("");
     
     const handleConfirmRegistration = () => {
         setLoading(true);
@@ -37,30 +37,36 @@ export default function RegisterOptions() {
             }
         });
     }
-    const handleFetchingDetails = (email: string) => {
+    const handleFetchingDetails = (id: string) => {
         setFetchingDetails(true);
-        getUserByEmail(email).then((res) => {
+        getUserByUserID(id).then((res) => {
             setFetchingDetails(false);
             if (!res.status) {
                 ShowMessage({ position: "center", ...res });
                 return;
             }else{
+                if(res?.data?.sNIN)
+                {
                 setNIN(Base64Decode(res.data.sNIN));
                 setShowPIN(true);
+                }
             }
         })
     }
     useEffect(() => {
         const handleEvent = (e: Event) => {
-            const detail = (e as CustomEvent<{ email?: string }>).detail ?? {};
+            const detail = (e as CustomEvent<{ id?: string }>).detail ?? {};
             setShowOptions(true);
-            if (detail.email) {
-                setEmail(detail.email);
-                handleFetchingDetails(detail.email);
+            if (detail.id) {
+                setUserId(detail.id);
+                handleFetchingDetails(detail.id);
             }
         }
         window.addEventListener(CONSTANT.Event.showRegisterOptions, handleEvent as EventListener);
         return () => {
+             if (userId) {
+                setUserId("");
+             }
             window.removeEventListener(CONSTANT.Event.showRegisterOptions, handleEvent as EventListener);
         }
     }, []);
@@ -69,8 +75,8 @@ export default function RegisterOptions() {
     }
     return (<BaseModal
         onClose={() => {
-            if (email) {
-                setEmail("");
+            if (userId) {
+                setUserId("");
                 setShowOptions(false);
                 setShowPIN(false);
                 return;
@@ -119,11 +125,11 @@ export default function RegisterOptions() {
         }}>
             <div className="grid grid-cols-1 gap-3">
                 <div
-                    className="p-3 font-light rounded-md text-black/50 text-center"
+                className="p-3 font-light rounded-md text-black/50 text-center"
                 >
-                 Enter your NIN to continue if you have registered before and have not received your RSA PIN.
+                 {userId === ""?"Enter your NIN to continue if you have registered before and have not received your RSA PIN.":"Continue your registration from where you left off to received your RSA PIN."}
                 </div>
-                <BaseInput
+                {userId == "" &&<BaseInput
                     placeholder="Enter your NIN"
                     name="nin"
                     value={ReturnAllNumbers(nin)}
@@ -133,7 +139,7 @@ export default function RegisterOptions() {
                     onValueChange={(value) => {
                         setNIN(value.value);
                     }}
-                />
+                />}
                 <BaseButton
                     loading={loading}
                     type="submit"
