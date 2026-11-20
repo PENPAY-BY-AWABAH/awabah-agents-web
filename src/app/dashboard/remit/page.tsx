@@ -142,7 +142,9 @@ const [listValidation,setListValidation] = useState<ValidationProp[]>([]);
                         ...formData,
                         fullName:res.data?.name || "",
                         isValid: true,
-                        ...res.data[0]
+                        ...res.data[0],
+                        // A registered phone number was entered: continue with the RSA PIN found for it (BAH-400).
+                        ...(res.data?.resolvedFromPhone && res.data?.rsaPin ? { rsaPin: String(res.data.rsaPin) } : {})
                     }
                     setFormData(data);
                 }
@@ -214,8 +216,8 @@ const [listValidation,setListValidation] = useState<ValidationProp[]>([]);
                 {!formData.firstTransaction && <BaseInput
                     required
                     disabled={formData?.blockFields}
-                    label="RSA PIN"
-                    placeholder="Enter RSA PIN"
+                    label="RSA PIN or registered phone number"
+                    placeholder="Enter RSA PIN or phone number"
                     type="text"
                     name={"rsaPIN"}
                     value={formData.rsaPin}
@@ -228,18 +230,23 @@ const [listValidation,setListValidation] = useState<ValidationProp[]>([]);
                     }}
                     max={15}
                     onBlur={()=>{
-                        if(formData.rsaPin?.length !== 15 && formData.rsaPin !== "")
+                        // An RSA PIN (15 characters) or the phone number the user registered with.
+                        const isPhoneNumber = /^(0[789][0-9]{9}|\+?234[789][0-9]{9})$/.test(String(formData.rsaPin || ""));
+                        if(formData.rsaPin?.length !== 15 && formData.rsaPin !== "" && !isPhoneNumber)
                         {
                             setFormData({
                             ...formData,
                             isValid: false,
                             rsaPin: ""
                         });
-                        return ShowMessage({status:false,message:"RSA PIN must be 15 digits",data:null,position:"center"})
+                        return ShowMessage({status:false,message:"Enter a 15-character RSA PIN or the phone number the user registered with",data:null,position:"center"})
           
                         }
                     }}
                 />}
+                {!formData.firstTransaction && !formData.isValid && <div className="text-left text-[12px] text-gray-500 mt-1 mb-2">
+                    No RSA PIN? Enter the phone number the user registered with instead.
+                </div>}
                 {!formData.firstTransaction && <BaseInput
                     required
                     label="Phone number"
