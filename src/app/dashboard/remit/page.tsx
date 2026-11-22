@@ -98,7 +98,7 @@ const Page = () => {
     useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
         const urlParams = getUrlParams(queryParams);
-        if (urlParams.verifyPayment !== null) {
+        if (urlParams.reference !== null) {
             setPaymentDetails({
                 ...paymentDetails,
                 status: false,

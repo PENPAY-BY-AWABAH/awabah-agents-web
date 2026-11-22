@@ -201,7 +201,7 @@ const Page = () => {
                             address: value
                         })
                     }}
-                    max={30}
+                    max={120}
                     label="Address"
                     placeholder="Address"
                 />

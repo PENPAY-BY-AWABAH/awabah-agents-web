@@ -769,7 +769,7 @@ const Page = () => {
                                             onBlur={() => {
 
                                             }}
-                                            max={90}
+                                            max={99}
                                             label="Address"
                                             placeholder="Enter address."
                                         />
