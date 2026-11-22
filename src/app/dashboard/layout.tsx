@@ -1,6 +1,7 @@
 "use client"
 import { useEffect, useState } from "react";
 import { Navbar } from "../components/Navbar";
+import PencomDowntimeNotice from "../components/pencomDowntimeNotice";
 import { CONSTANT, ROUTES } from "../includes/constants";
 import { useRouter } from "next/navigation";
 import { useIdleTimer } from 'react-idle-timer';
@@ -79,6 +80,7 @@ useEffect(()=>{
     return <div className="grid grid-cols-1 h-screen overflow-hidden">
     <Navbar />
     <main className=" flex-1 h-screen overflow-scroll w-screen bg-white p-[16px] lg:pt-30 text-black lg:px-18 m-auto ">
+    <PencomDowntimeNotice />
     {children} 
     </main>
     </div>
