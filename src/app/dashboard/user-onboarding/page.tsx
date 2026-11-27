@@ -24,7 +24,7 @@ import dayjs from "dayjs";
 import { ConsentPage } from "./components/consent";
 import BaseModal from "@/app/components/baseModal";
 import useCommissionStore from "@/app/includes/store";
-import { Base64Decode } from "@/app/includes/functions";
+import { Base64Decode, RemoveSpecialCharaters, ReturnAddress } from "@/app/includes/functions";
 import { toast } from "react-toastify";
 import Tooltip from "@mui/material/Tooltip";
 type RegisterProps = "User Details" | "Verify Email" | "Next Of Kin" | "Success" | "Pay" | "Employment Details" | "Parent / Guardian Details" | "Bank Details" | "Consent Agreement";
@@ -763,13 +763,13 @@ const Page = () => {
                                             onValueChange={({ value }) => {
                                                 setFormData({
                                                     ...formData,
-                                                    address: value
+                                                    address:ReturnAddress(value)
                                                 })
                                             }}
                                             onBlur={() => {
 
                                             }}
-                                            max={99}
+                                            max={90}
                                             label="Address"
                                             placeholder="Enter address."
                                         />
@@ -926,7 +926,6 @@ const Page = () => {
                             </div>
                         </form>
                     </div>}
-                    {loading && <BaseLoader modal color="green" size="lg" />}
                 </div>}
                 {section === "Verify Email" && <div >
                     <OtpSection
@@ -1047,7 +1046,7 @@ const Page = () => {
                 setShowCamera(false);
             }}
         />}
-        {uploading && <BaseLoader text="Proccessing..." modal size={"lg"} color={"green"} />}
+        {loading && <BaseLoader text="Proccessing..." modal size={"lg"} color={"green"} />}
     </div>
 }
 export default Page;

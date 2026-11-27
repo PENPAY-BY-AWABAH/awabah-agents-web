@@ -6,7 +6,7 @@ import BaseInput from "@/app/components/baseInput";
 import BaseButton from "@/app/components/baseButton";
 import BaseSelect from "@/app/components/baseSelect";
 import { ItemProps } from "@/app/includes/types";
-import { ReturnAllNumbers } from "@/app/includes/functions";
+import { ReturnAddress, ReturnAllNumbers } from "@/app/includes/functions";
 import BaseInputDate from "@/app/components/baseInputDate";
 import { Calendar } from "lucide-react";
 import dayjs from "dayjs";
@@ -231,10 +231,10 @@ export const EmploymentPage = ({ onClose: _onClose, onSuccess, trackingId }: { o
                     onValueChange={({ value }) => {
                         setFormData({
                             ...formData,
-                            employerStreetName: value
+                            employerStreetName:ReturnAddress(value)
                         })
                     }}
-                    max={90}
+                    max={99}
                     label="Employer Street Name"
                     placeholder="Enter Employer Street Name."
                 />

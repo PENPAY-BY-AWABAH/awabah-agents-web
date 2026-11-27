@@ -140,11 +140,11 @@ const [listValidation,setListValidation] = useState<ValidationProp[]>([]);
                     }
                     const  data = {
                         ...formData,
-                        fullName:res.data?.name || "",
+                        fullName:res.data?.rsaDetail?.name || "",
                         isValid: true,
-                        ...res.data[0],
+                        ...res.data,
                         // A registered phone number was entered: continue with the RSA PIN found for it (BAH-400).
-                        ...(res.data?.resolvedFromPhone && res.data?.rsaPin ? { rsaPin: String(res.data.rsaPin) } : {})
+                        // ...(res.data?.resolvedFromPhone && res.data?.rsaPin ? { rsaPin: String(res.data.rsaPin) } : {})
                     }
                     setFormData(data);
                 }

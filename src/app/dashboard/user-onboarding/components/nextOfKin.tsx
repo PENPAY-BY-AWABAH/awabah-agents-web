@@ -10,6 +10,7 @@ import { ItemProps } from "@/app/includes/types";
 import { BaseLoader } from "@/app/components/baseLoader";
 import { CONSTANT } from "@/app/includes/constants";
 import { SignUpProps } from "@/app/register/page";
+import { ReturnAddress } from "@/app/includes/functions";
 export interface NextOfKinProps {
   email?: string;
   firstName?: string;
@@ -178,11 +179,11 @@ export const NextOfKinPage = ({onSuccess,trackingId,userIsMinor}:{onClose:()=>vo
                             name="nin"
                             value={formData.streetName}
                             required
-                            max={150}
+                            max={99}
                             onValueChange={({ value }) => {
                                 setFormData({
                                     ...formData,
-                                    streetName: value
+                                    streetName: ReturnAddress(value)
                                 })
                             }}
                             label="Street Name"

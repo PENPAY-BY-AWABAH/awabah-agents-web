@@ -118,7 +118,11 @@ export const ValidateEmail = (value:string)=>{
 }
 export function RemoveSpecialCharaters(d: string) {
   d = String(d).trim();
-  return d.replace(/[-+,&\/\\#()$~%.;'":*?<>{}@ ]/g, '');
+  return d.replace(/[-+,&\/\\#()$~%.;'":*?<>{}@]/g, '');
+}
+export function ReturnAddress(d: string) {
+  d = String(d).trim();
+  return d.replace(/[-+&\/\\#()$~%.;'":*?<>{}@]/g, '');
 }
 export function ReturnAllNumbers(d: string) {
   d = String(d).trim();
