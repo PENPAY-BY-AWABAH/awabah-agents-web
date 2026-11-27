@@ -355,3 +355,18 @@ export const Base64Decode = (str: string) => {
     return "";
   }
 }
+export function isValidNigerianMobile(input:string) {
+  if (typeof input !== "string") return false;
+  const cleaned = input.replace(/[ ]/g,'').trim().replace(/[\s\-().]/g, "");
+  const validPrefixes = [
+    "703", "704", "706", "803", "806", "810", "813", "814", "816", "903", "906", "913", "916",
+    "701", "708", "802", "808", "812", "901", "902", "904", "907", "911", "912",
+    "705", "805", "807", "811", "815", "905", "915",
+    "809", "817", "818", "908", "909",
+    "702", "707", "709", "804"
+  ];
+
+  const prefixPattern = validPrefixes.join("|");
+  const regex = new RegExp(`^(?:\\+?234|0)(${prefixPattern})\\d{7}$`);
+  return regex.test(cleaned);
+}

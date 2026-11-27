@@ -1178,6 +1178,21 @@ const ConfirmRegistration = (nin:any)=>{
             })
         })
     }
+    
+    const VerifyNIN  = (nin:string)=>{
+        return new Promise<ApiResponse>((resolve) => {
+         setLoading(true);
+           call({
+                path:`pencas-nin-look-up`,
+                body:{nin},
+                method:"POST",
+                requestType:"json"
+            }).then((res) => {
+                setLoading(false);
+                resolve(res);
+            })
+        })
+    }
     return {
         loading,
         handleGetTransactions,
@@ -1246,7 +1261,8 @@ const ConfirmRegistration = (nin:any)=>{
         ConfirmRegistration,
         getUserByUserID,
         handleSendOTPToOga,
-        handleCreateOgaPassword
+        handleCreateOgaPassword,
+        VerifyNIN
     }
 }
 export default useHttpHook;

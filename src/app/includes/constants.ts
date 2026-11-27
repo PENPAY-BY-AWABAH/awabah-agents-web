@@ -47,7 +47,8 @@ export const CONSTANT = {
         historySection:"historySection",
         registrationForm:"registrationForm",
         nextOfKin:"nextOfKin",
-        showPrimer:"showPrimer"
+        showPrimer:"showPrimer",
+        formDraft:"formDraft"
     },
     Event:{
         showRegisterOptions:"showRegisterOptions",

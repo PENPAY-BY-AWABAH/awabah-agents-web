@@ -122,8 +122,10 @@ export default function PencomDowntimeNotice() {
     }
     emitChange();
   }, []);
+  
 const [show,setShow] = useState<boolean>(false);
- useEffect(()=>{
+
+useEffect(()=>{
   fetch("https://prod.penpay.com.ng/v1/pencom-downtime",{}).then((res)=>res.json()).then((res)=>{
     if(res.status)
     {
@@ -131,6 +133,7 @@ const [show,setShow] = useState<boolean>(false);
     }
   })
  },[])
+
  if(!show)
  {
   return null;

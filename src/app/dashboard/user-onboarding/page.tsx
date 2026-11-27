@@ -17,7 +17,6 @@ import { PaymentComponent } from "./components/payment";
 import { BaseLoader } from "@/app/components/baseLoader";
 import BaseSelect from "@/app/components/baseSelect";
 import { ItemProps, StateLGAProp } from "@/app/includes/types";
-import { CameraIcon, CheckCircle, InfoIcon, UploadIcon } from "lucide-react";
 import { ImagePickerOption } from "./components/imagePickerOption";
 import { CameraView } from "./components/cameraView";
 import dayjs from "dayjs";
@@ -26,7 +25,8 @@ import BaseModal from "@/app/components/baseModal";
 import useCommissionStore from "@/app/includes/store";
 import { Base64Decode } from "@/app/includes/functions";
 import { toast } from "react-toastify";
-import Tooltip from "@mui/material/Tooltip";
+import AdultRegistration from "./components/adultRegistration";
+import MinoRegistration from "./components/minoRegistration";
 type RegisterProps = "User Details" | "Verify Email" | "Next Of Kin" | "Success" | "Pay" | "Employment Details" | "Parent / Guardian Details" | "Bank Details" | "Consent Agreement";
 export interface SignUpProps {
     referralCode?: string;
@@ -59,10 +59,43 @@ export interface SignUpProps {
     stateCode?: string;
     lgaCode?: string;
 }
+ export const reduceImageSize = (base64String: string, quality: number = 0.7, maxWidth: number = 1000, maxHeight: number = 1000): Promise<string> => {
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.src = base64String;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
 
+                // Calculate new dimensions while maintaining aspect ratio
+                if (width > height) {
+                    if (width > maxWidth) {
+                        height = Math.round((height * maxWidth) / width);
+                        width = maxWidth;
+                    }
+                } else {
+                    if (height > maxHeight) {
+                        width = Math.round((width * maxHeight) / height);
+                        height = maxHeight;
+                    }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+
+                const ctx = canvas.getContext('2d');
+                if (ctx) {
+                    ctx.drawImage(img, 0, 0, width, height);
+                }
+
+                const compressedBase64 = canvas.toDataURL('image/jpeg', quality);
+                resolve(compressedBase64);
+            };
+        });
+    };
 const Page = () => {
     const fileUploadInputRef = useRef<HTMLInputElement>(null);
-    const signatueInputRef = useRef<HTMLInputElement>(null);
     const [listOfConsent, setListOfConsent] = useState<ItemProps[]>([]);
     const [index, setIndex] = useState<number>(0)
     const [uploading, setUploading] = useState<boolean>(false)
@@ -362,41 +395,7 @@ const Page = () => {
         })
     }
 
-    const reduceImageSize = (base64String: string, quality: number = 0.7, maxWidth: number = 1000, maxHeight: number = 1000): Promise<string> => {
-        return new Promise((resolve) => {
-            const img = new Image();
-            img.src = base64String;
-            img.onload = () => {
-                const canvas = document.createElement('canvas');
-                let width = img.width;
-                let height = img.height;
-
-                // Calculate new dimensions while maintaining aspect ratio
-                if (width > height) {
-                    if (width > maxWidth) {
-                        height = Math.round((height * maxWidth) / width);
-                        width = maxWidth;
-                    }
-                } else {
-                    if (height > maxHeight) {
-                        width = Math.round((width * maxHeight) / height);
-                        height = maxHeight;
-                    }
-                }
-
-                canvas.width = width;
-                canvas.height = height;
-
-                const ctx = canvas.getContext('2d');
-                if (ctx) {
-                    ctx.drawImage(img, 0, 0, width, height);
-                }
-
-                const compressedBase64 = canvas.toDataURL('image/jpeg', quality);
-                resolve(compressedBase64);
-            };
-        });
-    };
+   
 
     const handleFileChange = (e: any) => {
         const files = e.target.files;
@@ -550,90 +549,80 @@ const Page = () => {
                                 }}
                                 className={`cursor-pointer text-[12px] ${userIsMinor ? "bg-green-700 text-white" : "text-green-700"} text-center px-5 py-2  flex-grow`}>Minor</button>
                         </div>
-                        <form onSubmit={handleSubmit}
-                            className="mt-5"
-                        >
-                            <div
-                                className="w-[120px] relative cursor-pointer m-auto h-[120px] bg-gray-100 rounded-[120px] border-[3px] border-green-600"
-                            >
-                                {!formData.photo && <input
-                                    required={!formData.photo}
-                                    ref={fileUploadInputRef}
-                                    type="file"
-                                    onChange={handleFileChange}
-                                    style={{ opacity: 0, position: "absolute", bottom: 70, width: 10, height: 10 }}
-                                    accept="image/*"
-                                />}
-                                {formData.photo ? <img
-                                    className="w-full object-cover cursor-pointer m-auto h-full bg-gray-100 rounded-[120px] "
-                                    alt="avatar"
-                                    src={formData.photo}
-                                    onClick={() => setShowCamera(true)}
-                                /> : <img
-                                    className="w-full object-cover cursor-pointer m-auto h-full bg-gray-100 rounded-[120px] "
-                                    alt="avatar"
-                                    src={placeHolderAvatar.src}
-                                    onClick={() => setShowCamera(true)}
-                                />}
-                                <CameraIcon className="absolute bottom-[-10px] right-[-10px]"
-                                    onClick={() => setShowCamera(true)}
-                                />
-                                <Tooltip 
-                                placement="bottom"
-                                title="Take your photo in a well-lit environment. Make sure your face is clearly visible.">
-                                    <div className="absolute bottom-[-10px] left-[-10px]">
-                                        <InfoIcon className="text-[12px] text-[#2d2f2ea6]" />
-                                    </div>
-                                </Tooltip>
-                            </div>
-                            <div
-                                className={`px-[16px] mt-[20px]`}
-                            >
-                                <div className="text-left mb-4" >
-                                    <BaseSelect
-                                    placement="right"
-                                        label="Pension Fund Administrator (PFA)"
-                                        list={pfaList}
-                                        placeholder="Select a Pension Fund Administrator"
-                                        name="pfa"
-                                        required
-                                        left
-                                        onValueChange={({ value }) => {
-                                            const foundItem = pfaList.find((a) => a.value === value);
-                                            if (foundItem) {
-                                                setFormData((prev) => {
-                                                    return {
-                                                        ...prev,
-                                                        pfaCode: value,
-                                                        address: "",
-                                                        state: "",
-                                                        lga: "",
-                                                        pfaName: foundItem?.title
-                                                    }
-                                                })
-                                            }
-                                        }}
-                                        value={formData.pfaName!}
-                                        className=""
-                                        custom
-                                    />
-                                </div>
-                                {/* {userDetails.accountType === "Agent" && !userDetails?.isAgentAsignedToSuperAgent && <BaseInput
-                                    type="text"
-                                    disabled={disableReferralCode}
-                                    name="referralCode"
-                                    value={referralCode}
-                                    onValueChange={({ value }) => {
-                                        setReferralCode(value);
-                                    }}
-                                    max={60}
-                                    label={`Referral Code`}
-                                    placeholder="Enter Referral Code."
-                                    tooltip="Enter a referral code if you were referred by an agent."
-                                    placement="right"
-                                />} */}
+                       {!userIsMinor?<AdultRegistration pfaList={pfaList} jobTypeList={listOfConsent} />:<MinoRegistration   pfaList={pfaList} jobTypeList={listOfConsent}/>}
+                    </div>}
+                </div>}
+                {section === "Verify Email" && <div >
+                    <OtpSection
+                        email={formData.email!}
+                        trackingId={formData.trackingId!}
+                        onClose={() => {
+                            if (formData.nextOfKinRegisteredNotFound === true) {
+                                return setSection("Next Of Kin")
+                            }
+                            setSection("Next Of Kin")
+                        }}
+                        userIsMinor={userIsMinor}
+                    />
+                </div>}
+                {section === "Next Of Kin" && <div >
+                    <NextOfKinPage
+                        onClose={() => {
+                            setSection("Verify Email")
+                        }}
+                        onSuccess={(data) => {
+                            setFormData({
+                                ...formData,
+                                ...data
+                            })
+                            setSection("Consent Agreement")
+                        }}
+                        trackingId={formData.trackingId!}
+                        userIsMinor={userIsMinor}
+                    />
+                </div>}
+                {section === "Pay" && <div >
+                    <PaymentComponent
+                        onSuccess={() => {
+                            setSection("Success")
+                        }}
+                        userdata={formData}
+                    />
+                </div>}
+                {section === "Consent Agreement" && <div >
+                    <ConsentPage
+                        onSuccess={({ rsaPin }) => {
+                            setFormData({
+                                ...formData,
+                                rsaPin
+                            })
 
-                                {showState && <BaseModal
+                            if (!formData.rsaPin) {
+                                return setSection("Success");
+                            }
+                            localStorage.setItem(CONSTANT.LocalStore.remit, JSON.stringify({
+                                rsaPin: formData.rsaPin,
+                                pfaName: formData.pfaName,
+                                providerId: formData?.pfaCode,
+                                phoneNumber: String(formData.phoneNumber).replace("undefined", "").replace("+234", "0"),
+                                amount: 3000,
+                                fullName: formData.firstName + " " + formData.lastName,
+                                isValid: true,
+                                firstTransaction: true
+                            }))
+                            navigate.push(ROUTES.remit);
+                            //   setSection("Success");
+                        }}
+                        onClose={() => {
+
+                        }}
+                        trackingId={formData.trackingId!}
+                        email={formData.email!}
+                        userData={formData}
+                    />
+                </div>}
+            </div>
+            {showState && <BaseModal
                                     title="State and Local Goverment Area"
                                     onClose={() => setShowState(false)}
                                 >
@@ -711,46 +700,8 @@ const Page = () => {
                                             type="button"
                                         />
                                     </div>
-                                </BaseModal>}
-                                {!userIsMinor && <BaseInput
-                                    disabled={formData.hasBVN}
-                                    type="text"
-                                    name="phoneNumber"
-                                    value={formData.phoneNumber}
-                                    required
-                                    onValueChange={({ value }) => {
-                                        setFormData({
-                                            ...formData,
-                                            phoneNumber: value
-                                        })
-                                    }}
-                                    max={11}
-                                    label="Phone Number"
-                                    placeholder="Enter phone number."
-
-                                />}
-                                <BaseInput
-                                    type="text"
-                                    name="nin"
-                                    className="bg-white"
-                                    value={formData.nin}
-                                    required
-                                    max={11}
-                                    onValueChange={({ value }) => {
-                                        setFormData({
-                                            ...formData,
-                                            address: "",
-                                            state: "",
-                                            lga: "",
-                                            nin: value
-                                        })
-                                    }}
-                                    label="NIN (National Identification Number)"
-                                    placeholder="Enter NIN."
-                                    tooltip="Your NIN is used to verify your identity"
-                                    placement="right"
-                                />
-                                {showAddress && <BaseModal
+             </BaseModal>}
+            {showAddress && <BaseModal
                                     title="Postal address"
                                     onClose={() => setShowAddress(false)}
                                 >
@@ -783,222 +734,9 @@ const Page = () => {
                                         />
                                     </div>
                                 </BaseModal>}
-                            </div>
-                            <div className={`w-full ${userIsMinor ? "bg-green-200 p-3 rounded-[20px] mb-2 " : "px-[16px]"}`} >
-                                {userIsMinor && <div className="w-full text-left text-green-700 mb-2 font-bold">Parent / Guardian Details</div>}
-                                {userIsMinor && <BaseInput
-                                    disabled={formData.hasBVN}
-                                    type="text"
-                                    name="phoneNumber"
-                                    className="bg-white"
-                                    value={formData.phoneNumber}
-                                    required
-                                    onValueChange={({ value }) => {
-                                        setFormData({
-                                            ...formData,
-                                            address: "",
-                                            state: "",
-                                            lga: "",
-                                            phoneNumber: value
-                                        })
-                                    }}
-                                    max={11}
-                                    label="Phone Number"
-                                    placeholder="Enter phone number."
-                                />}
-                               
-                                {userIsMinor ? <BaseInput
-                                    type="text"
-                                    name="rsaPin"
-                                    className="bg-white"
-                                    value={formData.rsaPin}
-                                    required
-                                    max={15}
-                                    onValueChange={({ value }) => {
-                                        setFormData({
-                                            ...formData,
-                                            rsaPin: value
-                                        })
-                                    }}
-                                    label="RSA PIN"
-                                    placeholder="Enter RSA PIN."
-                                    tooltip="Enter the guardian's RSA PIN to link the minor's registration to the guardian."
-                                    placement="right"
-                                /> : null}
-                                {/* {!formData.hasBVN && !userIsMinor &&<BaseInput
-                            type="text"
-                            name="bvn"
-                            className="bg-white"
-                            value={formData.bvn}
-                            required
-                            max={11}
-                            onValueChange={({ value }) => {
-                                setFormData({
-                                    ...formData,
-                                    bvn: ReturnAllNumbers(value)
-                                })
-                            }}
-                            label="BVN (Bank Verification Number)"
-                            placeholder="Enter BVN."
-                        />} */}
+                {loading && <BaseLoader modal color="green" size="lg" />}
 
-                                {userIsMinor && <div className="text-left mb-4 " >
-                                    <BaseSelect
-                                        custom
-                                        placeholder="Job Type"
-                                        name="serviceNo"
-                                        className="bg-white"
-                                        value={formData.serviceTitle!}
-                                        required
-                                        onValueChange={({ value }) => {
-                                            const foundItem = listOfConsent.find((a) => a.value === value)
-                                            if (foundItem) {
-                                                setFormData({
-                                                    ...formData,
-                                                    serviceNo: value,
-                                                    address: "",
-                                                    state: "",
-                                                    lga: "",
-                                                    serviceTitle: foundItem?.title
-                                                })
-                                            }
-                                        }}
-                                        left
-                                        list={listOfConsent}
-                                        label="Select your Job type"
-                                    />
-                                </div>}
-                            </div>
-                            <div
-                                className={`px-[16px]`}
-                            >
-
-                                {!userIsMinor && <div className="text-left mb-4 mt-3" >
-                                    <BaseSelect
-                                        custom
-                                        placeholder="Job Type"
-                                        name="serviceNo"
-                                        className="bg-white"
-                                        value={formData.serviceTitle!}
-                                        required
-                                        onValueChange={({ value }) => {
-                                            const foundItem = listOfConsent.find((a) => a.value === value)
-                                            if (foundItem) {
-                                                setFormData({
-                                                    ...formData,
-                                                    serviceNo: value,
-                                                    address: "",
-                                                    state: "",
-                                                    lga: "",
-                                                    serviceTitle: foundItem?.title
-                                                })
-                                            }
-                                        }}
-                                        left
-                                        list={listOfConsent}
-                                        label="Select your Job type"
-                                    />
-                                </div>}
-                                <div className={`mb-5 h-[45px] mt-5 overflow-hidden flex gap-2 cursor-pointer items-center justify-center w-full border border-gray-300 rounded-md shadow-sm sm:text-sm relative `}
-                                >
-                                    {!formData?.signature ? <UploadIcon /> : <CheckCircle color="green" />}
-                                    <div className={`${formData?.signature ? "text-green-700" : "text-black"}`} >{formData?.signature ? "Change Signature" : "Upload Signature"}</div>
-                                    <input
-                                        required={!formData.signature}
-                                        ref={signatueInputRef}
-                                        type="file"
-                                        onChange={handleSignatureChange}
-                                        className="absolute top-[0px] opacity-0
-                                left-[0px]
-                                w-full
-                                h-[40px]
-                                cursor-pointer
-                                "
-                                        accept="image/*"
-                                    />
-                                </div>
-                                <div className="mb-[120px]">
-                                    <BaseButton
-                                        text="Next"
-                                        type="submit"
-                                    />
-                                </div>
-                            </div>
-                        </form>
-                    </div>}
-                    {loading && <BaseLoader modal color="green" size="lg" />}
-                </div>}
-                {section === "Verify Email" && <div >
-                    <OtpSection
-                        email={formData.email!}
-                        trackingId={formData.trackingId!}
-                        onClose={() => {
-                            if (formData.nextOfKinRegisteredNotFound === true) {
-                                return setSection("Next Of Kin")
-                            }
-                            setSection("Next Of Kin")
-                        }}
-                        userIsMinor={userIsMinor}
-                    />
-                </div>}
-                {section === "Next Of Kin" && <div >
-                    <NextOfKinPage
-                        onClose={() => {
-                            setSection("Verify Email")
-                        }}
-                        onSuccess={(data) => {
-                            setFormData({
-                                ...formData,
-                                ...data
-                            })
-                            setSection("Consent Agreement")
-                        }}
-                        trackingId={formData.trackingId!}
-                        userIsMinor={userIsMinor}
-                    />
-                </div>}
-                {section === "Pay" && <div >
-                    <PaymentComponent
-                        onSuccess={() => {
-                            setSection("Success")
-                        }}
-                        userdata={formData}
-                    />
-                </div>}
-                {section === "Consent Agreement" && <div >
-                    <ConsentPage
-                        onSuccess={({ rsaPin }) => {
-                            setFormData({
-                                ...formData,
-                                rsaPin
-                            })
-
-                            if (!formData.rsaPin) {
-                                return setSection("Success");
-                            }
-                            localStorage.setItem(CONSTANT.LocalStore.remit, JSON.stringify({
-                                rsaPin: formData.rsaPin,
-                                pfaName: formData.pfaName,
-                                providerId: formData?.pfaCode,
-                                phoneNumber: String(formData.phoneNumber).replace("undefined", "").replace("+234", "0"),
-                                amount: 3000,
-                                fullName: formData.firstName + " " + formData.lastName,
-                                isValid: true,
-                                firstTransaction: true
-                            }))
-                            navigate.push(ROUTES.remit);
-                            //   setSection("Success");
-                        }}
-                        onClose={() => {
-
-                        }}
-                        trackingId={formData.trackingId!}
-                        email={formData.email!}
-                        userData={formData}
-                    />
-                </div>}
-            </div>
-        </div> : <SuccessComponent
+                        </div> : <SuccessComponent
             onPay={() => {
                 localStorage.setItem(CONSTANT.LocalStore.remit, JSON.stringify({
                     rsaPin: formData.rsaPin,
@@ -1033,20 +771,7 @@ const Page = () => {
                 setShowOption(false);
             }}
         />}
-        {showCamera && <CameraView
-            onSuccess={(base64: string) => {
-                reduceImageSize(base64).then((res) => {
-                    setFormData({
-                        ...formData,
-                        photo: res
-                    })
-                    setShowCamera(false);
-                })
-            }}
-            onClose={() => {
-                setShowCamera(false);
-            }}
-        />}
+        
         {uploading && <BaseLoader text="Proccessing..." modal size={"lg"} color={"green"} />}
     </div>
 }
